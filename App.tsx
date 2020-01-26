@@ -1,12 +1,18 @@
-import React from 'react'
-import { View, Text } from 'react-native'
+import React, {useEffect} from 'react';
+import AppRouter from './src/routes/AppRouter';
+import {StatusBar} from 'react-native';
+import NotificationService from './src/services/NotificationService';
 
 const App = () => {
+  useEffect(() => {
+    NotificationService.init();
+  }, []);
   return (
-    <View>
-      <Text>BoilerPlate</Text>
-    </View>
-  )
-}
+    <>
+      <StatusBar barStyle="dark-content" />
+      <AppRouter />
+    </>
+  );
+};
 
-export default App
+export default App;

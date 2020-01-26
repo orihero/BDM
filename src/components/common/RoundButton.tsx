@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableWithoutFeedback} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  GestureResponderEvent,
+  GestureResponderHandlers,
+} from 'react-native';
 import {measures, colors} from '../../constants';
 
 export interface RoundButtonProps {
@@ -8,10 +15,10 @@ export interface RoundButtonProps {
   backgroundColor?: string;
   text?: string;
   textColor?: string;
-  flex?: string;
+  flex?: boolean;
   full?: boolean;
   big?: boolean;
-  onPress: Function;
+  onPress?: (event: GestureResponderEvent) => void;
 }
 
 const RoundButton = ({

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "150536454175",
+    "firebase_url": "https://notification-63c6e.firebaseio.com",
+    "project_id": "notification-63c6e",
+    "storage_bucket": "notification-63c6e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150536454175:android:7d5ac0e03e176f807f952a",
+        "android_client_info": {
+          "package_name": "com.bdm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "150536454175-bvfpm36rqn8c6v9kslehmht88011v1v5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDr63oNOQubrb_up_ZesXu8Q9foxgWTXas"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "150536454175-bvfpm36rqn8c6v9kslehmht88011v1v5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
