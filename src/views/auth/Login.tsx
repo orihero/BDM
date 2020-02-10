@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   View,
+  Linking,
 } from 'react-native';
 import logo from '../../assets/images/logo.png';
 import Text from '../../components/common/CustomText';
@@ -16,11 +17,64 @@ import RectangularInput from '../../components/common/RectangularInput';
 import RectangularSelect from '../../components/common/RectangularSelect';
 import {colors, commonStyles} from '../../constants';
 import {strings} from '../../locales/strings';
+import IntentLauncher from 'react-native-intent-launcher';
+import base64 from 'react-native-base64';
+
+let convertStringToByteArray = str => {
+  var bytes = [];
+  for (let i = 0; i < str.length; ++i) {
+    bytes.push(str.charCodeAt(i));
+  }
+  var byteArray = bytes;
+  return byteArray;
+};
+
+let api_key =
+  '86E2F10BA6CD237ADA76579102E1FD147561C390055B062FE5AC49957B1D1A54A266EF04A0E3C9AF6DFD65104E78B08524FF3FA769FDAB47C49DFEC1021A77D4';
+let serial_number = 'number';
+let message = convertStringToByteArray('77a76bf$1558607640$150308');
+let append_pkcs7 = convertStringToByteArray('');
+
+let intentLauncher = () => {
+  // const Buffer = require('buffer').Buffer;
+  // let encodedAuth = new Buffer('your text').toString('base64');
+  let extra = {api_key, serial_number, message};
+  IntentLauncher.startActivity({
+    packageName: 'uz.yt.eimzo',
+    className: 'uz.yt.eimzo.activity.MainActivity',
+    extra,
+    message: `{
+"tin":"566584586",
+
+"fullName":"BARATOV BEGZOD RUSTAM O‘G‘LI",
+"organization":"BARATOV BEGZOD RUSTAM O‘G‘LI"
+}`,
+    serial_number,
+    api_key,
+  })
+    .then(e => {
+      console.warn(e);
+    })
+    .catch(e => console.warn(e));
+};
+
+let linking = () => {
+  Linking.sendIntent('uz.yt.eimzo', {
+    api_key,
+    serial_number,
+    append_pkcs7,
+  }).then(res => {
+    console.warn(res);
+  });
+};
 
 let {width} = Dimensions.get('window');
 
 const Login = ({navigation}) => {
   const [remember, setRemember] = useState(false);
+  let onLogin = () => {
+    intentLauncher();
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -63,11 +117,7 @@ const Login = ({navigation}) => {
             />
             <Text style={styles.promptText}>{strings.forgotPassword}</Text>
           </View>
-          <GradientButton
-            onPress={() => navigation.navigate('Main')}
-            full
-            text={strings.login}
-          />
+          <GradientButton onPress={onLogin} full text={strings.login} />
         </View>
         <TouchableWithoutFeedback
           onPress={() => navigation.navigate('Register')}>

@@ -5460,6 +5460,11 @@ react-localization@^1.0.14:
   dependencies:
     localized-strings "^0.2.0"
 
+react-native-base64@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-base64/-/react-native-base64-0.0.2.tgz#c28463c2c6779ac3ec5fdd12979ebc8c5f9b410a"
+  integrity sha512-Fu/J1a2y0X22EJDWqJR2oEa1fpP4gTFjYxk8ElJdt1Yak3HOXmFJ7EohLVHU2DaQkgmKfw8qb7u/48gpzveRbg==
+
 react-native-firebase@^5.6.0:
   version "5.6.0"
   resolved "https://registry.yarnpkg.com/react-native-firebase/-/react-native-firebase-5.6.0.tgz#6f6123f53cb73477915dd55c55f3e1de91db38d2"
@@ -5477,6 +5482,10 @@ react-native-gesture-handler@^1.5.2:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.4"
     prop-types "^15.7.2"
+
+"react-native-intent-launcher@git+https://github.com/orihero/react-native-intent-launcher.git":
+  version "0.2.1"
+  resolved "git+https://github.com/orihero/react-native-intent-launcher.git#ef893defdf703740aebd032bc7b1513b3c578df8"
 
 react-native-linear-gradient@^2.5.6:
   version "2.5.6"
