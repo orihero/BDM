@@ -99,7 +99,8 @@ class BlurWrapper extends Component {
                         ref: (el) => {
                             if (el && el !== this.viewRef) {
                                 this.viewRef = el;
-                                this.blur();
+                                console.warn('bluring');
+                                setTimeout(this.blur, 10)
                             }
                         },
                         style: newStyles,
