@@ -12,3 +12,7 @@ export const SET_WARNING_ERROR = 'SET_WARNING_ERROR';
 export const HIDE_ERROR = 'HIDE_ERROR';
 export const SHOW_MODAL = 'SHOW_MODAL';
 export const HIDE_MODAL = 'HIDE_MODAL';
+
+//* DOCUMENTS
+export const FETCH_DOCUMENTS = 'FETCH_DOCUMENTS';
+export const DOCUMENTS_LOADED = 'DOCUMENTS_LOADED'

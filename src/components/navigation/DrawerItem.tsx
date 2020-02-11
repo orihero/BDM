@@ -38,6 +38,10 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
   drawerVisible
 }) => {
   const [expanded, setExpanded] = useState(false);
+  let closeDrawer = () => {
+    onPress()
+    setExpanded(false);
+  }
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -83,7 +87,7 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
           {expanded &&
             children &&
             children.map(el => (
-              <DrawerItem {...el} style={{ width: 40 }} onPress={onPress} child={true} />
+              <DrawerItem {...el} style={{ width: 40 }} onPress={closeDrawer} />
             ))}
         </View>
       </View>

@@ -25,6 +25,7 @@ export function* requestUserLogin({ payload: remember }) {
         yield put(hideError())
     }
 }
+
 function* user() {
     yield takeEvery(REQUEST_USER_LOG_IN, requestUserLogin);
 }

@@ -1,8 +1,7 @@
-import React from 'react'
-import Navigation from './Routes'
-import { View, StyleSheet } from 'react-native';
-import Modal from '../components/Modal';
+import React from 'react';
+import { StyleSheet } from 'react-native';
 import NavigationService from '../services/NavigationService';
+import Navigation from './Routes';
 
 
 let RouterWithAppState = () => {

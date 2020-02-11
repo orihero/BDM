@@ -54,7 +54,8 @@ export let strings = new LocalizedStrings({
     login1C: 'Логин 1С',
     password: 'Пароль',
     select: 'Выбрать',
-    somethingWentWrong: 'Что-то пошло не так!'
+    somethingWentWrong: 'Что-то пошло не так!',
+    documentSentDate: 'Отправлено'
   },
   en: {},
   uz: {},

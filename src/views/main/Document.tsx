@@ -1,8 +1,8 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
-import {commonStyles, Icons, colors} from '../../constants';
+import { View, StyleSheet } from 'react-native';
+import { commonStyles, Icons, colors } from '../../constants';
 import Text from '../../components/common/CustomText';
-import {strings} from '../../locales/strings';
+import { strings } from '../../locales/strings';
 
 export interface DocumentProps {
   id: string;
@@ -17,37 +17,58 @@ export interface DocumentProps {
 }
 
 const Document: React.FC<DocumentProps> = ({
-  date,
-  number,
-  id,
-  name,
-  ...rest
+  documentId,
+  documentDate,
+  documentNumber,
+  buyerName,
+  sum,
+  buyerTin,
+  documentSentDate
 }) => {
   return (
     <View style={[commonStyles.shadow, styles.container]}>
       <View style={styles.row}>
         <Icons name={'stop'} color={colors.red} size={32} />
-        <View style={{alignItems: 'flex-end'}}>
-          <Text style={styles.secondaryText}>{id}</Text>
-          <Text style={styles.secondaryText}>{`${date}   ${number}`}</Text>
+        <View style={{ alignItems: 'flex-end' }}>
+          <Text style={styles.secondaryText}>#{documentId}</Text>
+          <Text style={styles.secondaryText}>{`${documentDate}   №${documentNumber}`}</Text>
         </View>
       </View>
-      <Text style={styles.title}>{name}</Text>
+      <Text style={styles.title}>{buyerName}</Text>
       <View>
-        {Object.keys(rest).map((e, i) => (
-          <View
-            key={i}
-            style={[
-              styles.row,
-              i !== Object.keys(rest).length - 1 && {
-                borderBottomWidth: 1,
-                borderBottomColor: colors.ultraLightGray,
-              },
-            ]}>
-            <Text style={styles.regularText}>{strings[e]}</Text>
-            <Text style={styles.regularText}>{rest[e]}</Text>
-          </View>
-        ))}
+        <View
+          style={[
+            styles.row,
+            {
+              borderBottomWidth: 1,
+              borderBottomColor: colors.ultraLightGray,
+            },
+          ]}>
+          <Text style={styles.regularText}>{strings.amount}</Text>
+          <Text style={styles.regularText}>{sum}</Text>
+        </View>
+        <View
+          style={[
+            styles.row,
+            {
+              borderBottomWidth: 1,
+              borderBottomColor: colors.ultraLightGray,
+            },
+          ]}>
+          <Text style={styles.regularText}>{strings.documentSentDate}</Text>
+          <Text style={styles.regularText}>{documentSentDate}</Text>
+        </View>
+        <View
+          style={[
+            styles.row,
+            {
+              borderBottomWidth: 1,
+              borderBottomColor: colors.ultraLightGray,
+            },
+          ]}>
+          <Text style={styles.regularText}>{strings.inn}</Text>
+          <Text style={styles.regularText}>{buyerTin}</Text>
+        </View>
       </View>
     </View>
   );
