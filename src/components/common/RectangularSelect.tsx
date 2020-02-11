@@ -18,7 +18,6 @@ const RectangularSelect = ({
     <Picker
       style={styles.container}
       onValueChange={e => {
-        console.warn(e);
       }}
       items={[]}>
       <View style={[styles.container, containerStyle]}>

@@ -2,7 +2,7 @@
 import React from 'react';
 import firebase from 'react-native-firebase';
 import api from '../api/api';
-import {AppState, Clipboard} from 'react-native';
+import { AppState, Clipboard } from 'react-native';
 
 function init() {
   const channel = new firebase.notifications.Android.Channel(
@@ -47,7 +47,7 @@ const checkPermission = async () => {
 const getToken = async () => {
   let fcmToken = await firebase.messaging().getToken();
   Clipboard.setString(fcmToken);
-  alert("SAVED")
+  // alert("SAVED")
   //   api.auth.setToken(fcmToken).then(res => console.warn(res.data));
 };
 const requestPermission = async () => {
@@ -76,4 +76,4 @@ const backgroundPushes = async message => {
   return Promise.resolve();
 };
 
-export default {init, backgroundPushes, clearBadge};
+export default { init, backgroundPushes, clearBadge };

@@ -1,9 +1,8 @@
-import { SHOW_MODAL, HIDE_MODAL } from './../types';
-import { SET_ERROR } from '../types';
+import { SHOW_MODAL, HIDE_MODAL, HIDE_ERROR, } from './../types';
 
-export const setError = (payload) => ({
-    type: SET_ERROR,
-    payload
+
+export const hideError = () => ({
+    type: HIDE_ERROR,
 })
 
 export const showModal = () => ({

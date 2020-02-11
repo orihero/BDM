@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   LayoutAnimation,
   ActivityIndicator,
 } from 'react-native';
-import {measures, colors} from '../../constants';
+import { measures, colors } from '../../constants';
 
 export interface AnimatedButtonProps {
   fill?: boolean;
@@ -37,14 +37,13 @@ const AnimatedButton = ({
 }: AnimatedButtonProps) => {
   const [width, setWidth] = useState(maxSize);
   const [expanded, setExpanded] = useState(false);
-  let onLayout = ({nativeEvent}) => {
+  let onLayout = ({ nativeEvent }) => {
     if (width === 0) {
-      console.warn(nativeEvent);
       setWidth(nativeEvent.layout.width);
     }
   };
   let animation = new Animated.Value(width);
-  let revert = () => {};
+  let revert = () => { };
   useEffect(() => {
     if (loading) {
     } else {
@@ -76,20 +75,20 @@ const AnimatedButton = ({
   });
   return (
     <TouchableWithoutFeedback onPress={localPress}>
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
         <Animated.View
           onLayout={onLayout}
           style={[
             styles.base,
             fill && styles.fill,
             full && styles.full,
-            {backgroundColor, borderColor, width: animation, height},
+            { backgroundColor, borderColor, width: animation, height },
           ]}>
-          <Animated.Text style={{opacity, fontWeight: bold ? 'bold' : '400'}}>
+          <Animated.Text style={{ opacity, fontWeight: bold ? 'bold' : '400' }}>
             {text}
           </Animated.Text>
           {width === minSize && (
-            <View style={{position: 'absolute'}}>
+            <View style={{ position: 'absolute' }}>
               <ActivityIndicator size={'large'} color={colors.accent} />
             </View>
           )}

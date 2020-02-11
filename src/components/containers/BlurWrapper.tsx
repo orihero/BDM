@@ -3,6 +3,7 @@ import { findNodeHandle, Platform, Dimensions, ActivityIndicator, View } from 'r
 import { BlurView } from '@react-native-community/blur';
 import Modal from '../Modal';
 import { connect } from 'react-redux';
+import FloatingMessage from '../FloatingMessage';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 const isAndroid = Platform.OS === 'android';
@@ -53,7 +54,7 @@ class BlurWrapper extends Component {
         }
 
         // children that needs to be blurred.
-        const { children, blurAmount, loading } = this.props;
+        const { children, blurAmount, loading, error } = this.props;
 
         const { canBlurInAndroid } = this.state;
 
@@ -87,6 +88,7 @@ class BlurWrapper extends Component {
         if (!loading) {
             return <>
                 {React.cloneElement(this.props.children)}
+                {error && <FloatingMessage type={error.type} text={error.message} />}
             </>
         }
         return (
@@ -114,6 +116,7 @@ class BlurWrapper extends Component {
                     />
                 }
                 <Modal />
+                {error && <FloatingMessage type={error.type} text={error.message} />}
             </React.Fragment>
         );
     }
@@ -125,8 +128,9 @@ BlurWrapper.defaultProps = {
     showBlur: true,
 };
 
-const mapStateToProps = ({ appState: { loading } }) => ({
-    loading
+const mapStateToProps = ({ appState: { loading, error } }) => ({
+    loading,
+    error
 })
 
 
