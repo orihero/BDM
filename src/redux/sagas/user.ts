@@ -5,15 +5,20 @@ import { sign } from './../../utils/bdmImzoProvider';
 import { hideError, hideModal, showModal } from './../actions/appState';
 import { userLoaded, userLoggedIn } from './../actions/user';
 import { REQUEST_USER_LOG_IN, SET_DANGER_ERROR } from './../types';
+import NavigationService from '../../services/NavigationService';
 
 export function* requestUserLogin({ payload: remember }) {
     try {
         yield put(showModal())
         let request = yield call(sign, null)
-        const data = yield call(requests.auth.login, { sign: request.pkcs });
+        const data = yield call(requests.auth.login, { sign: request.pkcs7 });
         yield put(remember ? userLoggedIn(data.data) : userLoaded(data.data));
+        NavigationService.navigate('Main', {})
     } catch (e) {
-        yield put({ type: SET_DANGER_ERROR, payload: strings.somethingWentWrong });
+        console.warn(e.response);
+        let { data } = e.response || {}
+        let { message } = data || {};
+        yield put({ type: SET_DANGER_ERROR, payload: `${strings.somethingWentWrong}: ${JSON.stringify(message)}` });
     } finally {
         yield put(hideModal())
         yield delay(3000);

@@ -68,7 +68,7 @@ const Login = ({ navigation, requestUserLogin }) => {
             </View>
             <GradientButton onPress={onLogin} full text={strings.login} />
           </View>
-          <TouchableWithoutFeedback
+          {/* <TouchableWithoutFeedback
             onPress={() => navigation.navigate('Register')}>
             <View style={styles.footerBottom}>
               <Text style={styles.promptSmallText}>{strings.noAccount}</Text>
@@ -77,7 +77,7 @@ const Login = ({ navigation, requestUserLogin }) => {
                 {strings.register}
               </Text>
             </View>
-          </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback> */}
         </View>
       </SafeAreaView>
     </BlurWrapper>

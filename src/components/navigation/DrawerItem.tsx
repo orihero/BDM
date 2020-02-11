@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -9,6 +9,7 @@ import { Icons, colors } from '../../constants';
 import Text from '../common/CustomText';
 import { withNavigation } from 'react-navigation';
 import Feather from 'react-native-vector-icons/Feather';
+import NavigationService from '../../services/NavigationService';
 
 export interface DrawerItemProps {
   iconName?: string;
@@ -21,6 +22,7 @@ export interface DrawerItemProps {
   feather?: boolean;
   style?: any;
   onPress?: Function;
+  drawerVisible?: boolean
 }
 
 const DrawerItem: React.FC<DrawerItemProps> = ({
@@ -33,6 +35,7 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
   feather,
   style,
   onPress,
+  drawerVisible
 }) => {
   const [expanded, setExpanded] = useState(false);
   return (
@@ -43,8 +46,10 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
           return;
         }
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        if (!drawerVisible) {
+          onPress();
+        }
         setExpanded(!expanded);
-        onPress();
       }}>
       <View>
         <View style={styles.container}>
@@ -78,7 +83,7 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
           {expanded &&
             children &&
             children.map(el => (
-              <DrawerItem {...el} style={{ width: 40 }} onPress={onPress} />
+              <DrawerItem {...el} style={{ width: 40 }} onPress={onPress} child={true} />
             ))}
         </View>
       </View>

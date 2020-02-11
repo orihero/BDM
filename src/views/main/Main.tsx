@@ -3,6 +3,8 @@ import { View, FlatList, StyleSheet, Animated, Dimensions } from 'react-native';
 import Document, { DocumentProps } from './Document';
 import DrawerContent from '../../components/navigation/DrawerContent';
 import { colors } from '../../constants';
+import Header from '../../components/navigation/Header';
+import { strings } from '../../locales/strings';
 
 let data: DocumentProps[] = [
   {
@@ -44,7 +46,7 @@ const maxW = 300;
 let { height } = Dimensions.get('window');
 
 const Main = ({ navigation }) => {
-  let width = new Animated.Value(minW);
+  const [width, setWidth] = useState(new Animated.Value(minW))
   const [expanded, setExpanded] = useState(false);
   let toggle = () => {
     Animated.spring(width, { toValue: expanded ? minW : maxW }).start(() =>
@@ -52,30 +54,34 @@ const Main = ({ navigation }) => {
     );
   };
   return (
-    <View style={styles.container}>
-      <FlatList
-        contentContainerStyle={styles.flatContainer}
-        data={data}
-        showsVerticalScrollIndicator={false}
-        keyExtractor={(e, i) => i.toString()}
-        renderItem={({ item }) => <Document {...item} />}
-      />
-      <Animated.View
-        style={{
-          width,
-          position: 'absolute',
-          zIndex: 5,
-          backgroundColor: colors.white,
-          height,
-        }}>
-        <DrawerContent navigation={navigation} onPress={toggle} />
-      </Animated.View>
+    <View>
+      <Header title={strings.inbox} toggleDrawer={toggle} />
+      <View style={styles.row}>
+        <FlatList
+          contentContainerStyle={styles.flatContainer}
+          data={data}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={(e, i) => i.toString()}
+          renderItem={({ item }) => <Document {...item} />}
+        />
+        <Animated.View
+          style={{
+            width,
+            position: 'absolute',
+            zIndex: 5,
+            backgroundColor: colors.white,
+            height,
+            // elevation: 5
+          }}>
+          <DrawerContent navigation={navigation} expanded={expanded} onPress={toggle} />
+        </Animated.View>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  row: {
     flexDirection: 'row',
   },
   flatContainer: { paddingBottom: 30, marginLeft: minW },

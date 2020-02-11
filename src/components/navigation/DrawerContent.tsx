@@ -7,6 +7,7 @@ import DrawerItem, { DrawerItemProps } from './DrawerItem';
 interface DrawerContentProps {
   navigation: any;
   onPress?: Function;
+  expanded?: boolean
 }
 
 let menus: DrawerItemProps[] = [
@@ -92,7 +93,7 @@ let menus: DrawerItemProps[] = [
   },
 ];
 
-const DrawerContent: React.FC<DrawerContentProps> = ({ navigation, onPress }) => {
+const DrawerContent: React.FC<DrawerContentProps> = ({ navigation, onPress, expanded }) => {
   return (
     <View style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
@@ -109,7 +110,7 @@ const DrawerContent: React.FC<DrawerContentProps> = ({ navigation, onPress }) =>
             if (e.bottom) {
               return null;
             }
-            return <DrawerItem key={i} {...e} onPress={onPress} />;
+            return <DrawerItem key={i} {...e} drawerVisible={expanded} onPress={onPress} />;
           })}
         </ScrollView>
       </SafeAreaView>

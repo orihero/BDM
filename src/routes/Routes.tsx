@@ -11,7 +11,7 @@ let MainStack = createStackNavigator(
         Main: {
             screen: Main,
             navigationOptions: {
-                header: props => <Header title={strings.inbox} {...props} />,
+                header: null,
             },
         },
         Account: {

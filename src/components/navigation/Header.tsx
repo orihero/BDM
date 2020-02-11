@@ -2,19 +2,20 @@ import React from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Icons, colors } from '../../constants';
 import Text from '../common/CustomText';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView, withNavigation } from 'react-navigation';
 
 interface Props {
   title?: string;
   navigation: any;
+  toggleDrawer?: Function
 }
 
-export default ({ title, navigation }: Props) => {
+let Header = ({ title, navigation, toggleDrawer = () => { } }: Props) => {
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.container}>
         <TouchableWithoutFeedback
-          onPress={() => navigation.openDrawer && navigation.openDrawer()}>
+          onPress={toggleDrawer}>
           <Icons name={'menu'} color={colors.black} size={18} />
         </TouchableWithoutFeedback>
         <Text style={styles.title}>{title}</Text>
@@ -23,6 +24,8 @@ export default ({ title, navigation }: Props) => {
     </SafeAreaView>
   );
 };
+
+export default withNavigation(Header)
 
 const styles = StyleSheet.create({
   container: {
