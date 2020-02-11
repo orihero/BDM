@@ -1,15 +1,15 @@
 import React from 'react';
-import {View, StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {Icons, colors} from '../constants';
-import Text from './common/CustomText';
-import {SafeAreaView} from 'react-navigation';
+import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { Icons, colors } from '../../constants';
+import Text from '../common/CustomText';
+import { SafeAreaView } from 'react-navigation';
 
 interface Props {
   title?: string;
   navigation: any;
 }
 
-export default ({title, navigation}: Props) => {
+export default ({ title, navigation }: Props) => {
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.container}>

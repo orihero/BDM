@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
   TouchableWithoutFeedback,
   LayoutAnimation,
 } from 'react-native';
-import {Icons, colors} from '../constants';
-import Text from './common/CustomText';
-import {withNavigation} from 'react-navigation';
+import { Icons, colors } from '../../constants';
+import Text from '../common/CustomText';
+import { withNavigation } from 'react-navigation';
 import Feather from 'react-native-vector-icons/Feather';
 
 export interface DrawerItemProps {
@@ -59,17 +59,17 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
                     color={colors.black}
                   />
                 ) : (
-                  <Icons name={iconName} size={iconSize} color={colors.black} />
-                ))}
+                    <Icons name={iconName} size={iconSize} color={colors.black} />
+                  ))}
             </View>
-            <View style={{justifyContent: 'center'}}>
+            <View style={{ justifyContent: 'center' }}>
               <Text style={styles.title}>{title}</Text>
             </View>
           </View>
           {children && (
             <Icons
               name={'down-chevron'}
-              style={{transform: [{rotateX: expanded ? '180deg' : '0deg'}]}}
+              style={{ transform: [{ rotateX: expanded ? '180deg' : '0deg' }] }}
               size={18}
             />
           )}
@@ -78,7 +78,7 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
           {expanded &&
             children &&
             children.map(el => (
-              <DrawerItem {...el} style={{width: 40}} onPress={onPress} />
+              <DrawerItem {...el} style={{ width: 40 }} onPress={onPress} />
             ))}
         </View>
       </View>

@@ -1,9 +1,9 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import {colors, Icons} from '../../constants';
+import { StyleSheet, View } from 'react-native';
+import { colors, Icons } from '../../constants';
 import Picker from 'react-native-picker-select';
 import Text from './CustomText';
-import {strings} from '../../locales/strings';
+import { strings } from '../../locales/strings';
 
 interface RectangularSelectProps {
   placeholder?: string;
@@ -20,7 +20,7 @@ const RectangularSelect = ({
       onValueChange={e => {
         console.warn(e);
       }}
-      items={[{key: 'Test', color: colors.blue, label: 'Test', value: 'Test'}]}>
+      items={[]}>
       <View style={[styles.container, containerStyle]}>
         <Text style={styles.placeholder}>{placeholder}</Text>
         <Icons name={'down-chevron'} size={18} color={colors.gray} />

@@ -1,8 +1,8 @@
 import React from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
-import {SafeAreaView} from 'react-navigation';
-import {strings} from '../locales/strings';
-import DrawerItem, {DrawerItemProps} from './DrawerItem';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
+import { strings } from '../../locales/strings';
+import DrawerItem, { DrawerItemProps } from './DrawerItem';
 
 interface DrawerContentProps {
   navigation: any;
@@ -48,7 +48,7 @@ let menus: DrawerItemProps[] = [
         feather: true,
         iconSize: 24,
       },
-      {title: strings.trash, iconName: 'trash-2', feather: true, iconSize: 24},
+      { title: strings.trash, iconName: 'trash-2', feather: true, iconSize: 24 },
     ],
   },
   {
@@ -73,7 +73,7 @@ let menus: DrawerItemProps[] = [
         feather: true,
         iconSize: 24,
       },
-      {title: strings.trash, iconName: 'trash-2', feather: true, iconSize: 24},
+      { title: strings.trash, iconName: 'trash-2', feather: true, iconSize: 24 },
     ],
   },
   {
@@ -92,9 +92,9 @@ let menus: DrawerItemProps[] = [
   },
 ];
 
-const DrawerContent: React.FC<DrawerContentProps> = ({navigation, onPress}) => {
+const DrawerContent: React.FC<DrawerContentProps> = ({ navigation, onPress }) => {
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
         {/* <View
           style={{
@@ -103,7 +103,7 @@ const DrawerContent: React.FC<DrawerContentProps> = ({navigation, onPress}) => {
           <Image source={logo} style={styles.logo} />
         </View> */}
         <ScrollView
-          contentContainerStyle={{flex: 1}}
+          contentContainerStyle={{ flex: 1 }}
           showsVerticalScrollIndicator={false}>
           {menus.map((e, i) => {
             if (e.bottom) {
@@ -121,8 +121,8 @@ const DrawerContent: React.FC<DrawerContentProps> = ({navigation, onPress}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {paddingVertical: 30, paddingHorizontal: 5, flex: 1},
-  logo: {width: 200, height: 200 / 3.18},
+  container: { paddingVertical: 30, paddingHorizontal: 5, flex: 1 },
+  logo: { width: 200, height: 200 / 3.18 },
   logoutWrapper: {
     padding: 15,
   },

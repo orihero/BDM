@@ -121,7 +121,7 @@ def enableHermes = project.ext.react.get("enableHermes", false);
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-
+    buildToolsVersion "28.0.3"
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -129,6 +129,8 @@ android {
 
     defaultConfig {
         applicationId "com.bdm"
+        renderscriptTargetApi 23
+        renderscriptSupportModeEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -179,6 +181,7 @@ android {
 }
 
 dependencies {
+    implementation project(':@react-native-community_blur')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation 'com.android.support:appcompat-v7:27.1.1'

@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import {View, FlatList, StyleSheet, Animated, Dimensions} from 'react-native';
-import Document, {DocumentProps} from './Document';
-import DrawerContent from '../../components/DrawerContent';
-import {colors} from '../../constants';
+import React, { useState } from 'react';
+import { View, FlatList, StyleSheet, Animated, Dimensions } from 'react-native';
+import Document, { DocumentProps } from './Document';
+import DrawerContent from '../../components/navigation/DrawerContent';
+import { colors } from '../../constants';
 
 let data: DocumentProps[] = [
   {
@@ -41,13 +41,13 @@ let data: DocumentProps[] = [
 ];
 const minW = 60;
 const maxW = 300;
-let {height} = Dimensions.get('window');
+let { height } = Dimensions.get('window');
 
-const Main = ({navigation}) => {
+const Main = ({ navigation }) => {
   let width = new Animated.Value(minW);
   const [expanded, setExpanded] = useState(false);
   let toggle = () => {
-    Animated.spring(width, {toValue: expanded ? minW : maxW}).start(() =>
+    Animated.spring(width, { toValue: expanded ? minW : maxW }).start(() =>
       setExpanded(!expanded),
     );
   };
@@ -58,7 +58,7 @@ const Main = ({navigation}) => {
         data={data}
         showsVerticalScrollIndicator={false}
         keyExtractor={(e, i) => i.toString()}
-        renderItem={({item}) => <Document {...item} />}
+        renderItem={({ item }) => <Document {...item} />}
       />
       <Animated.View
         style={{
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
   },
-  flatContainer: {paddingBottom: 30, marginLeft: minW},
+  flatContainer: { paddingBottom: 30, marginLeft: minW },
 });
 
-export {Main};
+export { Main };

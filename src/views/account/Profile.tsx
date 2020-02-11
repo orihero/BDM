@@ -1,14 +1,14 @@
-import React, {Fragment} from 'react';
-import {View, Text, StyleSheet, ScrollView, SafeAreaView} from 'react-native';
-import InnerHeader from '../../components/InnerHeader';
-import {strings} from '../../locales/strings';
-import {colors} from '../../constants';
+import React, { Fragment } from 'react';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import InnerHeader from '../../components/navigation/InnerHeader';
+import { strings } from '../../locales/strings';
+import { colors } from '../../constants';
 import RectangularSelect from '../../components/common/RectangularSelect';
 import RectangularInput from '../../components/common/RectangularInput';
 import DefaultCheckbox from '../../components/common/DefaultCheckbox';
 import GradientButton from '../../components/common/GradientButton';
 import RoundButton from '../../components/common/RoundButton';
-import {FieldType, FieldSize} from '../auth';
+import { FieldType, FieldSize } from '../auth';
 
 let fields = [
   {
@@ -30,8 +30,8 @@ let fields = [
     placeholder: 'SMART BUSINESS LAB',
     rows: [
       [
-        {type: FieldType.SELECT, placeholder: 'Ташкент', size: FieldSize.HALF},
-        {type: FieldType.SELECT, placeholder: 'Ташкент', size: FieldSize.HALF},
+        { type: FieldType.SELECT, placeholder: 'Ташкент', size: FieldSize.HALF },
+        { type: FieldType.SELECT, placeholder: 'Ташкент', size: FieldSize.HALF },
       ],
       [
         {
@@ -39,7 +39,7 @@ let fields = [
           placeholder: 'Махмуд Тараби',
           size: FieldSize.HALF,
         },
-        {type: FieldType.INPUT, placeholder: '25', size: FieldSize.HALF},
+        { type: FieldType.INPUT, placeholder: '25', size: FieldSize.HALF },
       ],
     ],
   },
@@ -64,7 +64,7 @@ let fields = [
   {
     type: FieldType.LINE,
     columns: [
-      {size: FieldSize.QUARTER, type: FieldType.SELECT, placeholder: 'Да'},
+      { size: FieldSize.QUARTER, type: FieldType.SELECT, placeholder: 'Да' },
       {
         type: FieldType.INPUT,
         placeholder: 'Рег.номер налогоплат…',
@@ -117,13 +117,13 @@ let fields = [
   },
 ];
 
-const Profile = ({navigation}) => {
+const Profile = ({ navigation }) => {
   let renderFields = fields => {
     return fields.map(e => {
       switch (e.type) {
         case FieldType.CHECKBOX:
           return (
-            <View style={{marginVertical: 15}}>
+            <View style={{ marginVertical: 15 }}>
               <DefaultCheckbox title={e.title} />
             </View>
           );
@@ -181,25 +181,25 @@ const Profile = ({navigation}) => {
     <View style={styles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 100}}>
+        contentContainerStyle={{ paddingBottom: 100 }}>
         {renderFields(fields)}
         <View style={styles.row}>
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <RoundButton
               full
               flex
               backgroundColor={colors.gray}
               text={strings.cancel}
-              // onPress={() => navigation.navigate('Login')}
+            // onPress={() => navigation.navigate('Login')}
             />
           </View>
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <GradientButton
               textColor={colors.white}
               fill
               flex
               text={strings.save}
-              // onPress={() => navigation.navigate('Main')}
+            // onPress={() => navigation.navigate('Main')}
             />
           </View>
         </View>
@@ -243,4 +243,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export {Profile};
+export { Profile };

@@ -7,19 +7,19 @@ import {
   StatusBar,
   SafeAreaView,
 } from 'react-native';
-import {Icons, colors} from '../constants';
-import {strings} from '../locales/strings';
-import {HeaderBackButton} from 'react-navigation-stack';
-import {withNavigation} from 'react-navigation';
-import Text from './common/CustomText';
+import { Icons, colors } from '../../constants';
+import { strings } from '../../locales/strings';
+import { HeaderBackButton } from 'react-navigation-stack';
+import { withNavigation } from 'react-navigation';
+import Text from '../common/CustomText';
 
 const InnerHeader = withNavigation(
-  ({navigation, back, transparent, title = strings.settings}) => {
+  ({ navigation, back, transparent, title = strings.settings }) => {
     return (
       <SafeAreaView
         style={[
           styles.container,
-          transparent && {backgroundColor: colors.white},
+          transparent && { backgroundColor: colors.white },
         ]}>
         {Platform.OS === 'ios' && <StatusBar barStyle="light-content" />}
         <View style={styles.header}>

@@ -1,10 +1,10 @@
 import React from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import GradientButton from '../../components/common/GradientButton';
 import RoundButton from '../../components/common/RoundButton';
-import InnerHeader from '../../components/InnerHeader';
-import {colors} from '../../constants';
-import {strings} from '../../locales/strings';
+import InnerHeader from '../../components/navigation/InnerHeader';
+import { colors } from '../../constants';
+import { strings } from '../../locales/strings';
 import FieldsRenderer from '../../components/generators/FieldsRenderer';
 
 export enum FieldType {
@@ -51,8 +51,8 @@ let fields: FieldProps[] = [
     placeholder: 'SMART BUSINESS LAB',
     rows: [
       [
-        {type: FieldType.SELECT, placeholder: 'Ташкент', size: FieldSize.HALF},
-        {type: FieldType.SELECT, placeholder: 'Ташкент', size: FieldSize.HALF},
+        { type: FieldType.SELECT, placeholder: 'Ташкент', size: FieldSize.HALF },
+        { type: FieldType.SELECT, placeholder: 'Ташкент', size: FieldSize.HALF },
       ],
       [
         {
@@ -60,7 +60,7 @@ let fields: FieldProps[] = [
           placeholder: 'Махмуд Тараби',
           size: FieldSize.HALF,
         },
-        {type: FieldType.INPUT, placeholder: '25', size: FieldSize.HALF},
+        { type: FieldType.INPUT, placeholder: '25', size: FieldSize.HALF },
       ],
     ],
   },
@@ -85,7 +85,7 @@ let fields: FieldProps[] = [
   {
     type: FieldType.LINE,
     columns: [
-      {size: FieldSize.QUARTER, type: FieldType.SELECT, placeholder: 'Да'},
+      { size: FieldSize.QUARTER, type: FieldType.SELECT, placeholder: 'Да' },
       {
         type: FieldType.INPUT,
         placeholder: 'Рег.номер налогоплат…',
@@ -138,19 +138,19 @@ let fields: FieldProps[] = [
   },
 ];
 
-const Register = ({navigation}) => {
+const Register = ({ navigation }) => {
   return (
     <>
       <InnerHeader transparent back="Login" title={strings.toMain} />
       <View style={styles.container}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{paddingBottom: 100}}>
+          contentContainerStyle={{ paddingBottom: 100 }}>
           <Text style={styles.title}>{strings.register}</Text>
 
           <FieldsRenderer fields={fields} />
           <View style={styles.row}>
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
               <RoundButton
                 full
                 flex
@@ -159,7 +159,7 @@ const Register = ({navigation}) => {
                 onPress={() => navigation.navigate('Login')}
               />
             </View>
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
               <GradientButton
                 textColor={colors.white}
                 fill
@@ -210,4 +210,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export {Register};
+export { Register };

@@ -1,39 +1,18 @@
-import React from 'react';
-import {createAppContainer, createSwitchNavigator} from 'react-navigation';
-import {createStackNavigator} from 'react-navigation-stack';
-import Header from '../components/Header';
-import InnerHeader from '../components/InnerHeader';
-import {strings} from '../locales/strings';
-import {Account, Login, Main, Register} from '../views';
+import React from 'react'
+import Navigation from './Routes'
+import { View, StyleSheet } from 'react-native';
+import Modal from '../components/Modal';
 
-let MainStack = createStackNavigator(
-  {
-    Main: {
-      screen: Main,
-      navigationOptions: {
-        header: props => <Header title={strings.inbox} {...props} />,
-      },
-    },
-    Account: {
-      screen: Account,
-      navigationOptions: {
-        header: props => (
-          <InnerHeader
-            {...props}
-            back={'Main'}
-            title={strings.personalCabinet}
-          />
-        ),
-      },
-    },
-  },
-  {
-    defaultNavigationOptions: {
-      header: props => <InnerHeader {...props} />,
-    },
-  },
-);
 
-let AuthSwitch = createSwitchNavigator({Login, Register, MainStack});
+let RouterWithAppState = () => {
+  return <Navigation />
+}
 
-export default createAppContainer(AuthSwitch);
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  }
+})
+
+
+export default RouterWithAppState
