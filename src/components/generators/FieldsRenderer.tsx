@@ -1,112 +1,173 @@
-import React, {Fragment} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {FieldType, FieldSize, FieldProps} from '../../views';
+import React, { Fragment } from 'react';
+import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { FieldType, FieldSize, FieldProps } from '../../views';
 import DefaultCheckbox from '../common/DefaultCheckbox';
 import RectangularSelect from '../common/RectangularSelect';
 import RectangularInput from '../common/RectangularInput';
-import {colors} from '../../constants';
-import {strings} from '../../locales/strings';
+import { colors, Icons } from '../../constants';
+import { strings } from '../../locales/strings';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import DocumentPicker from 'react-native-document-picker';
 
 interface FieldRendererProps {
-  fields: FieldProps[];
+    fields: FieldProps[];
 }
 
-const FieldsRenderer = ({fields}: FieldRendererProps) => {
-  let renderFields = fields => {
-    return fields.map(e => {
-      switch (e.type) {
-        case FieldType.CHECKBOX:
-          return (
-            <View style={{marginVertical: 15}}>
-              <DefaultCheckbox title={e.title} />
-            </View>
-          );
-        case FieldType.SELECT:
-          if (e.size === FieldSize.FULL) {
-            return (
-              <Fragment>
-                <Text style={styles.inputTitle}>{e.title}</Text>
-                <RectangularSelect placeholder={e.placeholder} />
-              </Fragment>
+const FieldsRenderer = ({ fields }: FieldRendererProps) => {
+    let pickFile = async () => {
+        try {
+            const res = await DocumentPicker.pick({
+                type: [DocumentPicker.types.allFiles],
+            });
+            console.log(
+                res.uri,
+                res.type, // mime type
+                res.name,
+                res.size
             );
-          }
-          return (
-            <View style={styles[e.size]}>
-              <RectangularSelect placeholder={e.placeholder} />
-            </View>
-          );
-        case FieldType.INPUT:
-          if (e.size === FieldSize.FULL) {
-            return (
-              <Fragment>
-                <Text style={styles.inputTitle}>{e.title}</Text>
-                <RectangularInput placeholder={e.placeholder} />
-              </Fragment>
-            );
-          }
-          return (
-            <View style={styles[e.size]}>
-              <RectangularInput placeholder={e.placeholder} />
-            </View>
-          );
-        case FieldType.COMPLEX:
-          return (
-            <Fragment>
-              <Text style={styles.inputTitle}>{strings.address}</Text>
-              {e.rows &&
-                e.rows.map(el => {
-                  return <View style={styles.row}>{renderFields(el)}</View>;
-                })}
-            </Fragment>
-          );
-        case FieldType.LINE:
-          return (
-            <Fragment>
-              <Text style={styles.inputTitle}>{e.title}</Text>
-              <View style={styles.row}>{renderFields(e.columns)}</View>
-            </Fragment>
-          );
-        default:
-          return null;
-      }
-    });
-  };
-  return renderFields(fields);
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                // User cancelled the picker, exit any dialogs or menus and move on
+            } else {
+                throw err;
+            }
+        }
+
+    }
+    let renderFields = fields => {
+        return fields.map(e => {
+            switch (e.type) {
+                case FieldType.CHECKBOX:
+                    return (
+                        <View style={{ marginVertical: 15 }}>
+                            <DefaultCheckbox title={e.title} />
+                        </View>
+                    );
+                case FieldType.SELECT:
+                    if (e.size === FieldSize.FULL) {
+                        return (
+                            <View>
+                                <Text style={styles.inputTitle}>{e.title}</Text>
+                                <RectangularSelect placeholder={e.placeholder} />
+                            </View>
+                        );
+                    }
+                    return (
+                        <View style={styles[e.size]}>
+                            {e.title && <Text numberOfLines={1} style={styles.inputTitle}>{e.title}</Text>}
+                            <RectangularSelect placeholder={e.placeholder} />
+                        </View>
+                    );
+                case FieldType.INPUT:
+                    if (e.size === FieldSize.FULL) {
+                        return (
+                            <View>
+                                <Text style={styles.inputTitle}>{e.title}</Text>
+                                <RectangularInput placeholder={e.placeholder} />
+                            </View>
+                        );
+                    }
+                    return (
+                        <View style={styles[e.size]}>
+                            {e.title && <Text numberOfLines={1} style={styles.inputTitle}>{e.title}</Text>}
+                            <RectangularInput placeholder={e.placeholder} />
+                        </View>
+                    );
+                case FieldType.COMPLEX:
+                    return (
+                        <Fragment>
+                            <Text style={styles.inputTitle}>{strings.address}</Text>
+                            {e.rows &&
+                                e.rows.map(el => {
+                                    return <View style={styles.row}>{renderFields(el)}</View>;
+                                })}
+                        </Fragment>
+                    );
+                case FieldType.LINE:
+                    return (
+                        <Fragment>
+                            {e.title && <Text style={styles.inputTitle}>{e.title}</Text>}
+                            <View style={styles.row}>{renderFields(e.columns)}</View>
+                        </Fragment>
+                    );
+                case FieldType.FILE:
+                    return <View style={styles.row}>
+                        <TouchableWithoutFeedback onPress={pickFile}>
+                            <View style={styles.filePicker}>
+                                <Text style={styles.inputTitle}>{strings.selectFile}</Text>
+                                <Icons name={"paperclip"} size={20} />
+                            </View>
+                        </TouchableWithoutFeedback>
+                        <View style={styles.button}>
+                            <Text style={styles.inputTitle}>{strings.reset}</Text>
+                            <AntDesign name={"close"} size={20} color={colors.red} />
+                        </View>
+                    </View>
+                default:
+                    return null;
+            }
+        });
+    };
+    return renderFields(fields);
 };
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  container: {
-    padding: 15,
-  },
-  inputTitle: {
-    fontSize: 16,
-    color: colors.gray,
-    marginVertical: 10,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-  },
-  half: {
-    flex: 1,
-    paddingRight: 5,
-    marginBottom: 7.5,
-  },
-  quarter: {
-    flex: 0.25,
-    paddingRight: 5,
-    marginBottom: 7.5,
-  },
-  quarterThree: {
-    flex: 0.75,
-    paddingRight: 5,
-    marginBottom: 7.5,
-  },
+    title: {
+        fontSize: 26,
+        fontWeight: 'bold',
+        marginBottom: 15,
+    },
+    container: {
+        padding: 15,
+    },
+    inputTitle: {
+        fontSize: 16,
+        color: colors.gray,
+        marginVertical: 10,
+    },
+    row: {
+        flexDirection: 'row',
+        // backgroundColor: 'red'
+    },
+    half: {
+        flex: 1,
+        paddingRight: 5,
+        marginBottom: 7.5,
+    },
+    quarter: {
+        flex: 0.4,
+        paddingRight: 5,
+        marginBottom: 7.5,
+    },
+    quarterThree: {
+        flex: 0.6,
+        paddingRight: 5,
+        marginBottom: 7.5,
+    },
+    filePicker: {
+        flex: .6,
+        borderStyle: 'dashed',
+        borderWidth: 1,
+        borderRadius: 6,
+        borderColor: colors.lightGray,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 15,
+        paddingVertical: 7.5,
+        marginVertical: 15,
+        marginRight: 10,
+        alignItems: 'center'
+    },
+    button: {
+        flex: .4,
+        borderRadius: 6,
+        borderWidth: 1,
+        borderColor: colors.lightGray,
+        marginVertical: 15,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+    }
 });
 
 export default FieldsRenderer;

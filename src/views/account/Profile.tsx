@@ -8,9 +8,10 @@ import RectangularInput from '../../components/common/RectangularInput';
 import DefaultCheckbox from '../../components/common/DefaultCheckbox';
 import GradientButton from '../../components/common/GradientButton';
 import RoundButton from '../../components/common/RoundButton';
-import { FieldType, FieldSize } from '../auth';
+import { FieldType, FieldSize, FieldProps } from '../auth';
+import FieldsRenderer from '../../components/generators/FieldsRenderer';
 
-let fields = [
+let fields: FieldProps[] = [
   {
     type: FieldType.SELECT,
     size: FieldSize.FULL,
@@ -118,71 +119,13 @@ let fields = [
 ];
 
 const Profile = ({ navigation }) => {
-  let renderFields = fields => {
-    return fields.map(e => {
-      switch (e.type) {
-        case FieldType.CHECKBOX:
-          return (
-            <View style={{ marginVertical: 15 }}>
-              <DefaultCheckbox title={e.title} />
-            </View>
-          );
-        case FieldType.SELECT:
-          if (e.size === FieldSize.FULL) {
-            return (
-              <Fragment>
-                <Text style={styles.inputTitle}>{e.title}</Text>
-                <RectangularSelect placeholder={e.placeholder} />
-              </Fragment>
-            );
-          }
-          return (
-            <View style={styles[e.size]}>
-              <RectangularSelect placeholder={e.placeholder} />
-            </View>
-          );
-        case FieldType.INPUT:
-          if (e.size === FieldSize.FULL) {
-            return (
-              <Fragment>
-                <Text style={styles.inputTitle}>{e.title}</Text>
-                <RectangularInput placeholder={e.placeholder} />
-              </Fragment>
-            );
-          }
-          return (
-            <View style={styles[e.size]}>
-              <RectangularInput placeholder={e.placeholder} />
-            </View>
-          );
-        case FieldType.COMPLEX:
-          return (
-            <Fragment>
-              <Text style={styles.inputTitle}>{strings.address}</Text>
-              {e.rows &&
-                e.rows.map(el => {
-                  return <View style={styles.row}>{renderFields(el)}</View>;
-                })}
-            </Fragment>
-          );
-        case FieldType.LINE:
-          return (
-            <Fragment>
-              <Text style={styles.inputTitle}>{e.title}</Text>
-              <View style={styles.row}>{renderFields(e.columns)}</View>
-            </Fragment>
-          );
-        default:
-          return null;
-      }
-    });
-  };
+
   return (
     <View style={styles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}>
-        {renderFields(fields)}
+        <FieldsRenderer fields={fields} />
         <View style={styles.row}>
           <View style={{ flex: 1 }}>
             <RoundButton

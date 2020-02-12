@@ -44,7 +44,7 @@ const Login = ({ navigation, requestUserLogin }) => {
           <Text style={styles.promptText}>{strings.toBegin}</Text>
           <Text style={styles.enterAccount}>{strings.enterAccount}</Text>
           <View style={{ justifyContent: 'center', flex: 1 }}>
-            <RectangularSelect />
+            <RectangularSelect disabled />
           </View>
         </View>
         <View style={styles.footer}>

@@ -4,7 +4,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import Header from '../components/navigation/Header';
 import InnerHeader from '../components/navigation/InnerHeader';
 import { strings } from '../locales/strings';
-import { Account, Login, Main, Register } from '../views';
+import { Account, Login, Main, Register, NewDocument } from '../views';
 
 let MainStack = createStackNavigator(
     {
@@ -26,14 +26,21 @@ let MainStack = createStackNavigator(
                 ),
             },
         },
+        NewDocument: {
+            screen: NewDocument,
+            navigationOptions: {
+                header: null
+            },
+        }
     },
     {
         defaultNavigationOptions: {
             header: props => <InnerHeader {...props} />,
         },
+        initialRouteName: "NewDocument"
     },
 );
 
-let AuthSwitch = createSwitchNavigator({ Login, Register, MainStack });
+let AuthSwitch = createSwitchNavigator({ Login, Register, MainStack }, { initialRouteName: 'MainStack' });
 
 export default createAppContainer(AuthSwitch);

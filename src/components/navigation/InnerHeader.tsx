@@ -1,16 +1,9 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Platform,
-  StatusBar,
-  SafeAreaView,
-} from 'react-native';
-import { Icons, colors } from '../../constants';
-import { strings } from '../../locales/strings';
-import { HeaderBackButton } from 'react-navigation-stack';
+import { Platform, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native';
 import { withNavigation } from 'react-navigation';
+import { HeaderBackButton } from 'react-navigation-stack';
+import { colors } from '../../constants';
+import { strings } from '../../locales/strings';
 import Text from '../common/CustomText';
 
 const InnerHeader = withNavigation(
@@ -25,7 +18,7 @@ const InnerHeader = withNavigation(
         <View style={styles.header}>
           <View style={[styles.side]}>
             <HeaderBackButton
-              tintColor={colors.darkGray}
+              tintColor={colors.black}
               onPress={() => {
                 if (back) navigation.navigate(back);
                 else navigation.goBack();
@@ -46,7 +39,7 @@ const InnerHeader = withNavigation(
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
-    padding: 15,
+    paddingHorizontal: 15,
   },
   header: {
     flexDirection: 'row',
@@ -59,8 +52,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerText: {
-    color: colors.darkGray,
+    color: colors.black,
     fontSize: 18,
+    fontWeight: 'bold'
   },
   headerMiddle: {
     justifyContent: 'flex-start',

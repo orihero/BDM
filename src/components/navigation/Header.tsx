@@ -19,7 +19,10 @@ let Header = ({ title, navigation, toggleDrawer = () => { } }: Props) => {
           <Icons name={'menu'} color={colors.black} size={18} />
         </TouchableWithoutFeedback>
         <Text style={styles.title}>{title}</Text>
-        <Icons name="down-chevron" color={colors.black} size={18} />
+        <View style={styles.row}>
+          <Icons name="filter" color={colors.black} style={styles.mr10} size={18} />
+          <Icons name="search" color={colors.black} size={18} />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -41,4 +44,10 @@ const styles = StyleSheet.create({
   wrapper: {
     backgroundColor: colors.white,
   },
+  row: {
+    flexDirection: 'row'
+  },
+  mr10: {
+    marginRight: 10
+  }
 });

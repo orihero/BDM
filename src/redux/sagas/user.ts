@@ -18,7 +18,7 @@ export function* requestUserLogin({ payload: remember }) {
         console.warn(e.response);
         let { data } = e.response || {}
         let { message } = data || {};
-        yield put({ type: SET_DANGER_ERROR, payload: `${strings.somethingWentWrong}: ${JSON.stringify(message)}` });
+        yield put({ type: SET_DANGER_ERROR, payload: `${strings.somethingWentWrong}: ${JSON.stringify(data)}` });
     } finally {
         yield put(hideModal())
         yield delay(3000);

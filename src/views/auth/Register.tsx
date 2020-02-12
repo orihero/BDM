@@ -13,6 +13,7 @@ export enum FieldType {
   COMPLEX,
   LINE,
   CHECKBOX,
+  FILE
 }
 
 export interface FieldProps {
@@ -147,7 +148,6 @@ const Register = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 100 }}>
           <Text style={styles.title}>{strings.register}</Text>
-
           <FieldsRenderer fields={fields} />
           <View style={styles.row}>
             <View style={{ flex: 1 }}>

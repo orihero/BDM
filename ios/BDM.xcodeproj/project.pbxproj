@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* BDMTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BDMTests.m */; };
 		0563ECBF61194E3CB2D06F27 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B61E8129A235491BBF251362 /* Entypo.ttf */; };

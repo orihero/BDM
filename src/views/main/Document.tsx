@@ -45,7 +45,7 @@ const Document: React.FC<DocumentProps> = ({
             },
           ]}>
           <Text style={styles.regularText}>{strings.amount}</Text>
-          <Text style={styles.regularText}>{sum}</Text>
+          <Text style={styles.regularText}>{sum} сум</Text>
         </View>
         <View
           style={[
@@ -57,6 +57,17 @@ const Document: React.FC<DocumentProps> = ({
           ]}>
           <Text style={styles.regularText}>{strings.documentSentDate}</Text>
           <Text style={styles.regularText}>{documentSentDate}</Text>
+        </View>
+        <View
+          style={[
+            styles.row,
+            {
+              borderBottomWidth: 1,
+              borderBottomColor: colors.ultraLightGray,
+            },
+          ]}>
+          <Text style={styles.regularText}>{strings.signed}</Text>
+          <Text style={styles.regularText}>{strings.yes}</Text>
         </View>
         <View
           style={[
