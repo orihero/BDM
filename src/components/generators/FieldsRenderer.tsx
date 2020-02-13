@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useReducer } from 'react';
 import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { FieldType, FieldSize, FieldProps } from '../../views';
 import DefaultCheckbox from '../common/DefaultCheckbox';
@@ -8,12 +8,25 @@ import { colors, Icons } from '../../constants';
 import { strings } from '../../locales/strings';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DocumentPicker from 'react-native-document-picker';
+import { reducer, SET } from '../../utils/state';
 
 interface FieldRendererProps {
     fields: FieldProps[];
+    footer?: any
 }
 
-const FieldsRenderer = ({ fields }: FieldRendererProps) => {
+const FieldsRenderer = ({ fields, footer: Footer }: FieldRendererProps) => {
+    const [state, dispatch] = useReducer(reducer, {});
+    let initialItems = () => fields.reduce((prev, current) => {
+        if (current.type === FieldType.SELECT) {
+            return { ...prev, [current.name]: current.staticValue || [] }
+        }
+        return prev
+    }, {});
+
+    const [items, dispatchItems] = useReducer(reducer, {}, initialItems);
+    console.warn(items);
+
     let pickFile = async () => {
         try {
             const res = await DocumentPicker.pick({
@@ -32,7 +45,9 @@ const FieldsRenderer = ({ fields }: FieldRendererProps) => {
                 throw err;
             }
         }
-
+    }
+    let updateState = (name, value) => {
+        dispatch({ type: SET, name, value });
     }
     let renderFields = fields => {
         return fields.map(e => {
@@ -40,22 +55,25 @@ const FieldsRenderer = ({ fields }: FieldRendererProps) => {
                 case FieldType.CHECKBOX:
                     return (
                         <View style={{ marginVertical: 15 }}>
-                            <DefaultCheckbox title={e.title} />
+                            <DefaultCheckbox setActive={() => updateState(e.name, !state[e.name])} title={e.title} />
                         </View>
                     );
                 case FieldType.SELECT:
+                    if (!items[e.name]) {
+                        dispatchItems({ type: SET, name: e.name, value: e.staticValue || [] })
+                    }
                     if (e.size === FieldSize.FULL) {
                         return (
                             <View>
                                 <Text style={styles.inputTitle}>{e.title}</Text>
-                                <RectangularSelect placeholder={e.placeholder} />
+                                <RectangularSelect items={items[e.name]} value={state[e.name]} onChange={(val) => updateState(e.name, val.value)} placeholder={e.placeholder} />
                             </View>
                         );
                     }
                     return (
                         <View style={styles[e.size]}>
                             {e.title && <Text numberOfLines={1} style={styles.inputTitle}>{e.title}</Text>}
-                            <RectangularSelect placeholder={e.placeholder} />
+                            <RectangularSelect items={items[e.name]} onChange={(val) => updateState(e.name, val.value)} placeholder={e.placeholder} />
                         </View>
                     );
                 case FieldType.INPUT:
@@ -63,14 +81,14 @@ const FieldsRenderer = ({ fields }: FieldRendererProps) => {
                         return (
                             <View>
                                 <Text style={styles.inputTitle}>{e.title}</Text>
-                                <RectangularInput placeholder={e.placeholder} />
+                                <RectangularInput onChange={val => updateState(e.name, val)} value={state[e.name]} placeholder={e.placeholder} />
                             </View>
                         );
                     }
                     return (
                         <View style={styles[e.size]}>
                             {e.title && <Text numberOfLines={1} style={styles.inputTitle}>{e.title}</Text>}
-                            <RectangularInput placeholder={e.placeholder} />
+                            <RectangularInput onChange={val => updateState(e.name, val)} value={state[e.name]} placeholder={e.placeholder} />
                         </View>
                     );
                 case FieldType.COMPLEX:
@@ -108,7 +126,10 @@ const FieldsRenderer = ({ fields }: FieldRendererProps) => {
             }
         });
     };
-    return renderFields(fields);
+    return <View>
+        {renderFields(fields)}
+        {Footer && <Footer data={state} />}
+    </View>
 };
 
 const styles = StyleSheet.create({

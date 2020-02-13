@@ -1,11 +1,11 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { colors, Icons } from '../../constants';
-import Picker from 'react-native-picker-select';
+import Picker from '@react-native-community/datetimepicker';
 import Text from './CustomText';
 import { strings } from '../../locales/strings';
 
-interface RectangularSelectProps {
+interface DatePickerProps {
     placeholder?: string;
     containerStyle?: Object;
     disabled?: boolean;
@@ -14,20 +14,20 @@ interface RectangularSelectProps {
     value?: string;
 }
 
-const RectangularSelect = ({
+const RectangularDatePicker = ({
     placeholder = strings.certificate,
     containerStyle,
-    disabled = false,
     items = [],
     onChange = () => { },
     value
-}: RectangularSelectProps) => {
+}: DatePickerProps) => {
     return (
         <Picker
+            value={value}
             style={styles.container}
-            onValueChange={onChange}
-            disabled={disabled}
-            items={items}>
+            onChange={(e) => {
+                console.warn(e);
+            }}>
             <View style={[styles.container, containerStyle]}>
                 <Text style={[styles.placeholder, value && styles.value]}>{value ? value : placeholder}</Text>
                 <Icons name={'down-chevron'} size={18} color={colors.gray} />
@@ -53,4 +53,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default RectangularSelect;
+export default RectangularDatePicker;

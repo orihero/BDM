@@ -70,7 +70,8 @@ export let strings = new LocalizedStrings({
         selectFile: 'Выбрать файл',
         reset: 'Сбросить',
         enterAmount: 'Введите сумму',
-        uzs: 'UZS'
+        uzs: 'UZS',
+        next: 'Прододжить'
     },
     en: {},
     uz: {},

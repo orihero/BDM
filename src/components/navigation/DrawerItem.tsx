@@ -7,6 +7,7 @@ import Text from '../common/CustomText';
 import { DrawerAction, DrawerActionTypes } from './DrawerContent';
 import { connect } from 'react-redux';
 import { getObjectProperty } from '../../utils/object';
+import NavigationService from '../../services/NavigationService';
 
 export interface DrawerItemProps {
     iconName?: string;
@@ -49,7 +50,7 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
         <TouchableWithoutFeedback
             onPress={() => {
                 if (!children && action?.navigateTo) {
-                    navigation.navigate(action.navigateTo);
+                    NavigationService.navigate(action.navigateTo);
                     return;
                 }
                 LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -133,4 +134,4 @@ const mapDispatchToProps = {
 }
 
 
-export default connect(mapStateToProps)(withNavigation(DrawerItem));
+export default (connect(mapStateToProps)((DrawerItem)));

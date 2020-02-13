@@ -13,7 +13,8 @@ export enum FieldType {
   COMPLEX,
   LINE,
   CHECKBOX,
-  FILE
+  FILE,
+  DATE_PICKER
 }
 
 export interface FieldProps {
@@ -23,6 +24,8 @@ export interface FieldProps {
   placeholder?: string;
   rows?: FieldProps[];
   columns?: FieldProps[];
+  name?: string;
+  staticValue?: any[];
 }
 
 export enum FieldSize {
