@@ -7,7 +7,32 @@ import DrawerItem, { DrawerItemProps } from './DrawerItem';
 interface DrawerContentProps {
   navigation: any;
   onPress?: Function;
-  expanded?: boolean
+  expanded?: boolean;
+}
+
+export enum BoxType {
+  inbox = 1,
+  outbox = 2
+}
+
+export enum DocumentStatus {
+  sentOrRecieved = 10,
+  uploaded = 11,
+  signed = 30,
+  rejected = 60,
+  deleted = 71
+}
+
+export enum DrawerActionTypes {
+  navigate = 0,
+  changeBox = 1
+}
+
+export interface DrawerAction {
+  type: DrawerActionTypes;
+  navigateTo?: string;
+  box?: BoxType;
+  status?: DocumentStatus;
 }
 
 let menus: DrawerItemProps[] = [
@@ -19,6 +44,10 @@ let menus: DrawerItemProps[] = [
         title: strings.twoSide,
         iconName: 'double',
         iconSize: 24,
+        action: {
+          type: DrawerActionTypes.navigate,
+          navigateTo: 'NewDocument'
+        },
       },
       {
         title: strings.threeSide,
@@ -36,20 +65,48 @@ let menus: DrawerItemProps[] = [
         iconName: 'download',
         feather: true,
         iconSize: 24,
+        action: {
+          type: DrawerActionTypes.changeBox,
+          box: BoxType.inbox,
+          status: DocumentStatus.sentOrRecieved
+        },
+        countPath: 'inputBox.recieved'
       },
       {
         title: strings.signed,
         iconName: 'check-circle',
         feather: true,
         iconSize: 24,
+        action: {
+          type: DrawerActionTypes.changeBox,
+          box: BoxType.inbox,
+          status: DocumentStatus.signed
+        },
+        countPath: 'inputBox.signature'
       },
       {
         title: strings.rejected,
         iconName: 'delete',
         feather: true,
         iconSize: 24,
+        action: {
+          type: DrawerActionTypes.changeBox,
+          box: BoxType.inbox,
+          status: DocumentStatus.rejected
+        },
+        countPath: 'inputBox.reject'
       },
-      { title: strings.trash, iconName: 'trash-2', feather: true, iconSize: 24 },
+      {
+        title: strings.trash,
+        iconName: 'trash-2',
+        feather: true,
+        iconSize: 24,
+        action: {
+          type: DrawerActionTypes.changeBox,
+          box: BoxType.inbox,
+          status: DocumentStatus.deleted
+        }
+      },
     ],
   },
   {
@@ -61,20 +118,48 @@ let menus: DrawerItemProps[] = [
         iconName: 'send',
         feather: true,
         iconSize: 24,
+        action: {
+          type: DrawerActionTypes.changeBox,
+          box: BoxType.outbox,
+          status: DocumentStatus.sentOrRecieved
+        },
+        countPath: 'outputBox.sent'
       },
       {
         title: strings.signed,
         iconName: 'check-circle',
         feather: true,
         iconSize: 24,
+        action: {
+          type: DrawerActionTypes.changeBox,
+          box: BoxType.outbox,
+          status: DocumentStatus.signed
+        },
+        countPath: 'outputBox.signed'
       },
       {
         title: strings.rejected,
         iconName: 'delete',
         feather: true,
         iconSize: 24,
+        action: {
+          type: DrawerActionTypes.changeBox,
+          box: BoxType.outbox,
+          status: DocumentStatus.rejected
+        },
+        countPath: 'outputBox.rejected'
       },
-      { title: strings.trash, iconName: 'trash-2', feather: true, iconSize: 24 },
+      {
+        title: strings.trash,
+        iconName: 'trash-2',
+        feather: true,
+        iconSize: 24,
+        action: {
+          type: DrawerActionTypes.changeBox,
+          box: BoxType.outbox,
+          status: DocumentStatus.deleted
+        },
+      },
     ],
   },
   {
@@ -126,6 +211,10 @@ const styles = StyleSheet.create({
   logo: { width: 200, height: 200 / 3.18 },
   logoutWrapper: {
     padding: 15,
+    position: 'absolute',
+    right: 0,
+    left: 0,
+    bottom: 80
   },
 });
 

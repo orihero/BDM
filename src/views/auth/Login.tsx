@@ -28,7 +28,7 @@ const Login = ({ navigation, requestUserLogin }) => {
     //     })
     //     .catch(({ response: res }) => console.warn(res))
     // })
-    console.warn(requestUserLogin(remember));
+    requestUserLogin(remember);
   };
   return (
     <BlurWrapper >

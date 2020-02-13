@@ -18,7 +18,8 @@ export let requests = {
         login: (sign) => axios.post(`${url}/auth/login`, sign)
     },
     documents: {
-        getDocuments: ({ boxType, status, page, perPage }) => axios.get(`${url}/document/get/data?boxType=${boxType}&status=${status}&page=${page}&perPage=${perPage}`)
+        getDocuments: ({ boxType, status, page, perPage }) => axios.get(`${url}/document/get/data?boxType=${boxType}&status=${status}&page=${page}&perPage=${perPage}`),
+        getDocumentsCount: () => axios.get(`${url}/document/get/counts/by/status`)
     }
 }
 

@@ -37,10 +37,10 @@ let MainStack = createStackNavigator(
         defaultNavigationOptions: {
             header: props => <InnerHeader {...props} />,
         },
-        initialRouteName: "NewDocument"
+
     },
 );
 
-let AuthSwitch = createSwitchNavigator({ Login, Register, MainStack }, { initialRouteName: 'MainStack' });
+let AuthSwitch = createSwitchNavigator({ Login, Register, MainStack });
 
 export default createAppContainer(AuthSwitch);

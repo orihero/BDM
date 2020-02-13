@@ -1,7 +1,6 @@
 /* eslint-disable */
 import React from 'react';
 import firebase from 'react-native-firebase';
-import api from '../api/api';
 import { AppState, Clipboard } from 'react-native';
 
 function init() {

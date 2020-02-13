@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  LayoutAnimation,
-} from 'react-native';
-import { Icons, colors } from '../../constants';
-import Text from '../common/CustomText';
-import { withNavigation } from 'react-navigation';
+import React, { useState } from 'react';
+import { LayoutAnimation, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import NavigationService from '../../services/NavigationService';
+import { withNavigation } from 'react-navigation';
+import { colors, Icons } from '../../constants';
+import Text from '../common/CustomText';
+import { DrawerAction } from './DrawerContent';
 
 export interface DrawerItemProps {
   iconName?: string;
@@ -22,7 +17,9 @@ export interface DrawerItemProps {
   feather?: boolean;
   style?: any;
   onPress?: Function;
-  drawerVisible?: boolean
+  drawerVisible?: boolean;
+  action?: DrawerAction,
+  countPath?: string;
 }
 
 const DrawerItem: React.FC<DrawerItemProps> = ({
@@ -38,10 +35,11 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
   drawerVisible
 }) => {
   const [expanded, setExpanded] = useState(false);
-  let closeDrawer = () => {
-    onPress()
+  let closeDrawer = (action: DrawerAction) => {
+    onPress(action)
     setExpanded(false);
   }
+
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -51,7 +49,7 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
         }
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         if (!drawerVisible) {
-          onPress();
+          onPress({});
         }
         setExpanded(!expanded);
       }}>
@@ -87,7 +85,7 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
           {expanded &&
             children &&
             children.map(el => (
-              <DrawerItem {...el} style={{ width: 40 }} onPress={closeDrawer} />
+              <DrawerItem {...el} style={{ width: 40 }} onPress={() => closeDrawer(el.action)} />
             ))}
         </View>
       </View>

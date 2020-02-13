@@ -27,7 +27,6 @@ let fields: FieldProps[] = [
   {
     type: FieldType.FILE, placeholder: strings.selectFile, size: FieldSize.FULL,
   },
-
 ]
 
 const NewDocument: React.FC<Props> = () => {

@@ -13,7 +13,8 @@ export function* requestUserLogin({ payload: remember }) {
         let request = yield call(sign, null)
         const data = yield call(requests.auth.login, { sign: request.pkcs7 });
         yield put(remember ? userLoggedIn(data.data) : userLoaded(data.data));
-        NavigationService.navigate('Main', {})
+        console.warn(data.data);
+        NavigationService.navigate('Main', {});
     } catch (e) {
         console.warn(e.response);
         let { data } = e.response || {}
@@ -21,8 +22,8 @@ export function* requestUserLogin({ payload: remember }) {
         yield put({ type: SET_DANGER_ERROR, payload: `${strings.somethingWentWrong}: ${JSON.stringify(data)}` });
     } finally {
         yield put(hideModal())
-        yield delay(3000);
-        yield put(hideError())
+        // yield delay(3000);
+        // yield put(hideError())
     }
 }
 
