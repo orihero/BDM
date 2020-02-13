@@ -26,6 +26,7 @@ export interface FieldProps {
   columns?: FieldProps[];
   name?: string;
   staticValue?: any[];
+  fetch?: Function
 }
 
 export enum FieldSize {

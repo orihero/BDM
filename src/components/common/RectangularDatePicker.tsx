@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
 import { colors, Icons } from '../../constants';
 import Picker from '@react-native-community/datetimepicker';
 import Text from './CustomText';
@@ -21,18 +21,24 @@ const RectangularDatePicker = ({
     onChange = () => { },
     value
 }: DatePickerProps) => {
+    let normalize = (selectedDate) => {
+        let date = `${selectedDate?.getFullYear()}-${selectedDate?.getMonth() >= 10 ? selectedDate?.getMonth().toString() : "0" + selectedDate?.getMonth().toString()}-${selectedDate?.getDate() >= 10 ? selectedDate?.getDate().toString() : "0" + selectedDate?.getDate().toString()}`;
+        return date
+    }
+    const [visible, setVisible] = useState(false)
     return (
-        <Picker
-            value={value}
-            style={styles.container}
-            onChange={(e) => {
-                console.warn(e);
-            }}>
-            <View style={[styles.container, containerStyle]}>
-                <Text style={[styles.placeholder, value && styles.value]}>{value ? value : placeholder}</Text>
-                <Icons name={'down-chevron'} size={18} color={colors.gray} />
+        <TouchableWithoutFeedback onPress={() => setVisible(!visible)}>
+            <View>
+                <View style={[styles.container, containerStyle]}>
+                    <Text style={[styles.placeholder, value && styles.value]}>{value ? value : placeholder}</Text>
+                    <Icons name={'down-chevron'} size={18} color={colors.gray} />
+                </View>
+                {visible && <Picker value={Date.now()} onChange={(e, selectedDate) => {
+                    setVisible(false)
+                    onChange(normalize(selectedDate))
+                }} />}
             </View>
-        </Picker>
+        </TouchableWithoutFeedback>
     );
 };
 

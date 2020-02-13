@@ -7,16 +7,17 @@ import { FieldProps, FieldType, FieldSize } from '../auth';
 import { colors } from '../../constants';
 import GradientButton from '../../components/common/GradientButton';
 import RoundButton from '../../components/common/RoundButton';
+import { requests } from '../../api/requests';
 
 interface Props { }
 
 let fields: FieldProps[] = [
-  { type: FieldType.SELECT, title: strings.input, placeholder: strings.type, size: FieldSize.FULL, name: 'type' },
+  { type: FieldType.SELECT, title: strings.input, placeholder: strings.type, size: FieldSize.FULL, name: 'type', fetch: requests.documents.getDocumentTypes },
   { type: FieldType.INPUT, title: strings.input, placeholder: strings.recieverInn, size: FieldSize.FULL, name: 'buyerTin' },
   {
     type: FieldType.LINE, size: FieldSize.FULL, columns: [
       { type: FieldType.INPUT, title: strings.documentNumber, size: FieldSize.QUARTER, placeholder: strings.number, name: 'document.documentNumber' },
-      { type: FieldType.SELECT, placeholder: strings.selectDate, size: FieldSize.QUERTER_THREE, title: strings.selectDate, name: 'document.documentDate' },
+      { type: FieldType.DATE_PICKER, placeholder: strings.selectDate, size: FieldSize.QUERTER_THREE, title: strings.selectDate, name: 'document.documentDate' },
     ],
   },
   {
@@ -24,7 +25,7 @@ let fields: FieldProps[] = [
       { type: FieldType.INPUT, title: strings.amount, size: FieldSize.QUERTER_THREE, placeholder: strings.enterAmount, name: 'sum' },
       {
         type: FieldType.SELECT, placeholder: strings.uzs, size: FieldSize.QUARTER, title: strings.currency, name: 'currencyId',
-        staticValue: [{ label: 'UZS', value: 1 }, { label: 'USD', value: 2 }, { label: 'RUB', value: 3 }, { label: 'EUR', value: 4 },]
+        staticValue: [{ label: 'UZS', actualValue: 1, value: 0 }, { label: 'USD', actualValue: 2, value: 1 }, { label: 'RUB', actualValue: 3, value: 2 }, { label: 'EUR', actualValue: 4, value: 3 },]
       },
     ],
   },
@@ -35,13 +36,13 @@ let fields: FieldProps[] = [
 ]
 
 const NewDocument: React.FC<Props> = ({ navigation }) => {
-  let onSubmit = () => { }
+  let onSubmit = () => {
+    //TODO On submit
+  }
   let onCancel = () => {
     navigation.goBack();
   }
   let footer = ({ data }) => {
-    console.warn(data);
-
     return <View style={styles.row}>
       <View style={{ flex: 1 }}>
         <RoundButton
