@@ -59,6 +59,8 @@ const Main = ({ navigation, fetchDocuments, documents: { data }, getDocumentsCou
                 navigation.navigate(action.navigateTo);
                 break;
             case DrawerActionTypes.changeBox:
+                console.warn(action);
+
                 fetchDocuments(action)
                 break;
         }

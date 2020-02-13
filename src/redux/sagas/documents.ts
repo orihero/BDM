@@ -8,9 +8,9 @@ import { call, put, takeEvery, delay, fork } from 'redux-saga/effects';
 export function* fetchDocumentsAsync({ payload: { boxType = 1, status = 10, page = 1, perPage = 20, } }) {
     try {
         yield put(showModal())
-        let response = yield call(requests.documents.getDocuments, { boxType, status, page, perPage });
+        let response = yield call(requests.documents.getDocuments, { boxType, status, page, perPage }) || {};
         console.warn(response.data);
-        yield put(documentsLoaded(response.data))
+        yield put(documentsLoaded({ data: response.data, boxType, status }))
     } catch ({ response }) {
         //* We do not have an internet
         if (!response) {

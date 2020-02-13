@@ -3,6 +3,8 @@ import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Icons, colors } from '../../constants';
 import Text from '../common/CustomText';
 import { SafeAreaView, withNavigation } from 'react-navigation';
+import { connect } from 'react-redux';
+import { strings } from '../../locales/strings';
 
 interface Props {
   title?: string;
@@ -10,7 +12,8 @@ interface Props {
   toggleDrawer?: Function
 }
 
-let Header = ({ title, navigation, toggleDrawer = () => { } }: Props) => {
+let Header = ({ navigation, toggleDrawer = () => { }, boxType }: Props) => {
+  let title = boxType === 2 ? strings.outbox : strings.inbox;
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.container}>
@@ -28,7 +31,13 @@ let Header = ({ title, navigation, toggleDrawer = () => { } }: Props) => {
   );
 };
 
-export default withNavigation(Header)
+const mapStateToProps = ({ documents: { boxType, status } }) => ({
+  boxType, status
+})
+
+
+
+export default connect(mapStateToProps)(withNavigation(Header))
 
 const styles = StyleSheet.create({
   container: {
@@ -49,5 +58,5 @@ const styles = StyleSheet.create({
   },
   mr10: {
     marginRight: 10
-  }
+  },
 });

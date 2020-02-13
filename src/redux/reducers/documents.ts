@@ -22,8 +22,10 @@ export default (state = initialState, { type, payload }) => {
     switch (type) {
         case DOCUMENTS_COUNT_LOADED:
             return { ...state, count: payload }
-        case DOCUMENTS_LOADED:
-            return { ...state, data: payload }
+        case DOCUMENTS_LOADED: {
+            let { data, boxType, status } = payload;
+            return { ...state, data, boxType, status }
+        }
         default:
             return state
     }

@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { strings } from '../../locales/strings';
 import DrawerItem, { DrawerItemProps } from './DrawerItem';
+import { connect } from 'react-redux';
 
 interface DrawerContentProps {
   navigation: any;
@@ -29,9 +30,9 @@ export enum DrawerActionTypes {
 }
 
 export interface DrawerAction {
-  type: DrawerActionTypes;
+  type?: DrawerActionTypes;
   navigateTo?: string;
-  box?: BoxType;
+  boxType?: BoxType;
   status?: DocumentStatus;
 }
 
@@ -45,7 +46,6 @@ let menus: DrawerItemProps[] = [
         iconName: 'double',
         iconSize: 24,
         action: {
-          type: DrawerActionTypes.navigate,
           navigateTo: 'NewDocument'
         },
       },
@@ -53,12 +53,19 @@ let menus: DrawerItemProps[] = [
         title: strings.threeSide,
         iconName: 'triple',
         iconSize: 24,
+        action: {
+          navigateTo: 'NewDocument'
+        },
       },
     ],
   },
   {
     iconName: 'file-down',
     title: strings.inbox,
+    action: {
+      boxType: BoxType.inbox,
+      type: DrawerActionTypes.changeBox
+    },
     children: [
       {
         title: strings.recieved,
@@ -66,8 +73,6 @@ let menus: DrawerItemProps[] = [
         feather: true,
         iconSize: 24,
         action: {
-          type: DrawerActionTypes.changeBox,
-          box: BoxType.inbox,
           status: DocumentStatus.sentOrRecieved
         },
         countPath: 'inputBox.recieved'
@@ -78,8 +83,6 @@ let menus: DrawerItemProps[] = [
         feather: true,
         iconSize: 24,
         action: {
-          type: DrawerActionTypes.changeBox,
-          box: BoxType.inbox,
           status: DocumentStatus.signed
         },
         countPath: 'inputBox.signature'
@@ -90,8 +93,6 @@ let menus: DrawerItemProps[] = [
         feather: true,
         iconSize: 24,
         action: {
-          type: DrawerActionTypes.changeBox,
-          box: BoxType.inbox,
           status: DocumentStatus.rejected
         },
         countPath: 'inputBox.reject'
@@ -102,8 +103,6 @@ let menus: DrawerItemProps[] = [
         feather: true,
         iconSize: 24,
         action: {
-          type: DrawerActionTypes.changeBox,
-          box: BoxType.inbox,
           status: DocumentStatus.deleted
         }
       },
@@ -112,6 +111,10 @@ let menus: DrawerItemProps[] = [
   {
     iconName: 'file-up',
     title: strings.outbox,
+    action: {
+      boxType: BoxType.outbox,
+      type: DrawerActionTypes.changeBox
+    },
     children: [
       {
         title: strings.recieved,
@@ -119,8 +122,6 @@ let menus: DrawerItemProps[] = [
         feather: true,
         iconSize: 24,
         action: {
-          type: DrawerActionTypes.changeBox,
-          box: BoxType.outbox,
           status: DocumentStatus.sentOrRecieved
         },
         countPath: 'outputBox.sent'
@@ -131,8 +132,6 @@ let menus: DrawerItemProps[] = [
         feather: true,
         iconSize: 24,
         action: {
-          type: DrawerActionTypes.changeBox,
-          box: BoxType.outbox,
           status: DocumentStatus.signed
         },
         countPath: 'outputBox.signed'
@@ -143,8 +142,6 @@ let menus: DrawerItemProps[] = [
         feather: true,
         iconSize: 24,
         action: {
-          type: DrawerActionTypes.changeBox,
-          box: BoxType.outbox,
           status: DocumentStatus.rejected
         },
         countPath: 'outputBox.rejected'
@@ -155,8 +152,6 @@ let menus: DrawerItemProps[] = [
         feather: true,
         iconSize: 24,
         action: {
-          type: DrawerActionTypes.changeBox,
-          box: BoxType.outbox,
           status: DocumentStatus.deleted
         },
       },
@@ -166,19 +161,25 @@ let menus: DrawerItemProps[] = [
     iconName: 'user',
     title: strings.personalCabinet,
     iconSize: 35,
-    navigateTo: 'Account',
     feather: true,
+    action: {
+      navigateTo: 'Account',
+    }
   },
   {
     iconName: 'logout',
-    title: strings.logout,
+    // title: strings.logout,
     bottom: true,
     iconSize: 30,
-    navigateTo: 'Login',
+    action: {
+      navigateTo: 'Login',
+    }
   },
 ];
 
-const DrawerContent: React.FC<DrawerContentProps> = ({ navigation, onPress, expanded }) => {
+const DrawerContent: React.FC<DrawerContentProps> = ({ navigation, onPress, expanded, boxType }) => {
+  console.warn(boxType);
+
   return (
     <View style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
@@ -195,7 +196,7 @@ const DrawerContent: React.FC<DrawerContentProps> = ({ navigation, onPress, expa
             if (e.bottom) {
               return null;
             }
-            return <DrawerItem key={i} {...e} drawerVisible={expanded} onPress={onPress} />;
+            return <DrawerItem key={i} {...e} active={boxType === e.action?.boxType} drawerVisible={expanded} onPress={onPress} />;
           })}
         </ScrollView>
       </SafeAreaView>
@@ -218,4 +219,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DrawerContent;
+const mapStateToProps = ({ documents: { boxType, status, count } }) => ({
+  boxType, status, count
+});
+
+const mapDispatchToProps = {
+
+}
+
+
+export default connect(mapStateToProps)(DrawerContent);
