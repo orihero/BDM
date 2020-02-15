@@ -54,7 +54,7 @@ class BlurWrapper extends Component {
         }
 
         // children that needs to be blurred.
-        const { children, blurAmount, loading, error } = this.props;
+        const { children, blurAmount, loading, error, loadingMessage } = this.props;
 
         const { canBlurInAndroid } = this.state;
 
@@ -115,7 +115,7 @@ class BlurWrapper extends Component {
                         viewRef={this.nodeHandleRef}
                     />
                 }
-                <Modal />
+                <Modal loadingMessage={loadingMessage} />
                 {error && <FloatingMessage type={error.type} text={error.message} />}
             </React.Fragment>
         );
@@ -128,9 +128,10 @@ BlurWrapper.defaultProps = {
     showBlur: true,
 };
 
-const mapStateToProps = ({ appState: { loading, error } }) => ({
+const mapStateToProps = ({ appState: { loading, error, loadingMessage } }) => ({
     loading,
-    error
+    error,
+    loadingMessage
 })
 
 

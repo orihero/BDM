@@ -71,7 +71,11 @@ export let strings = new LocalizedStrings({
         reset: 'Сбросить',
         enterAmount: 'Введите сумму',
         uzs: 'UZS',
-        next: 'Прододжить'
+        next: 'Прододжить',
+        uploadingFile: 'Загрузка файла',
+        uploadSuccess: 'Файл успешно загружен',
+        creatingDocument: 'Создание документа',
+        documentCreatedSuccesfully: 'Документ создан успешно'
     },
     en: {},
     uz: {},

@@ -8,6 +8,9 @@ import { colors } from '../../constants';
 import GradientButton from '../../components/common/GradientButton';
 import RoundButton from '../../components/common/RoundButton';
 import { requests } from '../../api/requests';
+import { createDocument } from '../../redux/actions'
+import { connect } from 'react-redux';
+import BlurWrapper from '../../components/containers/BlurWrapper';
 
 interface Props { }
 
@@ -31,18 +34,29 @@ let fields: FieldProps[] = [
   },
   { type: FieldType.INPUT, title: strings.comments, placeholder: strings.enterComments, size: FieldSize.FULL, name: 'description' },
   {
-    type: FieldType.FILE, placeholder: strings.selectFile, size: FieldSize.FULL,
+    type: FieldType.FILE, placeholder: strings.selectFile, size: FieldSize.FULL, name: 'file'
   },
 ]
 
-const NewDocument: React.FC<Props> = ({ navigation }) => {
-  let onSubmit = () => {
-    //TODO On submit
-  }
-  let onCancel = () => {
-    navigation.goBack();
-  }
-  let footer = ({ data }) => {
+const NewDocument: React.FC<Props> = ({ navigation, createDocument }) => {
+  let footer = ({ getSubmitData }) => {
+    let onSubmit = () => {
+      //TODO On submit
+      //* Indices are stored
+      // switch (data.type) {
+      //   case :
+
+      //     break;
+
+      //   default:
+      //     break;
+      // }
+      let data = getSubmitData();
+      createDocument(data)
+    }
+    let onCancel = () => {
+      navigation.goBack();
+    }
     return <View style={styles.row}>
       <View style={{ flex: 1 }}>
         <RoundButton
@@ -50,7 +64,7 @@ const NewDocument: React.FC<Props> = ({ navigation }) => {
           flex
           backgroundColor={colors.gray}
           text={strings.cancel}
-          onPress={() => navigation.navigate('Login')}
+          onPress={onCancel}
         />
       </View>
       <View style={{ flex: 1 }}>
@@ -58,21 +72,23 @@ const NewDocument: React.FC<Props> = ({ navigation }) => {
           textColor={colors.white}
           fill
           flex
-          text={strings.next}
-          onPress={() => navigation.navigate('Main')}
+          text={strings.create}
+          onPress={onSubmit}
         />
       </View>
     </View>
   }
-  return <View style={styles.flex}>
-    <InnerHeader
-      back={'Main'}
-      title={strings.newTwoSide}
-    />
-    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-      <FieldsRenderer fields={fields} footer={footer} />
-    </ScrollView>
-  </View>
+  return <BlurWrapper>
+    <View style={styles.flex}>
+      <InnerHeader
+        back={'Main'}
+        title={strings.newTwoSide}
+      />
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+        <FieldsRenderer fields={fields} footer={footer} />
+      </ScrollView>
+    </View>
+  </BlurWrapper>
 };
 
 
@@ -89,4 +105,15 @@ const styles = StyleSheet.create({
   }
 });
 
-export { NewDocument };
+const mapStateToProps = (state) => ({
+
+})
+
+const mapDispatchToProps = {
+  createDocument
+}
+
+
+let Connected = connect(mapStateToProps, mapDispatchToProps)(NewDocument)
+
+export { Connected as NewDocument };

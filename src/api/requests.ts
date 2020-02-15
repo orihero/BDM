@@ -1,4 +1,5 @@
-import axios from 'axios'
+import axios from 'axios';
+import { formData } from '../utils/formData'
 
 let url = 'http://api-mobile.24m.uz/api';
 
@@ -20,7 +21,9 @@ export let requests = {
     documents: {
         getDocuments: ({ boxType, status, page, perPage }) => axios.get(`${url}/document/get/data?boxType=${boxType}&status=${status}&page=${page}&perPage=${perPage}`),
         getDocumentsCount: () => axios.get(`${url}/document/get/counts/by/status`),
-        getDocumentTypes: () => axios.get(`${url}/user/get/document/types`)
+        getDocumentTypes: () => axios.get(`${url}/user/get/document/types`),
+        create: (path, data) => axios.post(`${url}/document${path}`),
+        uploadFile: (data) => axios.post(`${url}/document/get/path/for/view/pdf`, formData(data))
     }
 }
 

@@ -3,7 +3,8 @@ import { SET_DANGER_ERROR, HIDE_MODAL, SHOW_MODAL, HIDE_ERROR, SET_SUCCESS_ERROR
 
 const initialState = {
     error: null,
-    loading: false
+    loading: false,
+    loadingMessage: null
 }
 
 export default (state = initialState, { type, payload }) => {
@@ -17,9 +18,9 @@ export default (state = initialState, { type, payload }) => {
         case HIDE_ERROR:
             return { ...state, error: null }
         case SHOW_MODAL:
-            return { ...state, loading: true }
+            return { ...state, loading: true, loadingMessage: payload }
         case HIDE_MODAL:
-            return { ...state, loading: false }
+            return { ...state, loading: false, loadingMessage: null }
         default:
             return state
     }

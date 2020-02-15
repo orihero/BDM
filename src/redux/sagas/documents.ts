@@ -1,9 +1,37 @@
+import { sign as eSign } from './../../utils/bdmImzoProvider';
 import { showModal, hideModal, hideError } from './../actions/appState';
 import { documentsLoaded, documentsCountLoaded } from './../actions/documents';
 import { strings } from './../../locales/strings';
-import { SET_DANGER_ERROR, FETCH_DOCUMENTS, GET_DOCUMENT_COUNT } from './../types';
+import { SET_DANGER_ERROR, FETCH_DOCUMENTS, GET_DOCUMENT_COUNT, SET_SUCCESS_ERROR, CREATE_DOCUMENT } from './../types';
 import { requests } from './../../api/requests';
 import { call, put, takeEvery, delay, fork } from 'redux-saga/effects';
+import { constructFileFromUri } from '../../utils/formData';
+import RnFs from 'react-native-fs'
+import { Platform } from 'react-native';
+
+export let docIdUrls = {
+    "1": {
+        url: "/create/contract"
+    },
+    "2": {
+        url: '/create/invoice'
+    },
+    "3": {
+        url: '/create/act/completed'
+    },
+    "4": {
+        url: '/create/act/acceptance'
+    },
+    5: {
+        url: '/create/act/reconciliation'
+    },
+    "6": {
+        url: '/create/empowerment'
+    },
+    "other": {
+        url: '/create/other'
+    }
+}
 
 export function* fetchDocumentsAsync({ payload: { boxType = 1, status = 10, page = 1, perPage = 20, } }) {
     try {
@@ -45,10 +73,68 @@ export function* getDocumentsCount(data) {
     }
 }
 
+
+
+export function* createDocument({ payload: data }) {
+    try {
+        //* Show loading
+        yield put(showModal(strings.uploadingFile));
+        //* Construct fileUpload request body
+        let fileData = { file: constructFileFromUri(data.file), tinRecipient: data.tin, documentTypeId: data.type, documentNumber: data.document.documentNumber, documentDate: data.document.documentDate }
+        //* Uploading file
+        let response = yield call(requests.documents.uploadFile, fileData);
+        //* Let user know that the file uploaded succesfully
+        yield put({ type: SET_SUCCESS_ERROR, payload: `${strings.uploadSuccess}` })
+        //* Change loading screen message to creating document
+        yield put(showModal(strings.creatingDocument));
+        //* Getting path of file to convert it base64 with react-native-fs
+        let path = (Platform.OS == 'ios')
+            ? data.file.uri.replace('file://', '')
+            : data.file.uri;
+        //* Convert file to 64
+        let fileBase64 = yield call(RnFs.readFile, path, 'base64');
+        //* Sign the file
+        let sign = yield call(eSign, fileBase64)
+        //* Construct request body for creating document
+        let { filePath, fileName } = response.data.data;
+        let documentData = { ...data, filePath, fileName, sign: sign.pkcs7, buyerCompanyName: 'BBB' };
+        delete documentData.file;
+        //* Getting document url specific to documentType
+        let url = docIdUrls[data.type].url || docIdUrls.other;
+        console.warn(documentData);
+
+        //* Creating document
+        let docResponse = yield call(requests.documents.create, url, documentData);
+        console.warn(docResponse);
+
+        //* Clear messages and loading screens
+        yield put(hideModal());
+        yield put({ type: SET_SUCCESS_ERROR, payload: strings.documentCreatedSuccesfully })
+        yield delay(3000);
+        yield put(hideError())
+    } catch (error) {
+        console.warn(error);
+        let { response } = error || {};
+        if (!response) {
+            yield put({ type: SET_DANGER_ERROR, payload: `${strings.somethingWentWrong}: ${JSON.stringify(error)}` })
+        } else {
+            yield put({ type: SET_DANGER_ERROR, payload: `${strings.somethingWentWrong}: ${JSON.stringify(response.data.message)}` })
+        }
+        console.warn(response);
+        yield put(hideModal())
+        yield delay(3000)
+        yield put(hideError())
+    }
+}
+
 export function* documents() {
     yield takeEvery(FETCH_DOCUMENTS, fetchDocumentsAsync);
 }
 
 export function* documentsCount() {
     yield takeEvery(GET_DOCUMENT_COUNT, getDocumentsCount);
+}
+
+export function* documentCreation() {
+    yield takeEvery(CREATE_DOCUMENT, createDocument);
 }

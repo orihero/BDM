@@ -5,8 +5,9 @@ export const hideError = () => ({
     type: HIDE_ERROR,
 })
 
-export const showModal = () => ({
+export const showModal = (payload) => ({
     type: SHOW_MODAL,
+    payload
 })
 
 export const hideModal = () => ({

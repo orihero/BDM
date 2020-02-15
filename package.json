@@ -21,6 +21,7 @@
     "react-native": "0.61.5",
     "react-native-document-picker": "^3.2.4",
     "react-native-firebase": "^5.6.0",
+    "react-native-fs": "^2.16.4",
     "react-native-gesture-handler": "^1.5.2",
     "react-native-intent-launcher": "git+https://github.com/orihero/react-native-intent-launcher.git",
     "react-native-linear-gradient": "^2.5.6",

@@ -26,7 +26,6 @@ const FieldsRenderer = ({ fields, footer: Footer }: FieldRendererProps) => {
     }, {});
 
     const [items, dispatchItems] = useReducer(reducer, {}, initialItems);
-    console.warn(state);
     useEffect(() => {
         Object.keys(items).map(key => {
             if (typeof items[key].fetch === 'function') {
@@ -59,6 +58,26 @@ const FieldsRenderer = ({ fields, footer: Footer }: FieldRendererProps) => {
     let updateState = (name, value) => {
         dispatch({ type: SET, name, value });
     }
+
+    let getSubmitData = () => {
+        let normalState = { ...state };
+        // Object.keys(items).forEach(key => {
+        //     normalState[key] = items[key].data[normalState[key]].actualValue
+        // })
+        Object.keys(normalState).forEach(key => {
+            if (items[key]) {
+                normalState[key] = items[key].data[normalState[key]].actualValue
+            }
+            if (key.indexOf(".") !== -1) {
+                let parts = key.split(".");
+                let obj = normalState[parts[0]] || {};
+                normalState[parts[0]] = { ...obj, [parts[1]]: normalState[key] };
+                delete normalState[key]
+            }
+        })
+        return normalState;
+    }
+
     let renderFields = fields => {
         return fields.map(e => {
             switch (e.type) {
@@ -155,7 +174,7 @@ const FieldsRenderer = ({ fields, footer: Footer }: FieldRendererProps) => {
     };
     return <View>
         {renderFields(fields)}
-        {Footer && <Footer data={state} />}
+        {Footer && <Footer getSubmitData={getSubmitData} />}
     </View>
 };
 
