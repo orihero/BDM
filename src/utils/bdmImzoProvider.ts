@@ -9,13 +9,19 @@ let message = `{
                     "fullName":"BARATOV BEGZOD RUSTAM O‘G‘LI",
                     "organization":"BARATOV BEGZOD RUSTAM O‘G‘LI"
                    }`;
-
-export let sign = (input) => {
-    return IntentLauncher.startActivity({
+// let append_pkcs7 = ""
+export let sign = (append_pkcs7) => {
+    let obj = {
         packageName: 'uz.yt.eimzo',
         className: 'uz.yt.eimzo.activity.MainActivity',
         serial_number,
         api_key,
-        message: input ? input : message
-    });
+        message: append_pkcs7 ? append_pkcs7 : message
+    };
+    // if (append_pkcs7) {
+    //     obj = { ...obj, append_pkcs7 }
+    // } else {
+    //     obj = { ...obj, message }
+    // }
+    return IntentLauncher.startActivity(obj);
 };

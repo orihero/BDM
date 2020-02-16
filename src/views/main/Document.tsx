@@ -1,19 +1,20 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { commonStyles, Icons, colors } from '../../constants';
 import Text from '../../components/common/CustomText';
 import { strings } from '../../locales/strings';
+import { withNavigation } from 'react-navigation';
+import { NavigationProps } from '../../utils/defaultPropTypes';
 
 export interface DocumentProps {
-  id: string;
-  number: string;
-  date: string;
-  name: string;
-  amount: string;
-  type: string;
-  sent: string;
-  signed: string;
-  inn: string;
+  documentId: string;
+  documentNumber: string;
+  documentSentDate: string;
+  documentDate: string;
+  buyerName: string;
+  sum: string;
+  buyerTin: string;
+  navigation: NavigationProps;
 }
 
 const Document: React.FC<DocumentProps> = ({
@@ -23,65 +24,70 @@ const Document: React.FC<DocumentProps> = ({
   buyerName,
   sum,
   buyerTin,
-  documentSentDate
+  documentSentDate,
+  navigation,
 }) => {
   return (
-    <View style={[commonStyles.shadow, styles.container]}>
-      <View style={styles.row}>
-        <Icons name={'stop'} color={colors.red} size={32} />
-        <View style={{ alignItems: 'flex-end' }}>
-          <Text style={styles.secondaryText}>#{documentId}</Text>
-          <Text style={styles.secondaryText}>{`${documentDate}   №${documentNumber}`}</Text>
+    <TouchableWithoutFeedback onPress={() => {
+      navigation.navigate('PdfViewer', { docId: documentId })
+    }}>
+      <View style={[commonStyles.shadow, styles.container]}>
+        <View style={styles.row}>
+          <Icons name={'stop'} color={colors.red} size={32} />
+          <View style={{ alignItems: 'flex-end' }}>
+            <Text style={styles.secondaryText}>#{documentId}</Text>
+            <Text style={styles.secondaryText}>{`${documentDate}   №${documentNumber}`}</Text>
+          </View>
+        </View>
+        <Text style={styles.title}>{buyerName}</Text>
+        <View>
+          <View
+            style={[
+              styles.row,
+              {
+                borderBottomWidth: 1,
+                borderBottomColor: colors.ultraLightGray,
+              },
+            ]}>
+            <Text style={styles.regularText}>{strings.amount}</Text>
+            <Text style={styles.regularText}>{sum} сум</Text>
+          </View>
+          <View
+            style={[
+              styles.row,
+              {
+                borderBottomWidth: 1,
+                borderBottomColor: colors.ultraLightGray,
+              },
+            ]}>
+            <Text style={styles.regularText}>{strings.documentSentDate}</Text>
+            <Text style={styles.regularText}>{documentSentDate}</Text>
+          </View>
+          <View
+            style={[
+              styles.row,
+              {
+                borderBottomWidth: 1,
+                borderBottomColor: colors.ultraLightGray,
+              },
+            ]}>
+            <Text style={styles.regularText}>{strings.signed}</Text>
+            <Text style={styles.regularText}>{strings.yes}</Text>
+          </View>
+          <View
+            style={[
+              styles.row,
+              {
+                borderBottomWidth: 1,
+                borderBottomColor: colors.ultraLightGray,
+              },
+            ]}>
+            <Text style={styles.regularText}>{strings.inn}</Text>
+            <Text style={styles.regularText}>{buyerTin}</Text>
+          </View>
         </View>
       </View>
-      <Text style={styles.title}>{buyerName}</Text>
-      <View>
-        <View
-          style={[
-            styles.row,
-            {
-              borderBottomWidth: 1,
-              borderBottomColor: colors.ultraLightGray,
-            },
-          ]}>
-          <Text style={styles.regularText}>{strings.amount}</Text>
-          <Text style={styles.regularText}>{sum} сум</Text>
-        </View>
-        <View
-          style={[
-            styles.row,
-            {
-              borderBottomWidth: 1,
-              borderBottomColor: colors.ultraLightGray,
-            },
-          ]}>
-          <Text style={styles.regularText}>{strings.documentSentDate}</Text>
-          <Text style={styles.regularText}>{documentSentDate}</Text>
-        </View>
-        <View
-          style={[
-            styles.row,
-            {
-              borderBottomWidth: 1,
-              borderBottomColor: colors.ultraLightGray,
-            },
-          ]}>
-          <Text style={styles.regularText}>{strings.signed}</Text>
-          <Text style={styles.regularText}>{strings.yes}</Text>
-        </View>
-        <View
-          style={[
-            styles.row,
-            {
-              borderBottomWidth: 1,
-              borderBottomColor: colors.ultraLightGray,
-            },
-          ]}>
-          <Text style={styles.regularText}>{strings.inn}</Text>
-          <Text style={styles.regularText}>{buyerTin}</Text>
-        </View>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -115,4 +121,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Document;
+export default withNavigation(Document);

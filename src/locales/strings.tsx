@@ -75,7 +75,10 @@ export let strings = new LocalizedStrings({
         uploadingFile: 'Загрузка файла',
         uploadSuccess: 'Файл успешно загружен',
         creatingDocument: 'Создание документа',
-        documentCreatedSuccesfully: 'Документ создан успешно'
+        documentCreatedSuccesfully: 'Документ создан успешно',
+        reject: 'Отклонять',
+        confirm: 'Подтвердит',
+        companyName: 'Название компании'
     },
     en: {},
     uz: {},

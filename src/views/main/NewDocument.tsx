@@ -17,6 +17,7 @@ interface Props { }
 let fields: FieldProps[] = [
   { type: FieldType.SELECT, title: strings.input, placeholder: strings.type, size: FieldSize.FULL, name: 'type', fetch: requests.documents.getDocumentTypes },
   { type: FieldType.INPUT, title: strings.input, placeholder: strings.recieverInn, size: FieldSize.FULL, name: 'buyerTin' },
+  { type: FieldType.INPUT, title: strings.input, placeholder: strings.companyName, size: FieldSize.FULL, name: 'buyerCompanyName' },
   {
     type: FieldType.LINE, size: FieldSize.FULL, columns: [
       { type: FieldType.INPUT, title: strings.documentNumber, size: FieldSize.QUARTER, placeholder: strings.number, name: 'document.documentNumber' },

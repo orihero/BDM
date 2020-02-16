@@ -45,7 +45,6 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
         onPress(action)
         setExpanded(false);
     }
-
     return (
         <TouchableWithoutFeedback
             onPress={() => {
@@ -91,9 +90,9 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
                 <View style={styles.childsContainer}>
                     {expanded &&
                         children &&
-                        children.map(el => (
-                            <DrawerItem {...el} style={{ width: 40 }} onPress={() => closeDrawer({ ...el.action, ...action })} />
-                        ))}
+                        children.map(el => {
+                            return <DrawerItem count={count} {...el} style={{ width: 40 }} onPress={() => closeDrawer({ ...el.action, ...action })} />
+                        })}
                 </View>
             </View>
         </TouchableWithoutFeedback>
@@ -125,7 +124,7 @@ const styles = StyleSheet.create({
     activeIndicator: { padding: 25, borderRadius: 60, backgroundColor: colors.lightGray, position: 'absolute', transform: [{ translateX: -10 }] }
 });
 
-const mapStateToProps = ({ documents: count }) => ({
+const mapStateToProps = ({ documents: { count } }) => ({
     count
 })
 

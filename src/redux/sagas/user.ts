@@ -13,10 +13,9 @@ export function* requestUserLogin({ payload: remember }) {
         let request = yield call(sign, null)
         const data = yield call(requests.auth.login, { sign: request.pkcs7 });
         yield put(remember ? userLoggedIn(data.data) : userLoaded(data.data));
-        console.warn(data.data);
         NavigationService.navigate('Main', {});
     } catch (e) {
-        console.warn(e.response);
+        console.warn(e);
         let { data } = e.response || {}
         let { message } = data || {};
         yield put({ type: SET_DANGER_ERROR, payload: `${strings.somethingWentWrong}: ${JSON.stringify(data)}` });

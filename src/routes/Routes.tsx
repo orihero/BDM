@@ -4,7 +4,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import Header from '../components/navigation/Header';
 import InnerHeader from '../components/navigation/InnerHeader';
 import { strings } from '../locales/strings';
-import { Account, Login, Main, Register, NewDocument } from '../views';
+import { Account, Login, Main, Register, NewDocument, PdfViewer } from '../views';
 
 let MainStack = createStackNavigator(
     {
@@ -28,6 +28,12 @@ let MainStack = createStackNavigator(
         },
         NewDocument: {
             screen: NewDocument,
+            navigationOptions: {
+                header: null
+            },
+        },
+        PdfViewer: {
+            screen: PdfViewer,
             navigationOptions: {
                 header: null
             },

@@ -117,7 +117,7 @@ let menus: DrawerItemProps[] = [
     },
     children: [
       {
-        title: strings.recieved,
+        title: strings.sent,
         iconName: 'send',
         feather: true,
         iconSize: 24,

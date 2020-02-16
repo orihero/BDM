@@ -20,8 +20,13 @@ const InnerHeader = withNavigation(
             <HeaderBackButton
               tintColor={colors.black}
               onPress={() => {
-                if (back) navigation.navigate(back);
-                else navigation.goBack();
+                if (back) {
+                  navigation.navigate(back);
+                  return
+                }
+                if (!navigation.goBack()) {
+                  navigation.navigate('Main')
+                }
               }}
             />
           </View>
