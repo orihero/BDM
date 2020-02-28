@@ -6,7 +6,7 @@ import { colors } from '../../constants';
 import Header from '../../components/navigation/Header';
 import { strings } from '../../locales/strings';
 import { connect } from 'react-redux';
-import { fetchDocuments, getDocumentsCount } from '../../redux/actions'
+import { fetchDocuments, getRegions } from '../../redux/actions'
 import BlurWrapper from '../../components/containers/BlurWrapper';
 import { DrawerAction } from '../../components/navigation/DrawerContent'
 
@@ -50,7 +50,7 @@ const maxW = 300;
 let { height } = Dimensions.get('window');
 
 
-const Main = ({ navigation, fetchDocuments, documents: { data }, getDocumentsCount }) => {
+const Main = ({ navigation, fetchDocuments, documents: { data }, getRegions }) => {
     const [width, setWidth] = useState(new Animated.Value(minW))
     const [expanded, setExpanded] = useState(false);
     let toggle = (action: DrawerAction) => {
@@ -69,7 +69,7 @@ const Main = ({ navigation, fetchDocuments, documents: { data }, getDocumentsCou
         );
     };
     useEffect(() => {
-        getDocumentsCount();
+        // getRegions();
         fetchDocuments();
     }, [])
     return (
@@ -114,7 +114,7 @@ const mapStateToProps = ({ documents }) => ({
 
 const mapDispatchToProps = {
     fetchDocuments,
-    getDocumentsCount
+    getRegions
 }
 
 

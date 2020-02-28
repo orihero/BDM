@@ -4,7 +4,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import Header from '../components/navigation/Header';
 import InnerHeader from '../components/navigation/InnerHeader';
 import { strings } from '../locales/strings';
-import { Account, Login, Main, Register, NewDocument, PdfViewer } from '../views';
+import { Account, Login, Main, Register, NewDocument, PdfViewer, Splash } from '../views';
 
 let MainStack = createStackNavigator(
     {
@@ -47,6 +47,6 @@ let MainStack = createStackNavigator(
     },
 );
 
-let AuthSwitch = createSwitchNavigator({ Login, Register, MainStack });
+let AuthSwitch = createSwitchNavigator({ Splash, Login, Register, MainStack });
 
 export default createAppContainer(AuthSwitch);

@@ -178,19 +178,11 @@ let menus: DrawerItemProps[] = [
 ];
 
 const DrawerContent: React.FC<DrawerContentProps> = ({ navigation, onPress, expanded, boxType }) => {
-  console.warn(boxType);
-
   return (
     <View style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
-        {/* <View
-          style={{
-            paddingVertical: 30,
-          }}>
-          <Image source={logo} style={styles.logo} />
-        </View> */}
         <ScrollView
-          contentContainerStyle={{ flex: 1 }}
+          contentContainerStyle={{ paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}>
           {menus.map((e, i) => {
             if (e.bottom) {

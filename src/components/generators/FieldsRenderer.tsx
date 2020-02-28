@@ -13,11 +13,12 @@ import RectangularDatePicker from '../common/RectangularDatePicker';
 
 interface FieldRendererProps {
     fields: FieldProps[];
-    footer?: any
+    footer?: any;
+    initialValue?: any;
 }
 
-const FieldsRenderer = ({ fields, footer: Footer }: FieldRendererProps) => {
-    const [state, dispatch] = useReducer(reducer, {});
+const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererProps) => {
+    const [state, dispatch] = useReducer(reducer, initialValue || {});
     let initialItems = () => fields.reduce((prev, current) => {
         if (current.type === FieldType.SELECT) {
             return { ...prev, [current.name]: { ...current, data: current.staticValue } || current }
@@ -26,14 +27,22 @@ const FieldsRenderer = ({ fields, footer: Footer }: FieldRendererProps) => {
     }, {});
 
     const [items, dispatchItems] = useReducer(reducer, {}, initialItems);
-    useEffect(() => {
+    let fetchItems = (val) => {
         Object.keys(items).map(key => {
             if (typeof items[key].fetch === 'function') {
-                items[key].fetch().then(res => {
-                    dispatchItems({ type: SET, name: key, value: { ...items[key], data: res.data.map((e, index) => ({ value: index, label: e.docTypeName, actualValue: e.docTypeCode })) } })
+                let param = items[key].fetchParamFromStateName && items[items[key].fetchParamFromStateName].data ? items[items[key].fetchParamFromStateName].data[state[items[key].fetchParamFromStateName]].actualValue : null
+                items[key].fetch(param).then(res => {
+                    dispatchItems({ type: SET, name: key, value: { ...items[key], data: res.data.map(items[key].map) } })
+                }).catch(err => {
+                    console.warn(err.response);
+
                 })
             }
         })
+    }
+    useEffect(() => {
+        fetchItems()
+        //TODO Imrpove or change
     }, [])
     let pickFile = async (e: FieldProps) => {
         try {
@@ -80,6 +89,8 @@ const FieldsRenderer = ({ fields, footer: Footer }: FieldRendererProps) => {
 
     let renderFields = fields => {
         return fields.map(e => {
+            if (e.visible === false)
+                return null;
             switch (e.type) {
                 case FieldType.CHECKBOX:
                     return (
@@ -95,14 +106,14 @@ const FieldsRenderer = ({ fields, footer: Footer }: FieldRendererProps) => {
                         return (
                             <View>
                                 <Text style={styles.inputTitle}>{e.title}</Text>
-                                <RectangularSelect value={state[e.name]} items={items[e.name] ? items[e.name].data : []} onChange={(val) => updateState(e.name, val)} placeholder={e.placeholder} />
+                                <RectangularSelect value={state[e.name]} items={items[e.name] ? items[e.name].data : []} onChange={(val) => { updateState(e.name, val); fetchItems(); }} placeholder={e.placeholder} />
                             </View>
                         );
                     }
                     return (
                         <View style={styles[e.size]}>
                             {e.title && <Text numberOfLines={1} style={styles.inputTitle}>{e.title}</Text>}
-                            <RectangularSelect value={state[e.name]} items={items[e.name] ? items[e.name].data : []} onChange={(val) => updateState(e.name, val)} placeholder={e.placeholder} />
+                            <RectangularSelect value={state[e.name]} items={items[e.name] ? items[e.name].data : []} onChange={(val) => { updateState(e.name, val); fetchItems(); }} placeholder={e.placeholder} />
                         </View>
                     );
                 case FieldType.DATE_PICKER:
@@ -125,7 +136,7 @@ const FieldsRenderer = ({ fields, footer: Footer }: FieldRendererProps) => {
                         return (
                             <View>
                                 <Text style={styles.inputTitle}>{e.title}</Text>
-                                <RectangularInput onChange={val => updateState(e.name, val)} value={state[e.name]} placeholder={e.placeholder} />
+                                <RectangularInput disabled={e.disabled} onChange={val => updateState(e.name, val)} value={state[e.name]} placeholder={e.placeholder} />
                             </View>
                         );
                     }

@@ -21,13 +21,6 @@ const mapDispatchToProps = {
 const Login = ({ navigation, requestUserLogin }) => {
   const [remember, setRemember] = useState(false);
   let onLogin = () => {
-    // sign().then(e => {
-    //   requests.login({ sign: e.pkcs7 })
-    //     .then(res => {
-    //       userLoggedIn()
-    //     })
-    //     .catch(({ response: res }) => console.warn(res))
-    // })
     requestUserLogin(remember);
   };
   return (
@@ -40,12 +33,9 @@ const Login = ({ navigation, requestUserLogin }) => {
           ]}>
           <Image source={logo} style={styles.image} />
         </View>
-        <View style={styles.container}>
+        <View style={[styles.container,]}>
           <Text style={styles.promptText}>{strings.toBegin}</Text>
           <Text style={styles.enterAccount}>{strings.enterAccount}</Text>
-          <View style={{ justifyContent: 'center', flex: 1 }}>
-            <RectangularSelect disabled />
-          </View>
         </View>
         <View style={styles.footer}>
           <View>
@@ -68,16 +58,6 @@ const Login = ({ navigation, requestUserLogin }) => {
             </View>
             <GradientButton onPress={onLogin} full text={strings.login} />
           </View>
-          {/* <TouchableWithoutFeedback
-            onPress={() => navigation.navigate('Register')}>
-            <View style={styles.footerBottom}>
-              <Text style={styles.promptSmallText}>{strings.noAccount}</Text>
-              <Text style={styles.promptBoldText}>
-                {'   '}
-                {strings.register}
-              </Text>
-            </View>
-          </TouchableWithoutFeedback> */}
         </View>
       </SafeAreaView>
     </BlurWrapper>
@@ -89,6 +69,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 15,
     backgroundColor: colors.white,
+    justifyContent: 'center'
   },
   row: {
     flexDirection: 'row',
@@ -124,7 +105,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
 });
@@ -133,3 +114,17 @@ let WrappedLogin = connect(null, mapDispatchToProps)(Login)
 
 export { WrappedLogin as Login };
 
+{/* <TouchableWithoutFeedback
+            onPress={() => navigation.navigate('Register')}>
+            <View style={styles.footerBottom}>
+              <Text style={styles.promptSmallText}>{strings.noAccount}</Text>
+              <Text style={styles.promptBoldText}>
+                {'   '}
+                {strings.register}
+              </Text>
+            </View>
+          </TouchableWithoutFeedback> */}
+
+{/* <View style={{ justifyContent: 'center', flex: 1 }}>
+            <RectangularSelect disabled />
+          </View> */}

@@ -33,7 +33,7 @@ const RectangularSelect = ({
             placeholder={{ label: placeholder, value: -1, color: colors.gray }}
             items={items}>
             <View style={[styles.container, containerStyle]}>
-                <Text style={[styles.placeholder, value && styles.value]}>{value !== null && value !== undefined ? items[value].label : placeholder}</Text>
+                <Text style={[styles.placeholder, value && styles.value]}>{value !== null && value !== undefined && items[value] ? items[value].label : placeholder}</Text>
                 <Icons name={'down-chevron'} size={18} color={colors.gray} />
             </View>
         </Picker>

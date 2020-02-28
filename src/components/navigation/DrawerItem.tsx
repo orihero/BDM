@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LayoutAnimation, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { withNavigation } from 'react-navigation';
@@ -45,6 +45,12 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
         onPress(action)
         setExpanded(false);
     }
+    useEffect(() => {
+        if (!drawerVisible) {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+            setExpanded(false)
+        }
+    }, [drawerVisible])
     return (
         <TouchableWithoutFeedback
             onPress={() => {

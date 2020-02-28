@@ -1,4 +1,4 @@
-import { FETCH_DOCUMENTS, DOCUMENTS_LOADED, GET_DOCUMENT_COUNT, DOCUMENTS_COUNT_LOADED, CREATE_DOCUMENT, ACCEPT_DOCUMENT } from './../types';
+import { FETCH_DOCUMENTS, DOCUMENTS_LOADED, GET_REGIONS, DOCUMENTS_COUNT_LOADED, CREATE_DOCUMENT, ACCEPT_DOCUMENT } from './../types';
 
 
 export const fetchDocuments = (payload = {}) => ({
@@ -11,8 +11,8 @@ export const documentsLoaded = (payload = {}) => ({
     payload
 })
 
-export const getDocumentsCount = () => ({
-    type: GET_DOCUMENT_COUNT,
+export const getRegions = () => ({
+    type: GET_REGIONS,
 })
 
 export const documentsCountLoaded = (payload = {}) => ({

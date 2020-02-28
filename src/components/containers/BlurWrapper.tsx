@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { findNodeHandle, Platform, Dimensions, ActivityIndicator, View } from 'react-native';
+import { findNodeHandle, Platform, Dimensions, ActivityIndicator, View, Animated } from 'react-native';
 import { BlurView } from '@react-native-community/blur';
 import Modal from '../Modal';
 import { connect } from 'react-redux';
@@ -13,7 +13,9 @@ class BlurWrapper extends Component {
         // this applies only to android. For ios we can always blur the view, but in android one needs
         // to wait until the view to be blurred is rendered.
         canBlurInAndroid: !isAndroid,
+        translateY: new Animated.Value(-100)
     }
+
     /*
      * When the view to be blurred changes, we reset the component and start from the beggining.
      */
@@ -56,7 +58,7 @@ class BlurWrapper extends Component {
         // children that needs to be blurred.
         const { children, blurAmount, loading, error, loadingMessage } = this.props;
 
-        const { canBlurInAndroid } = this.state;
+        const { canBlurInAndroid, translateY } = this.state;
 
         // we can accept only one child.
         // If you have mutliple child make sure you render it wrapped inside a `View``
@@ -88,7 +90,7 @@ class BlurWrapper extends Component {
         if (!loading) {
             return <>
                 {React.cloneElement(this.props.children)}
-                {error && <FloatingMessage type={error.type} text={error.message} />}
+                {error && <FloatingMessage translateY={translateY} type={error.type} text={error.message} />}
             </>
         }
         return (
@@ -99,7 +101,7 @@ class BlurWrapper extends Component {
                         ref: (el) => {
                             if (el && el !== this.viewRef) {
                                 this.viewRef = el;
-                                setTimeout(this.blur, 10)
+                                this.blur
                             }
                         },
                         style: newStyles,
@@ -108,15 +110,15 @@ class BlurWrapper extends Component {
                 {
                     canBlurInAndroid &&
                     <BlurView
-                        blurType="light"
+                        blurType="dark"
                         blurAmount={blurAmount}
-                        overlayColor="#fffffdb0"
+                        overlayColor="white"
                         style={{ position: 'absolute', left: 0, right: 0, top: 0, right: 0, width: viewportWidth, height: viewportHeight }}
                         viewRef={this.nodeHandleRef}
                     />
                 }
                 <Modal loadingMessage={loadingMessage} />
-                {error && <FloatingMessage type={error.type} text={error.message} />}
+                {error && <FloatingMessage translateY={translateY} type={error.type} text={error.message} />}
             </React.Fragment>
         );
     }

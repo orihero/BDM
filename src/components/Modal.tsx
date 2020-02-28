@@ -4,8 +4,6 @@ import { colors } from '../constants';
 import Text from './common/CustomText';
 
 const Modal = ({ loadingMessage }) => {
-    console.warn(loadingMessage);
-
     return (
         <View style={styles.container}>
             <ActivityIndicator size={'large'} color={colors.blue} />

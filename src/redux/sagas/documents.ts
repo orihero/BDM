@@ -2,12 +2,13 @@ import { sign as eSign } from './../../utils/bdmImzoProvider';
 import { showModal, hideModal, hideError } from './../actions/appState';
 import { documentsLoaded, documentsCountLoaded } from './../actions/documents';
 import { strings } from './../../locales/strings';
-import { SET_DANGER_ERROR, FETCH_DOCUMENTS, GET_DOCUMENT_COUNT, SET_SUCCESS_ERROR, CREATE_DOCUMENT, ACCEPT_DOCUMENT, REJECT_DOCUMENT, DELETE_DOCUMENT } from './../types';
+import { SET_DANGER_ERROR, FETCH_DOCUMENTS, GET_DOCUMENT_COUNT, SET_SUCCESS_ERROR, CREATE_DOCUMENT, ACCEPT_DOCUMENT, REJECT_DOCUMENT, DELETE_DOCUMENT, GET_REGIONS } from './../types';
 import { requests } from './../../api/requests';
 import { call, put, takeEvery, delay, fork } from 'redux-saga/effects';
 import { constructFileFromUri } from '../../utils/formData';
 import RnFs from 'react-native-fs'
 import { Platform } from 'react-native';
+import NavigationService from '../../services/NavigationService';
 
 export let docIdUrls = {
     "1": {
@@ -37,28 +38,30 @@ export function* fetchDocumentsAsync({ payload: { boxType = 1, status = 10, page
     try {
         yield put(showModal())
         let response = yield call(requests.documents.getDocuments, { boxType, status, page, perPage }) || {};
-        console.warn(response.data);
-        yield put(documentsLoaded({ data: response.data, boxType, status }))
+        yield put(documentsLoaded({ data: response.data, boxType, status }));
+        let res = yield call(requests.documents.getDocumentsCount, {});
+        yield put(documentsCountLoaded(res.data))
+        yield delay(10)
+        yield put(hideModal());
     } catch ({ response }) {
+        yield put(hideModal());
         //* We do not have an internet
         if (!response) {
             //TODO control no internet case
             return;
         }
-        yield put({ type: SET_DANGER_ERROR, payload: `${strings.somethingWentWrong}: ${JSON.stringify(response.data.message)}` })
-    } finally {
-        yield put(hideModal());
+        yield put({ type: SET_DANGER_ERROR, payload: `${strings.somethingWentWrong}: ${JSON.stringify(response.data.message)}` });
         yield delay(3000)
         yield put(hideError())
+    } finally {
+
     }
 }
 
-export function* getDocumentsCount(data) {
+export function* getRegions(data) {
     try {
         yield put(showModal());
         let response = yield call(requests.documents.getDocumentsCount, {});
-        console.warn(response);
-
         yield put(documentsCountLoaded(response.data))
         yield put(hideModal());
     } catch ({ response }) {
@@ -66,8 +69,7 @@ export function* getDocumentsCount(data) {
         if (!response) {
             //TODO control no internet case
         }
-        console.warn(response);
-        yield put({ type: SET_DANGER_ERROR, payload: `${strings.somethingWentWrong}: ${JSON.stringify(response.data.message)}` })
+        yield put({ type: SET_DANGER_ERROR, payload: `${strings.somethingWentWrong}` })
         yield delay(3000)
         yield put(hideError())
     }
@@ -86,20 +88,18 @@ export function* createDocument({ payload: data }) {
         let fileData = { file: constructFileFromUri(data.file), tinRecipient: data.tin, documentTypeId: data.type, documentNumber: data.document.documentNumber, documentDate: data.document.documentDate }
         //* Uploading file
         let response = yield call(requests.documents.uploadFile, fileData);
-        //* Let user know that the file uploaded succesfully
-        yield put({ type: SET_SUCCESS_ERROR, payload: `${strings.uploadSuccess}` })
         //* Change loading screen message to creating document
         yield put(showModal(strings.creatingDocument));
+        //* Let user know that the file uploaded succesfully
+        yield put({ type: SET_SUCCESS_ERROR, payload: `${strings.uploadSuccess}` })
         //* Getting path of file to convert it base64 with react-native-fs
         let path = (Platform.OS == 'ios')
             ? data.file.uri.replace('file://', '')
             : data.file.uri;
         //* Convert file to base64
         let fileBase64 = yield call(RnFs.readFile, path, 'base64');
-        // console.warn(fileBase64);
         //* Sign the file
         let sign = yield call(eSign, fileBase64)
-        console.warn(sign);
         //* Check if yhr user signed otherwise reject!
         if (!sign.pkcs7) {
             yield put({ type: SET_DANGER_ERROR, payload: strings.somethingWentWrong })
@@ -118,8 +118,10 @@ export function* createDocument({ payload: data }) {
         //* Creating document
         let docResponse = yield call(requests.documents.create, url, documentData);
         //* Clear messages and loading screens
-        yield put({ type: SET_SUCCESS_ERROR, payload: strings.documentCreatedSuccesfully })
+        NavigationService.navigate('Main')
         yield put(hideModal());
+        yield delay(500)
+        yield put({ type: SET_SUCCESS_ERROR, payload: strings.documentCreatedSuccesfully })
         yield delay(3000);
         yield put(hideError())
     } catch (error) {
@@ -137,11 +139,17 @@ export function* createDocument({ payload: data }) {
     }
 }
 
-export function* documentInteractionHandler({ payload: { } }) {
+export function* documentInteractionHandler({ payload: documentId }) {
     try {
         //* Show loading
-        yield put(showModal(strings.uploadingFile));
-
+        yield put(showModal(strings.fetchingData));
+        let signMessage = yield call(requests.documents.getSignMessage, documentId)
+        let sign = yield call(eSign, signMessage.data.data)
+        let response = yield call(requests.documents.sign, { documentId, sign });
+        yield put(hideModal())
+        yield put({ type: SET_SUCCESS_ERROR, payload: strings.signedSuccessfully })
+        yield delay(3000)
+        yield put(hideError())
     } catch (error) {
         console.warn(error);
         let { response } = error || {};
@@ -162,10 +170,14 @@ export function* documents() {
     yield takeEvery(FETCH_DOCUMENTS, fetchDocumentsAsync);
 }
 
-export function* documentsCount() {
-    yield takeEvery(GET_DOCUMENT_COUNT, getDocumentsCount);
+export function* handlegGetRegions() {
+    yield takeEvery(GET_REGIONS, getRegions);
 }
 
 export function* docuemntInteraction() {
     yield takeEvery([ACCEPT_DOCUMENT, REJECT_DOCUMENT, DELETE_DOCUMENT], documentInteractionHandler);
+}
+
+export function* documentCreation() {
+    yield takeEvery(CREATE_DOCUMENT, createDocument)
 }

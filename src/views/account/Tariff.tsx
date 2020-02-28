@@ -1,17 +1,19 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import Text from '../../components/common/CustomText';
 import LinearGradient from 'react-native-linear-gradient';
-import {colors} from '../../constants';
-import {strings} from '../../locales/strings';
+import { colors } from '../../constants';
+import { strings } from '../../locales/strings';
 
 export interface TariffProps {
+  id?: number;
   title?: string;
   shortDescription?: string;
   price?: string;
   period?: string;
   description?: string;
   reason?: string;
+  onPress?: Function;
 }
 
 export const Tariff: React.FC<TariffProps> = ({
@@ -21,6 +23,7 @@ export const Tariff: React.FC<TariffProps> = ({
   price,
   period,
   reason,
+  onPress
 }) => {
   return (
     <View style={styles.container}>
@@ -36,19 +39,21 @@ export const Tariff: React.FC<TariffProps> = ({
         <View style={styles.midCenter}>
           <Text style={styles.regularText}>{description}</Text>
         </View>
-        <View style={styles.midBottom}>
+        {/* <View style={styles.midBottom}>
           <Text style={styles.regularText}>{reason}</Text>
+        </View> */}
+      </View>
+      <TouchableWithoutFeedback onPress={onPress}>
+        <View style={styles.bottom}>
+          <LinearGradient
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={StyleSheet.absoluteFill}
+            colors={[colors.darkBlue, colors.blue]}
+          />
+          <Text style={styles.title}>{strings.select}</Text>
         </View>
-      </View>
-      <View style={styles.bottom}>
-        <LinearGradient
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
-          style={StyleSheet.absoluteFill}
-          colors={[colors.darkBlue, colors.blue]}
-        />
-        <Text style={styles.title}>{strings.select}</Text>
-      </View>
+      </TouchableWithoutFeedback>
     </View>
   );
 };
@@ -65,7 +70,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   middle: {},
-  bottom: {padding: 15, alignItems: 'center'},
+  bottom: { padding: 15, alignItems: 'center' },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -80,6 +85,7 @@ const styles = StyleSheet.create({
   regularText: {
     fontSize: 15,
     color: colors.darkGray,
+    textAlign: 'center'
   },
   midTop: {
     flexDirection: 'row',
@@ -93,5 +99,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: colors.ultraLightGray,
   },
-  midBottom: {padding: 15, alignItems: 'center'},
+  midBottom: { padding: 15, alignItems: 'center' },
 });

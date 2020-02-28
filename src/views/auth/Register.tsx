@@ -22,11 +22,16 @@ export interface FieldProps {
   size?: FieldSize;
   title?: string;
   placeholder?: string;
-  rows?: FieldProps[];
+  rows?: FieldProps[][];
   columns?: FieldProps[];
   name?: string;
   staticValue?: any[];
-  fetch?: Function
+  fetch?: Function;
+  disabled?: boolean;
+  visible?: boolean;
+  map?: Function;
+  //! Very specific if needed to pass param from state to fetch
+  fetchParamFromStateName?: string;
 }
 
 export enum FieldSize {

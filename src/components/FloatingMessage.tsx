@@ -11,11 +11,11 @@ export enum MessageTypes {
 
 export interface MessageProps {
     type: MessageTypes;
-    text: String
+    text: String;
+    translateY: Animated.Value
 }
 
-const FloatingMessage = ({ text, type = MessageTypes.Default }: MessageProps) => {
-    let translateY = new Animated.Value(-100)
+const FloatingMessage = ({ text, type = MessageTypes.Default, translateY }: MessageProps) => {
     let animateIn = () => {
         Animated.timing(translateY, { toValue: 0, duration: 200 }).start();
     }

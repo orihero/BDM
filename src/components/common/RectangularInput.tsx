@@ -7,12 +7,13 @@ interface RectangularInputProps {
   placeholder?: string;
   onChange?: Function;
   value?: string;
+  disabled?: string;
 }
 
-const RectangularInput = ({ placeholder, onChange = () => { }, value }: RectangularInputProps) => {
+const RectangularInput = ({ placeholder, onChange = () => { }, value, disabled }: RectangularInputProps) => {
   return (
     <View style={styles.container}>
-      <TextInput placeholder={placeholder} value={value} onChangeText={onChange} placeholderTextColor={colors.gray} />
+      <TextInput placeholder={placeholder} editable={!disabled} value={value} onChangeText={onChange} placeholderTextColor={colors.gray} />
     </View>
   );
 };

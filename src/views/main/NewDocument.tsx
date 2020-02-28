@@ -15,9 +15,9 @@ import BlurWrapper from '../../components/containers/BlurWrapper';
 interface Props { }
 
 let fields: FieldProps[] = [
-  { type: FieldType.SELECT, title: strings.input, placeholder: strings.type, size: FieldSize.FULL, name: 'type', fetch: requests.documents.getDocumentTypes },
-  { type: FieldType.INPUT, title: strings.input, placeholder: strings.recieverInn, size: FieldSize.FULL, name: 'buyerTin' },
-  { type: FieldType.INPUT, title: strings.input, placeholder: strings.companyName, size: FieldSize.FULL, name: 'buyerCompanyName' },
+  { type: FieldType.SELECT, title: strings.type, placeholder: strings.type, size: FieldSize.FULL, name: 'type', fetch: requests.documents.getDocumentTypes, map: (e, index) => ({ value: index, label: e.docTypeName, actualValue: e.docTypeCode }) },
+  { type: FieldType.INPUT, title: strings.recieverInn, placeholder: strings.recieverInn, size: FieldSize.FULL, name: 'buyerTin' },
+  { type: FieldType.INPUT, title: strings.companyName, placeholder: strings.companyName, size: FieldSize.FULL, name: 'buyerCompanyName' },
   {
     type: FieldType.LINE, size: FieldSize.FULL, columns: [
       { type: FieldType.INPUT, title: strings.documentNumber, size: FieldSize.QUARTER, placeholder: strings.number, name: 'document.documentNumber' },
@@ -42,16 +42,6 @@ let fields: FieldProps[] = [
 const NewDocument: React.FC<Props> = ({ navigation, createDocument }) => {
   let footer = ({ getSubmitData }) => {
     let onSubmit = () => {
-      //TODO On submit
-      //* Indices are stored
-      // switch (data.type) {
-      //   case :
-
-      //     break;
-
-      //   default:
-      //     break;
-      // }
       let data = getSubmitData();
       createDocument(data)
     }
@@ -73,7 +63,7 @@ const NewDocument: React.FC<Props> = ({ navigation, createDocument }) => {
           textColor={colors.white}
           fill
           flex
-          text={strings.create}
+          text={strings.send}
           onPress={onSubmit}
         />
       </View>

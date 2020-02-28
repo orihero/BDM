@@ -10,16 +10,22 @@ import { colors } from '../../constants';
 import { strings } from '../../locales/strings';
 import { NavigationProps } from '../../utils/defaultPropTypes';
 import { SET_DANGER_ERROR } from '../../redux/types';
-import { hideError } from '../../redux/actions';
+import { hideError, acceptDocument } from '../../redux/actions';
 import BlurWrapper from '../../components/containers/BlurWrapper';
 import InnerHeader from '../../components/navigation/InnerHeader';
+import { BoxType, DocumentStatus } from '../../components/navigation/DrawerContent';
 
 let { width, height } = Dimensions.get('window')
 
-const PdfViewer = ({ navigation, accessToken, dispatch }: NavigationProps) => {
+const PdfViewer = ({ navigation, accessToken, dispatch, document }: NavigationProps) => {
     let docId = navigation.getParam('docId');
     console.warn(docId);
-    let accept = () => { }
+    let { boxType, status } = document;
+    let accept = () => {
+        console.warn('accepting');
+
+        dispatch(acceptDocument(docId))
+    }
     let reject = () => { }
     return (
         <BlurWrapper>
@@ -27,12 +33,6 @@ const PdfViewer = ({ navigation, accessToken, dispatch }: NavigationProps) => {
                 <InnerHeader />
                 <Pdf
                     source={{ uri: `${url}/document/view/pdf/${docId}`, headers: { Authorization: `Bearer ${accessToken}` } }}
-                    onLoadComplete={(numberOfPages, filePath) => {
-                        console.log(`number of pages: ${numberOfPages}`);
-                    }}
-                    onPageChanged={(page, numberOfPages) => {
-                        console.log(`current page: ${page}`);
-                    }}
                     onError={(error) => {
                         console.warn(error);
                         try {
@@ -43,13 +43,13 @@ const PdfViewer = ({ navigation, accessToken, dispatch }: NavigationProps) => {
                         }
 
                     }}
-                    onPressLink={(uri) => {
-                        console.log(`Link presse: ${uri}`)
+                    activityIndicator={(e) => {
+                        console.warn(e);
+                        return <ActivityIndicator />
                     }}
-                    activityIndicator={<View />}
                     enablePaging
                     style={styles.container} />
-                <View style={styles.row}>
+                {(boxType === BoxType.inbox && status === DocumentStatus.sentOrRecieved) && <View style={styles.row}>
                     {/* <View style={{ flex: 1 }}> */}
                     <RoundButton
                         full
@@ -69,7 +69,7 @@ const PdfViewer = ({ navigation, accessToken, dispatch }: NavigationProps) => {
                     />
 
                     {/* </View> */}
-                </View>
+                </View>}
             </View>
 
         </BlurWrapper>
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     }
 })
 
-let mapStateToProps = ({ user: { accessToken } }) => ({ accessToken })
+let mapStateToProps = ({ user: { accessToken }, document }) => ({ accessToken, document })
 
 let Connected = connect(mapStateToProps)(PdfViewer)
 

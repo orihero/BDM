@@ -13,7 +13,7 @@ export let user = (state = initialState, { type, payload }) => {
         case USER_LOADED:
             return { ...state, ...payload }
         case USER_LOGGED_IN:
-            newState = { ...initialState, ...payload };
+            newState = { ...state, ...payload };
             AsyncStorage.setItem(storeName, JSON.stringify(newState))
             return newState
         case USER_LOGGED_OUT:
