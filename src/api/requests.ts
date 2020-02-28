@@ -33,7 +33,7 @@ export let requests = {
         create1CAccount: (credentials) => axios.post(`${url}/user/1c/account/password`, credentials),
         change1CAccount: (credentials) => axios.put(`${url}/user/1c/account/password`, credentials),
         search: (tin) => axios.get(`${url}/info/users/requisite/list/${tin}`),
-        update: credentails => axios.update(`${url}/user`, credentails)
+        update: credentails => axios.put(`${url}/user`, credentails)
     },
     helper: {
         getRegions: (id) => axios.get(`${url}/info/regions/list${id ? `/${id}` : ""}`),

@@ -54,7 +54,7 @@ const Profile = ({ navigation, user }) => {
         },
         {
             type: FieldType.INPUT,
-            placeholder: '63110',
+            placeholder: strings.okedCode,
             size: FieldSize.FULL,
             title: strings.okedCode,
             name: 'okedId',
@@ -62,7 +62,7 @@ const Profile = ({ navigation, user }) => {
         },
         {
             type: FieldType.INPUT,
-            placeholder: 'Каримов Шамсиддин Шавка угли',
+            placeholder: strings.director,
             size: FieldSize.FULL,
             title: strings.director,
             name: 'mainDirector',
@@ -70,7 +70,7 @@ const Profile = ({ navigation, user }) => {
         },
         {
             type: FieldType.INPUT,
-            placeholder: 'Каримов Шамсиддин Шавка угли',
+            placeholder: strings.accauntant,
             size: FieldSize.FULL,
             title: strings.accauntant,
             name: 'mainAccountant',
@@ -149,10 +149,14 @@ const Profile = ({ navigation, user }) => {
     ];
     let footer = ({ getSubmitData }) => {
         let save = async () => {
-            let data = getSubmitData();
-            console.warn(data);
-
-            requests.user.update(data)
+            let { phoneCode, phoneNumber, email, districtId, regionId, addressStreet, addressHomeNumber } = getSubmitData();
+            let data = { phoneCode, phoneNumber, email, districtId, regionId, addressStreet, addressHomeNumber, address: 'L' };
+            try {
+                let res = await requests.user.update(data)
+                console.warn(res);
+            } catch (error) {
+                console.warn(error.response);
+            }
         }
         let cancel = () => {
             navigation.navigate('Main');

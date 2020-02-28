@@ -27,15 +27,20 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
     }, {});
 
     const [items, dispatchItems] = useReducer(reducer, {}, initialItems);
-    let fetchItems = (val) => {
+    let fetchItems = () => {
         Object.keys(items).map(key => {
             if (typeof items[key].fetch === 'function') {
-                let param = items[key].fetchParamFromStateName && items[items[key].fetchParamFromStateName].data ? items[items[key].fetchParamFromStateName].data[state[items[key].fetchParamFromStateName]].actualValue : null
+                let param = items[key].fetchParamFromStateName && items[items[key].fetchParamFromStateName].data && items[items[key].fetchParamFromStateName].data[state[items[key].fetchParamFromStateName]] ? items[items[key].fetchParamFromStateName].data[state[items[key].fetchParamFromStateName]].actualValue : null
+                if (items[key].fetchParamFromStateName && !param) {
+                    //* It means first render
+                    param = state[items[key].fetchParamFromStateName];
+                    if (!param)
+                        return
+                }
                 items[key].fetch(param).then(res => {
                     dispatchItems({ type: SET, name: key, value: { ...items[key], data: res.data.map(items[key].map) } })
                 }).catch(err => {
                     console.warn(err.response);
-
                 })
             }
         })
@@ -43,7 +48,7 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
     useEffect(() => {
         fetchItems()
         //TODO Imrpove or change
-    }, [])
+    }, [state])
     let pickFile = async (e: FieldProps) => {
         try {
             const res = await DocumentPicker.pick({
@@ -106,14 +111,14 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
                         return (
                             <View>
                                 <Text style={styles.inputTitle}>{e.title}</Text>
-                                <RectangularSelect value={state[e.name]} items={items[e.name] ? items[e.name].data : []} onChange={(val) => { updateState(e.name, val); fetchItems(); }} placeholder={e.placeholder} />
+                                <RectangularSelect value={state[e.name]} items={items[e.name] ? items[e.name].data : []} onChange={(val) => { updateState(e.name, val); }} placeholder={e.placeholder} />
                             </View>
                         );
                     }
                     return (
                         <View style={styles[e.size]}>
                             {e.title && <Text numberOfLines={1} style={styles.inputTitle}>{e.title}</Text>}
-                            <RectangularSelect value={state[e.name]} items={items[e.name] ? items[e.name].data : []} onChange={(val) => { updateState(e.name, val); fetchItems(); }} placeholder={e.placeholder} />
+                            <RectangularSelect value={state[e.name]} items={items[e.name] ? items[e.name].data : []} onChange={(val) => { updateState(e.name, val); }} placeholder={e.placeholder} />
                         </View>
                     );
                 case FieldType.DATE_PICKER:

@@ -22,6 +22,17 @@ const RectangularSelect = ({
     onChange = () => { },
     value
 }: RectangularSelectProps) => {
+    // let val = placeholder
+    // if (value !== null && value !== undefined && items[value]){
+
+    // }
+    let val = value !== null && value !== undefined ? items[value] ? items[value].label : items.find(
+        (e) => {
+            console.warn(e);
+            return e.actualValue === value
+        })
+        ?.label : placeholder
+    console.warn(value);
     return (
         <Picker
             style={styles.container}
@@ -33,7 +44,7 @@ const RectangularSelect = ({
             placeholder={{ label: placeholder, value: -1, color: colors.gray }}
             items={items}>
             <View style={[styles.container, containerStyle]}>
-                <Text style={[styles.placeholder, value && styles.value]}>{value !== null && value !== undefined && items[value] ? items[value].label : placeholder}</Text>
+                <Text style={[styles.placeholder, value && styles.value]}>{val}</Text>
                 <Icons name={'down-chevron'} size={18} color={colors.gray} />
             </View>
         </Picker>
