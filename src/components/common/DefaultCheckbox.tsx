@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {Icons, colors} from '../../constants';
+import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { Icons, colors } from '../../constants';
 import Text from './CustomText';
 
 export interface DefaultCheckboxProps {
@@ -20,7 +20,7 @@ const DefaultCheckbox = ({
   backgroundColor = 'transparent',
   size = 20,
   activeBackColor = colors.blue,
-  setActive = () => {},
+  setActive = () => { },
   index,
   isActive,
   title,
@@ -34,13 +34,13 @@ const DefaultCheckbox = ({
         <View
           style={[
             styles.container,
-            {width: size, height: size, borderRadius: size},
-            isActive && {borderColor: activeBackColor},
+            { width: size, height: size, borderRadius: size },
+            isActive && { borderColor: activeBackColor },
           ]}>
           <View
             style={[
-              isActive ? {backgroundColor: activeBackColor} : {backgroundColor},
-              {width: size * 0.6, height: size * 0.6, borderRadius: size},
+              isActive ? { backgroundColor: activeBackColor } : { backgroundColor },
+              { width: size * 0.6, height: size * 0.6, borderRadius: size },
             ]}
           />
         </View>
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   },
   promptText: {
     color: colors.lightGray,
-    fontSize: 18,
+    fontSize: 16,
   },
 });
 

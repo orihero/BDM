@@ -75,17 +75,19 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
 
     let getSubmitData = () => {
         let normalState = { ...state };
-        // Object.keys(items).forEach(key => {
-        //     normalState[key] = items[key].data[normalState[key]].actualValue
-        // })
         Object.keys(normalState).forEach(key => {
+            //* Check if item is select
             if (items[key]) {
                 normalState[key] = items[key].data[normalState[key]].actualValue
             }
+            //* Check if item should be an object
             if (key.indexOf(".") !== -1) {
                 let parts = key.split(".");
                 let obj = normalState[parts[0]] || {};
                 normalState[parts[0]] = { ...obj, [parts[1]]: normalState[key] };
+                delete normalState[key]
+            }
+            if (!items[key].visible) {
                 delete normalState[key]
             }
         })
@@ -140,7 +142,7 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
                     if (e.size === FieldSize.FULL) {
                         return (
                             <View>
-                                <Text style={styles.inputTitle}>{e.title}</Text>
+                                {e.title && <Text style={styles.inputTitle}>{e.title}</Text>}
                                 <RectangularInput disabled={e.disabled} onChange={val => updateState(e.name, val)} value={state[e.name]} placeholder={e.placeholder} />
                             </View>
                         );

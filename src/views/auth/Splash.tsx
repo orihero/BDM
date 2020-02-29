@@ -1,17 +1,17 @@
+import AsyncStorage from '@react-native-community/async-storage';
 import React, { useEffect } from 'react';
-import { Image, StyleSheet, View, Dimensions } from 'react-native';
+import { Dimensions, Image, StyleSheet, View } from 'react-native';
+import { connect } from 'react-redux';
+import { requests } from '../../api/requests';
 import logo from '../../assets/images/logo.png';
 import { colors } from '../../constants/index';
-import { connect } from 'react-redux';
-import { userLoaded, getDocumentsCount } from '../../redux/actions'
-import AsyncStorage from '@react-native-community/async-storage';
+import { hideError, hideModal, userLoaded } from '../../redux/actions';
 import { storeName } from '../../redux/reducers/user';
-import { requests } from '../../api/requests';
 import { NavigationProps } from '../../utils/defaultPropTypes';
 
 let { width } = Dimensions.get('window');
 
-const Splash = ({ user, userLoaded, navigation }: NavigationProps) => {
+const Splash = ({ user, userLoaded, navigation, hideModal }: NavigationProps) => {
     let effect = async () => {
         try {
             let credentials = await AsyncStorage.getItem(storeName);
@@ -19,10 +19,14 @@ const Splash = ({ user, userLoaded, navigation }: NavigationProps) => {
             userLoaded(data)
             let res = await requests.user.me();
             userLoaded({ data: res.data.data, ...data });
+            hideModal();
+            hideError();
             navigation.navigate('Main');
         } catch (error) {
             console.warn(error);
-            navigation.navigate('Login')
+            navigation.navigate('Login');
+            hideModal();
+            hideError();
         }
     }
     useEffect(() => {
@@ -55,7 +59,9 @@ const mapStateToProps = ({ user }) => ({
 })
 
 const mapDispatchToProps = {
-    userLoaded
+    userLoaded,
+    hideModal,
+    hideError,
 }
 
 

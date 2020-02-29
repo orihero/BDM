@@ -30,8 +30,14 @@ export interface FieldProps {
   disabled?: boolean;
   visible?: boolean;
   map?: Function;
+  titleType?: TitleType;
   //! Very specific if needed to pass param from state to fetch
   fetchParamFromStateName?: string;
+}
+
+export enum TitleType {
+  default,
+  checkBox
 }
 
 export enum FieldSize {

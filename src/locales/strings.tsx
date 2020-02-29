@@ -86,7 +86,13 @@ export let strings = new LocalizedStrings({
         oldPassword: "Старый пароль",
         street: 'Улица',
         region: 'Область',
-        town: 'Город'
+        town: 'Город',
+        contractNumber: '№ договора',
+        contractDate: 'Дата договора',
+        hasIndividualPerson: 'Отправить с подписю физического лица',
+        individualTin: 'ИНН физического лица',
+        documentName: 'Наименовани документа',
+        products: 'Продукты'
     },
     en: {},
     uz: {},

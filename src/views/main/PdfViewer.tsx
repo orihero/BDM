@@ -17,10 +17,10 @@ import { BoxType, DocumentStatus } from '../../components/navigation/DrawerConte
 
 let { width, height } = Dimensions.get('window')
 
-const PdfViewer = ({ navigation, accessToken, dispatch, document }: NavigationProps) => {
+const PdfViewer = ({ navigation, accessToken, dispatch, documents }: NavigationProps) => {
     let docId = navigation.getParam('docId');
     console.warn(docId);
-    let { boxType, status } = document;
+    let { boxType, status } = documents;
     let accept = () => {
         console.warn('accepting');
 
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     }
 })
 
-let mapStateToProps = ({ user: { accessToken }, document }) => ({ accessToken, document })
+let mapStateToProps = ({ user: { accessToken }, documents }) => ({ accessToken, documents })
 
 let Connected = connect(mapStateToProps)(PdfViewer)
 

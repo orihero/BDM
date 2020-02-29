@@ -21,7 +21,7 @@ export let requests = {
     documents: {
         getDocuments: ({ boxType, status, page, perPage }) => axios.get(`${url}/document/get/data?boxType=${boxType}&status=${status}&page=${page}&perPage=${perPage}`),
         getDocumentsCount: () => axios.get(`${url}/document/get/counts/by/status`),
-        getDocumentTypes: () => axios.get(`${url}/user/get/document/types`),
+        getDocumentTypes: (type) => axios.get(`${url}/user/get/document/types?type=${type}`),
         create: (path, data) => axios.post(`${url}/document${path}`, data),
         uploadFile: (data) => axios.post(`${url}/document/get/path/for/view/pdf`, formData(data)),
         getSignMessage: (docId) => axios.get(`${url}/document/get/content/forsign/${docId}`),
