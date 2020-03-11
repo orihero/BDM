@@ -4,7 +4,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import Header from '../components/navigation/Header';
 import InnerHeader from '../components/navigation/InnerHeader';
 import { strings } from '../locales/strings';
-import { Account, Login, Main, Register, NewDocument, PdfViewer, Splash } from '../views';
+import { Account, Login, Main, Register, NewDocument, PdfViewer, Splash, Products } from '../views';
 
 let MainStack = createStackNavigator(
     {
@@ -37,7 +37,19 @@ let MainStack = createStackNavigator(
             navigationOptions: {
                 header: null
             },
-        }
+        },
+        Products: {
+            screen: Products,
+            navigationOptions: {
+                header: props => (
+                    <InnerHeader
+                        {...props}
+                        back={'NewDocument'}
+                        title={strings.products}
+                    />
+                ),
+            },
+        },
     },
     {
         defaultNavigationOptions: {

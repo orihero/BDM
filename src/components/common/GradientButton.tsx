@@ -7,7 +7,7 @@ import {
   GestureResponderEvent,
   Dimensions,
 } from 'react-native';
-import {measures, colors} from '../../constants';
+import { measures, colors } from '../../constants';
 
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -15,12 +15,14 @@ export interface RoundButtonProps {
   fill?: boolean;
   borderColor?: string;
   backgroundColor?: string;
-  text?: string;
+  text?: string | Function;
   textColor?: string;
   flex?: boolean;
   full?: boolean;
   big?: boolean;
   onPress?: (event: GestureResponderEvent) => void;
+  fontSize?: number;
+  stylea?: any
 }
 
 const GradientButton = ({
@@ -33,6 +35,8 @@ const GradientButton = ({
   textColor,
   big,
   flex,
+  fontSize,
+  style
 }: RoundButtonProps) => {
   return (
     <TouchableWithoutFeedback onPress={onPress}>
@@ -42,7 +46,7 @@ const GradientButton = ({
           fill && styles.fill,
           full && styles.full,
           big && styles.big,
-          flex && {flex: 1},
+          flex && { flex: 1 },
           {
             backgroundColor,
             borderColor,
@@ -50,21 +54,23 @@ const GradientButton = ({
             justifyContent: 'center',
             alignItems: 'center',
           },
+          style
         ]}>
         <LinearGradient
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
           style={StyleSheet.absoluteFill}
           colors={[colors.darkBlue, colors.blue]}
         />
-        <Text
+        {typeof text === 'string' ? <Text
           style={[
             styles.textBase,
             fill && styles.textFill,
-            textColor && {color: textColor},
+            textColor && { color: textColor },
+            fontSize && { fontSize }
           ]}>
           {text}
-        </Text>
+        </Text> : text()}
       </View>
     </TouchableWithoutFeedback>
   );

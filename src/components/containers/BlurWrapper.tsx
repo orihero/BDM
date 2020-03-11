@@ -50,10 +50,10 @@ class BlurWrapper extends Component {
 
     render() {
 
-        // if we are not blurring, we just retun the children back..
-        if (!this.props.showBlur) {
-            return this.props.children;
-        }
+        // // if we are not blurring, we just retun the children back..
+        // if (!this.props.showBlur) {
+        //     return this.props.children;
+        // }
 
         // children that needs to be blurred.
         const { children, blurAmount, loading, error, loadingMessage } = this.props;
@@ -85,7 +85,9 @@ class BlurWrapper extends Component {
             newStyles.push(myStyleOpactiy);
         }
         /* Prepare the style */
-
+        if (!loading && !error) {
+            return this.props.children;
+        }
         // render the actual element with blur view..
         if (!loading) {
             return <>
@@ -93,6 +95,7 @@ class BlurWrapper extends Component {
                 {error && <FloatingMessage translateY={translateY} type={error.type} text={error.message} />}
             </>
         }
+
         return (
             <React.Fragment>
                 {
@@ -130,11 +133,14 @@ BlurWrapper.defaultProps = {
     showBlur: true,
 };
 
-const mapStateToProps = ({ appState: { loading, error, loadingMessage } }) => ({
-    loading,
-    error,
-    loadingMessage
-})
+const mapStateToProps = ({ appState }) => {
+    let { loading, error, loadingMessage } = appState;
+    return ({
+        loading,
+        error,
+        loadingMessage,
+    })
+}
 
 
 

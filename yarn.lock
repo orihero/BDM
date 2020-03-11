@@ -1113,6 +1113,14 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
   integrity sha512-KfRL3PuHmqQLOG+2tGpRO26Ctg+Cq1E01D2DMriKEATHgWLfeNDmq9e29Q9WIky0dQ3NPkd1mzYH8Lm936Z9qw==
 
+"@types/react-native-autocomplete-input@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@types/react-native-autocomplete-input/-/react-native-autocomplete-input-4.0.1.tgz#6a1556ab6658b5b52fe197da2b964f60363d2e99"
+  integrity sha512-um2iICwQezPIT9oTZYrK44tjuHcqDZGrY2dKuLEEYPmN+o8v/xoWV6XJTiJbAxXbIYjNO7zkrpfDmaDno09KVw==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-native" "*"
+
 "@types/react-native-vector-icons@^6.4.4":
   version "6.4.4"
   resolved "https://registry.yarnpkg.com/@types/react-native-vector-icons/-/react-native-vector-icons-6.4.4.tgz#f81dcc371b74a9c408ce12f95b8f494d7543146b"
@@ -5590,6 +5598,11 @@ react-localization@^1.0.14:
   integrity sha512-s+yK3EqPUhN8kAfUIoA5m0a0iGOvxB3DrvngYnSZNLRQRX+yS7LYfTuKT66KVa3Cr6EP4iGRtw4XRqpsi1ZLjw==
   dependencies:
     localized-strings "^0.2.0"
+
+react-native-autocomplete-input@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-autocomplete-input/-/react-native-autocomplete-input-4.1.0.tgz#979ece28d891b245ecb967b6d31f1f924445b8ab"
+  integrity sha512-Yn4GulZ9F6tde74UUGZHdVFeYWVuL7+EbUZy6kt+QHrzMc5B4OuRop1FT4RyWLpvbySW/vvqYgj9LAmlzkuEqA==
 
 react-native-document-picker@^3.2.4:
   version "3.2.4"

@@ -1,12 +1,12 @@
 import React from 'react';
-import {View, Text as RnText, StyleSheet} from 'react-native';
+import { View, Text as RnText, StyleSheet } from 'react-native';
 
-const Text = ({style, children, ...rest}) => {
+const Text = ({ style, children, ...rest }) => {
   let baseStyle = styles.medium;
   if (style) {
     baseStyle = style.fontWeght === 'bold' ? styles.bold : styles.light;
   }
-  return <RnText style={[baseStyle, style]}>{children}</RnText>;
+  return <RnText style={[baseStyle, style]} {...rest}>{children}</RnText>;
 };
 
 const styles = StyleSheet.create({

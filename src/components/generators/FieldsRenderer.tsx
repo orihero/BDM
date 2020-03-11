@@ -10,17 +10,19 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import DocumentPicker from 'react-native-document-picker';
 import { reducer, SET } from '../../utils/state';
 import RectangularDatePicker from '../common/RectangularDatePicker';
+import Autocomplete from 'react-native-autocomplete-input';
 
 interface FieldRendererProps {
     fields: FieldProps[];
     footer?: any;
     initialValue?: any;
+    setData?: Function;
 }
 
-const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererProps) => {
+const FieldsRenderer = ({ fields, footer: Footer, initialValue, setData }: FieldRendererProps) => {
     const [state, dispatch] = useReducer(reducer, initialValue || {});
     let initialItems = () => fields.reduce((prev, current) => {
-        if (current.type === FieldType.SELECT) {
+        if (current.type === FieldType.SELECT || current.type === FieldType.AUTOCOMPLETE) {
             return { ...prev, [current.name]: { ...current, data: current.staticValue } || current }
         }
         return prev
@@ -48,6 +50,10 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
     useEffect(() => {
         fetchItems()
         //TODO Imrpove or change
+        // if (setData && typeof setData === 'function') {
+        //     setData(getSubmitData())
+        // }
+        // console./ warn(getSubmitData());
     }, [state])
     let pickFile = async (e: FieldProps) => {
         try {
@@ -77,7 +83,8 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
         let normalState = { ...state };
         Object.keys(normalState).forEach(key => {
             //* Check if item is select
-            if (items[key]) {
+            // console.warn(normalState);
+            if (items[key] && items[key].data) {
                 normalState[key] = items[key].data[normalState[key]].actualValue
             }
             //* Check if item should be an object
@@ -87,7 +94,7 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
                 normalState[parts[0]] = { ...obj, [parts[1]]: normalState[key] };
                 delete normalState[key]
             }
-            if (!items[key].visible) {
+            if (items[key] && items[key].visible && items[key].type !== FieldType.AUTOCOMPLETE) {
                 delete normalState[key]
             }
         })
@@ -99,10 +106,34 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
             if (e.visible === false)
                 return null;
             switch (e.type) {
+                case FieldType.AUTOCOMPLETE: {
+                    let filterData = async text => {
+                        if (state[e.name]) {
+                            dispatch({ type: SET, name: e.name, value: "" })
+                            return;
+                        }
+                        let res = await e.fetch(text);
+                        dispatchItems({ type: SET, name: e.name, value: res.data });
+                    }
+                    let autocompleteItem = ({ item }) => {
+                        return <TouchableWithoutFeedback onPress={() => {
+                            dispatch({ type: SET, name: e.name, value: item });
+                            dispatchItems({ type: SET, name: e.name, value: [] })
+                        }}>
+                            <Text style={{ paddingVertical: 5, marginVertical: 5, borderRadius: 6, backgroundColor: colors.white, paddingHorizontal: 5 }}>
+                                {item.tin} {item.name}
+                            </Text>
+                        </TouchableWithoutFeedback>
+                    }
+                    return <View>
+                        <Text style={styles.inputTitle}>{e.title}</Text>
+                        <Autocomplete placeholder={e.placeholder} listContainerStyle={{ borderWidth: 0, backgroundColor: colors.ultraLightGray }} listStyle={{ borderWidth: 0, backgroundColor: colors.ultraLightGray }} containerStyle={{ borderWidth: 0, padding: 8, backgroundColor: colors.ultraLightGray, borderRadius: 6 }} style={{ backgroundColor: colors.ultraLightGray }} inputContainerStyle={{ borderWidth: 0 }} data={items[e.name]} value={state[e.name] ? state[e.name].tin + " - " + state[e.name].name : null} renderItem={autocompleteItem} onChangeText={filterData} />
+                    </View>
+                }
                 case FieldType.CHECKBOX:
                     return (
-                        <View style={{ marginVertical: 15 }}>
-                            <DefaultCheckbox setActive={() => updateState(e.name, !state[e.name])} title={e.title} />
+                        <View style={{ marginVertical: 15, ...styles[e.size] }}>
+                            <DefaultCheckbox size={14} numberOfLines={1} isActive={state[e.name]} setActive={() => updateState(e.name, !state[e.name])} title={e.title} />
                         </View>
                     );
                 case FieldType.SELECT:
@@ -113,14 +144,14 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
                         return (
                             <View>
                                 <Text style={styles.inputTitle}>{e.title}</Text>
-                                <RectangularSelect value={state[e.name]} items={items[e.name] ? items[e.name].data : []} onChange={(val) => { updateState(e.name, val); }} placeholder={e.placeholder} />
+                                <RectangularSelect disabled={e.disabled} value={state[e.name]} items={items[e.name] ? items[e.name].data : []} onChange={(val) => { updateState(e.name, val); }} placeholder={e.placeholder} />
                             </View>
                         );
                     }
                     return (
                         <View style={styles[e.size]}>
                             {e.title && <Text numberOfLines={1} style={styles.inputTitle}>{e.title}</Text>}
-                            <RectangularSelect value={state[e.name]} items={items[e.name] ? items[e.name].data : []} onChange={(val) => { updateState(e.name, val); }} placeholder={e.placeholder} />
+                            <RectangularSelect disabled={e.disabled} value={state[e.name]} items={items[e.name] ? items[e.name].data : []} onChange={(val) => { updateState(e.name, val); }} placeholder={e.placeholder} />
                         </View>
                     );
                 case FieldType.DATE_PICKER:
@@ -128,14 +159,14 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
                         return (
                             <View>
                                 <Text style={styles.inputTitle}>{e.title}</Text>
-                                <RectangularDatePicker value={state[e.name]} onChange={(val) => updateState(e.name, val)} placeholder={e.placeholder} />
+                                <RectangularDatePicker disabled={e.disabled} value={state[e.name]} onChange={(val) => updateState(e.name, val)} placeholder={e.placeholder} />
                             </View>
                         );
                     }
                     return (
                         <View style={styles[e.size]}>
                             {e.title && <Text numberOfLines={1} style={styles.inputTitle}>{e.title}</Text>}
-                            <RectangularDatePicker value={state[e.name]} onChange={(val) => updateState(e.name, val)} placeholder={e.placeholder} />
+                            <RectangularDatePicker disabled={e.disabled} value={state[e.name]} onChange={(val) => updateState(e.name, val)} placeholder={e.placeholder} />
                         </View>
                     );
                 case FieldType.INPUT:
@@ -150,7 +181,7 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
                     return (
                         <View style={styles[e.size]}>
                             {e.title && <Text numberOfLines={1} style={styles.inputTitle}>{e.title}</Text>}
-                            <RectangularInput onChange={val => updateState(e.name, val)} value={state[e.name]} placeholder={e.placeholder} />
+                            <RectangularInput disabled={e.disabled} onChange={val => updateState(e.name, val)} value={state[e.name]} placeholder={e.placeholder} />
                         </View>
                     );
                 case FieldType.COMPLEX:
@@ -166,7 +197,7 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
                 case FieldType.LINE:
                     return (
                         <Fragment>
-                            {e.title && <Text style={styles.inputTitle}>{e.title}</Text>}
+                            {e.title && <Text numberOfLines={1} style={styles.inputTitle}>{e.title}</Text>}
                             <View style={styles.row}>{renderFields(e.columns)}</View>
                         </Fragment>
                     );
@@ -192,11 +223,11 @@ const FieldsRenderer = ({ fields, footer: Footer, initialValue }: FieldRendererP
     };
     return <View>
         {renderFields(fields)}
-        {Footer && <Footer getSubmitData={getSubmitData} />}
+        {Footer && <Footer getSubmitData={getSubmitData} getRawData={() => state} />}
     </View>
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
     title: {
         fontSize: 26,
         fontWeight: 'bold',
@@ -206,13 +237,12 @@ const styles = StyleSheet.create({
         padding: 15,
     },
     inputTitle: {
-        fontSize: 16,
+        fontSize: 14,
         color: colors.gray,
         marginVertical: 10,
     },
     row: {
         flexDirection: 'row',
-        // backgroundColor: 'red'
     },
     half: {
         flex: 1,

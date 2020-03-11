@@ -19,7 +19,7 @@ const mapDispatchToProps = {
 
 
 const Login = ({ navigation, requestUserLogin }) => {
-  const [remember, setRemember] = useState(false);
+  const [remember, setRemember] = useState(true);
   let onLogin = () => {
     requestUserLogin(remember);
   };
@@ -29,35 +29,38 @@ const Login = ({ navigation, requestUserLogin }) => {
         <View
           style={[
             commonStyles.centeredContainer,
-            { alignItems: 'flex-start', padding: 15 },
+            { alignItems: 'flex-start', padding: 15, flex: 1.2 },
           ]}>
           <Image source={logo} style={styles.image} />
         </View>
-        <View style={[styles.container,]}>
+        {/* <View style={[styles.container,]}>
           <Text style={styles.promptText}>{strings.toBegin}</Text>
           <Text style={styles.enterAccount}>{strings.enterAccount}</Text>
+        </View> */}
+        <View style={{ paddingHorizontal: 20 }}>
+          <DefaultCheckbox
+            style={{ marginBottom: 20 }}
+            isActive={remember}
+            setActive={() => {
+              LayoutAnimation.configureNext(
+                LayoutAnimation.create(
+                  200,
+                  LayoutAnimation.Types.easeInEaseOut,
+                  LayoutAnimation.Properties.scaleXY,
+                ),
+              );
+              setRemember(!remember);
+            }}
+            title={`  ${strings.remember}`}
+          />
+          <GradientButton onPress={onLogin} full text={strings.login} />
         </View>
         <View style={styles.footer}>
-          <View>
-            <View style={styles.row}>
-              <DefaultCheckbox
-                isActive={remember}
-                setActive={() => {
-                  LayoutAnimation.configureNext(
-                    LayoutAnimation.create(
-                      200,
-                      LayoutAnimation.Types.easeInEaseOut,
-                      LayoutAnimation.Properties.scaleXY,
-                    ),
-                  );
-                  setRemember(!remember);
-                }}
-                title={`  ${strings.remember}`}
-              />
-              <Text style={styles.promptText}>    {strings.forgotPassword}</Text>
-            </View>
-            <GradientButton onPress={onLogin} full text={strings.login} />
-          </View>
+          <Text style={{ textAlign: 'center' }}>
+            ТЕХНИЧЕСКАЯ ПОДДЕРЖКА {'\n'}
+            +998 95 194 24 24{'\n'}
+            info@24m.uz
+            </Text>
         </View>
       </SafeAreaView>
     </BlurWrapper>
@@ -69,7 +72,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 15,
     backgroundColor: colors.white,
-    justifyContent: 'center'
   },
   row: {
     flexDirection: 'row',
@@ -78,8 +80,6 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   footerBottom: {
-    flexDirection: 'row',
-    justifyContent: 'center',
   },
   image: {
     width: width - 100,
@@ -104,9 +104,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   footer: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    flex: .8,
+    justifyContent: 'flex-end',
   },
 });
 

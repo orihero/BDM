@@ -6,7 +6,7 @@ import { colors } from '../../constants';
 import Header from '../../components/navigation/Header';
 import { strings } from '../../locales/strings';
 import { connect } from 'react-redux';
-import { fetchDocuments, getRegions } from '../../redux/actions'
+import { fetchDocuments, getRegions, hideModal } from '../../redux/actions'
 import BlurWrapper from '../../components/containers/BlurWrapper';
 import { DrawerAction } from '../../components/navigation/DrawerContent'
 
@@ -50,7 +50,7 @@ const maxW = 300;
 let { height } = Dimensions.get('window');
 
 
-const Main = ({ navigation, fetchDocuments, documents: { data }, getRegions }) => {
+const Main = ({ navigation, fetchDocuments, documents: { data }, hideModal }) => {
     const [width, setWidth] = useState(new Animated.Value(minW))
     const [expanded, setExpanded] = useState(false);
     let toggle = (action: DrawerAction) => {
@@ -71,32 +71,31 @@ const Main = ({ navigation, fetchDocuments, documents: { data }, getRegions }) =
     useEffect(() => {
         // getRegions();
         fetchDocuments();
+        hideModal()
     }, [])
     return (
-        <BlurWrapper>
-            <View style={{ flex: 1 }}>
-                <Header title={strings.inbox} toggleDrawer={toggle} />
-                <View style={styles.row}>
-                    <FlatList
-                        contentContainerStyle={styles.flatContainer}
-                        data={data}
-                        showsVerticalScrollIndicator={false}
-                        keyExtractor={(e, i) => i.toString()}
-                        renderItem={({ item }) => <Document {...item} />}
-                    />
-                    <Animated.View
-                        style={{
-                            width,
-                            zIndex: 5,
-                            backgroundColor: colors.white,
-                            height,
-                            position: 'absolute'
-                        }}>
-                        <DrawerContent navigation={navigation} expanded={expanded} onPress={toggle} />
-                    </Animated.View>
-                </View>
+        <View style={{ flex: 1 }}>
+            <Header title={strings.inbox} toggleDrawer={toggle} />
+            <View style={styles.row}>
+                <FlatList
+                    contentContainerStyle={styles.flatContainer}
+                    data={data}
+                    showsVerticalScrollIndicator={false}
+                    keyExtractor={(e, i) => i.toString()}
+                    renderItem={({ item }) => <Document {...item} />}
+                />
+                <Animated.View
+                    style={{
+                        width,
+                        zIndex: 5,
+                        backgroundColor: colors.white,
+                        height,
+                        position: 'absolute'
+                    }}>
+                    <DrawerContent navigation={navigation} expanded={expanded} onPress={toggle} />
+                </Animated.View>
             </View>
-        </BlurWrapper>
+        </View>
     );
 };
 
@@ -114,7 +113,7 @@ const mapStateToProps = ({ documents }) => ({
 
 const mapDispatchToProps = {
     fetchDocuments,
-    getRegions
+    hideModal
 }
 
 

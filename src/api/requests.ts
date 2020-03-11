@@ -9,8 +9,35 @@ export let configureAxios = (storeInstance) => {
         if (token) {
             res.headers.Authorization = `Bearer ${token}`
         }
+        // TODO navigate(login)
         return res;
-    })
+    });
+
+    // let interceptor = axios.interceptors.response.use(
+    //     res => {
+    //         return Promise.resolve(res);
+    //     },
+    //     error => {
+    //         console.warn(error.response);
+    //         if (!error || !error.response || error.response.status !== 401) {
+    //             return Promise.reject(error);
+    //         }
+    //         axios.interceptors.response.eject(interceptor);
+    //         return requests.auth
+    //             .refreshToken({ refreshToken: store.getState().user.refreshToken })
+    //             .then(res => {
+    //                 error.response.config.headers = {
+    //                     Authorization: `Bearer ${res.data.data}`,
+    //                 };
+    //                 store.dispatch(userLoggedIn(res.data.data))
+    //                 return axios(error.response.config);
+    //             })
+    //             .catch(response => {
+    //                 return Promise.reject(response);
+    //             })
+    //             .finally(() => configureAxios(store));
+    //     },
+    // );
 }
 
 
@@ -25,7 +52,8 @@ export let requests = {
         create: (path, data) => axios.post(`${url}/document${path}`, data),
         uploadFile: (data) => axios.post(`${url}/document/get/path/for/view/pdf`, formData(data)),
         getSignMessage: (docId) => axios.get(`${url}/document/get/content/forsign/${docId}`),
-        sign: (credentials) => axios.post(`${url}/document/accept`, credentials)
+        sign: (credentials) => axios.post(`${url}/document/accept`, credentials),
+        getIvoiceId: () => axios.get(`${url}/invoice/get/id`)
     },
     user: {
         me: () => axios.get(`${url}/user`),
@@ -33,7 +61,9 @@ export let requests = {
         create1CAccount: (credentials) => axios.post(`${url}/user/1c/account/password`, credentials),
         change1CAccount: (credentials) => axios.put(`${url}/user/1c/account/password`, credentials),
         search: (tin) => axios.get(`${url}/info/users/requisite/list/${tin}`),
-        update: credentails => axios.put(`${url}/user`, credentails)
+        update: credentails => axios.put(`${url}/user`, credentails),
+        getRequisite: tin => axios.get(`${url}/info/users/requisite/list/${tin}`)
+
     },
     helper: {
         getRegions: (id) => axios.get(`${url}/info/regions/list${id ? `/${id}` : ""}`),

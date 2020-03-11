@@ -14,6 +14,7 @@ export interface DefaultCheckboxProps {
   setActive?: Function;
   isActive?: boolean;
   title: string;
+  numberOfLines?: number;
 }
 
 const DefaultCheckbox = ({
@@ -24,13 +25,15 @@ const DefaultCheckbox = ({
   index,
   isActive,
   title,
+  style,
+  numberOfLines
 }: DefaultCheckboxProps) => {
   return (
     <TouchableWithoutFeedback
       onPress={() => {
         setActive();
       }}>
-      <View style={styles.row}>
+      <View style={[styles.row, style]}>
         <View
           style={[
             styles.container,
@@ -40,11 +43,11 @@ const DefaultCheckbox = ({
           <View
             style={[
               isActive ? { backgroundColor: activeBackColor } : { backgroundColor },
-              { width: size * 0.6, height: size * 0.6, borderRadius: size },
+              { width: size * 0.6, height: size * 0.6, borderRadius: size, },
             ]}
           />
         </View>
-        <Text style={styles.promptText}>{title}</Text>
+        <Text numberOfLines={numberOfLines} style={styles.promptText}>{title}</Text>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -58,10 +61,13 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+    // alignSelf: 'center'
   },
   promptText: {
     color: colors.lightGray,
-    fontSize: 16,
+    fontSize: 15,
+    marginRight: -20
+    // textAlignVertical: 'center'
   },
 });
 

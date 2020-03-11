@@ -14,7 +14,8 @@ export enum FieldType {
   LINE,
   CHECKBOX,
   FILE,
-  DATE_PICKER
+  DATE_PICKER,
+  AUTOCOMPLETE
 }
 
 export interface FieldProps {

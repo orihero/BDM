@@ -11,7 +11,7 @@ import { NavigationProps } from '../../utils/defaultPropTypes';
 
 let { width } = Dimensions.get('window');
 
-const Splash = ({ user, userLoaded, navigation, hideModal }: NavigationProps) => {
+const Splash = ({ user, userLoaded, navigation, hideModal, ...rest }: NavigationProps) => {
     let effect = async () => {
         try {
             let credentials = await AsyncStorage.getItem(storeName);
@@ -24,9 +24,9 @@ const Splash = ({ user, userLoaded, navigation, hideModal }: NavigationProps) =>
             navigation.navigate('Main');
         } catch (error) {
             console.warn(error);
-            navigation.navigate('Login');
             hideModal();
             hideError();
+            navigation.navigate('Login');
         }
     }
     useEffect(() => {
