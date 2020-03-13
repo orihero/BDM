@@ -1,78 +1,127 @@
-/* eslint-disable */
-import React from 'react';
-import firebase from 'react-native-firebase';
-import { AppState, Clipboard } from 'react-native';
+import { AppState } from "react-native";
+import firebase from "react-native-firebase";
+import { requests } from "../api/requests";
+// import { orderLoaded } from "./../redux/actions/order";
 
-function init() {
-  const channel = new firebase.notifications.Android.Channel(
-    'insider',
-    'insider channel',
-    firebase.notifications.Android.Importance.Max,
-  ).setDescription('Updates');
-  firebase.notifications().android.createChannel(channel);
-  checkPermission();
-  createNotificationListeners();
+let store = null;
+
+let tokenProvider = () => {
+	return store.token;
+};
+
+function setState(state) {
+	store = state;
 }
 
-const createNotificationListeners = async () => {
-  let notifications = firebase.notifications();
-  notifications.onNotification(async notification => {
-    let badge = await notifications.getBadge();
-    notification.android
-      .setChannelId('insider')
-      .setSound('default')
-      .setVibrationPattern([300, 1000, 300]);
-    firebase.notifications().displayNotification(notification);
-    notifications.setBadge(badge + 1);
-  });
-  notifications.onNotificationOpened(async notification => {
-    notifications.setBadge(0);
-  });
+export enum NotificationActionTypes {
+	NewCall = "new_call",
+	CallCancelled = "call_canceled",
+	DriverArrived = "call_almost_arrived",
+	CallCompleted = "call_completed"
+}
+
+let notificationConsumer = async notification => {
+	console.warn(notification.data);
+	switch (notification.data.actionType) {
+		case "accepted": {
+		}
+		default:
+			console.warn("UNHANDLED ACTION");
+			console.warn(notification.data);
+			break;
+	}
+};
+
+function init() {
+	const channel = new firebase.notifications.Android.Channel(
+		"insider",
+		"insider channel",
+		firebase.notifications.Android.Importance.Max
+	).setDescription("Updates");
+	let channelId = firebase.notifications().android.createChannel(channel);
+	checkPermission();
+	createNotificationListeners(channelId);
+}
+
+const createNotificationListeners = async channelId => {
+	try {
+		let notifications = firebase.notifications();
+		notifications.onNotification(async notification => {
+			notification.android.setChannelId(channelId).setSound("default");
+			firebase.notifications().displayNotification(notification);
+			if (AppState.currentState.match(/active/)) {
+				notificationConsumer(notification);
+				clearBadge();
+			}
+		});
+		notifications.onNotificationOpened(async notification => {
+			// Process data of the notification
+			console.warn(notification.notification.data);
+			notificationConsumer(notification);
+			clearBadge();
+		});
+	} catch (error) {
+		console.warn(error);
+	}
 };
 
 let clearBadge = () => {
-  firebase.notifications().setBadge(0);
-  firebase.notifications().removeAllDeliveredNotifications();
+	firebase.notifications().removeAllDeliveredNotifications();
 };
 
 const checkPermission = async () => {
-  const enabled = await firebase.messaging().hasPermission();
-  if (enabled) {
-    getToken();
-  } else {
-    requestPermission();
-  }
+	try {
+		const enabled = await firebase.messaging().hasPermission();
+		if (enabled) {
+			getToken();
+		} else {
+			requestPermission();
+		}
+	} catch (error) {
+		console.warn(error);
+	}
 };
 const getToken = async () => {
-  let fcmToken = await firebase.messaging().getToken();
-  Clipboard.setString(fcmToken);
-  // alert("SAVED")
-  //   api.auth.setToken(fcmToken).then(res => console.warn(res.data));
+	try {
+		let fcmToken = await firebase.messaging().getToken();
+	} catch (error) {
+		console.warn(error);
+	}
 };
+
+const getFcmToken = async () => {
+	try {
+		let fcmToken = await firebase.messaging().getToken();
+		return fcmToken;
+	} catch (error) {
+		return error;
+	}
+};
+
 const requestPermission = async () => {
-  try {
-    await firebase.messaging().requestPermission();
-    getToken();
-  } catch (error) {
-    alert(
-      'The app needs permission to send you status of your sold and purchased products!',
-    );
-  }
+	try {
+		await firebase.messaging().requestPermission();
+		getToken();
+	} catch (error) {
+		alert(
+			"The app needs permission to send you status of your sold and purchased products!"
+		);
+	}
 };
 
 const backgroundPushes = async message => {
-  if (AppState.currentState.match(/active/)) {
-    return Promise.resolve();
-  }
-  const notification = new firebase.notifications.Notification()
-    .setNotificationId(message.messageId)
-    .setTitle(message.data.title)
-    .setBody(message.data.body)
-    .android.setChannelId('insider')
-    .android.setPriority(firebase.notifications.Android.Priority.High)
-    .setSound('default');
-  await firebase.notifications().displayNotification(notification);
-  return Promise.resolve();
+	if (AppState.currentState.match(/active/)) {
+		return Promise.resolve();
+	}
+	const notification = new firebase.notifications.Notification()
+		.setNotificationId(message.messageId)
+		.setTitle(message.data.title)
+		.setBody(message.data.body)
+		.android.setChannelId("insider")
+		.android.setPriority(firebase.notifications.Android.Priority.High)
+		.setSound("default");
+	await firebase.notifications().displayNotification(notification);
+	return Promise.resolve();
 };
 
-export default { init, backgroundPushes, clearBadge };
+export default { init, backgroundPushes, clearBadge, setState, getFcmToken };

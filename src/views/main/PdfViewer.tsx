@@ -9,12 +9,21 @@ import {
 import Pdf from "react-native-pdf";
 import { connect } from "react-redux";
 import {} from "rn-fetch-blob";
-import { url } from "../../api/requests";
+import { url, requests } from "../../api/requests";
 import BlurWrapper from "../../components/containers/BlurWrapper";
 import InnerHeader from "../../components/navigation/InnerHeader";
 import { colors } from "../../constants";
-import { acceptDocument, hideError } from "../../redux/actions";
-import { SET_DANGER_ERROR } from "../../redux/types";
+import {
+	acceptDocument,
+	hideError,
+	showModal,
+	hideModal
+} from "../../redux/actions";
+import {
+	SET_DANGER_ERROR,
+	SET_SUCCESS_ERROR,
+	SET_WARNING_ERROR
+} from "../../redux/types";
 import { NavigationProps } from "../../utils/defaultPropTypes";
 import SimpleLine from "react-native-vector-icons/Feather";
 import {
@@ -22,8 +31,12 @@ import {
 	DocumentStatus
 } from "../../components/navigation/DrawerContent";
 import { sign } from "../../utils/bdmImzoProvider";
+import { strings } from "../../locales/strings";
+import { docIdUrls } from "../../redux/sagas/documents";
 
 let { width, height } = Dimensions.get("window");
+
+export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const PdfViewer = ({
 	navigation,
@@ -35,13 +48,107 @@ const PdfViewer = ({
 	let docId = navigation.getParam("docId");
 	//* notNull filePath -- document was created
 	let filePath = navigation.getParam("filePath");
+	let fileName = navigation.getParam("fileName");
 	//* notNull content -- we have to sign invoice JSON
 	let content = navigation.getParam("content");
+	let data = navigation.getParam("data");
+	let dataForSign = navigation.getParam("dataForSign");
 
 	let { boxType, status } = documents;
 	let accept = async () => {
 		//* Check if new document
 		if (filePath) {
+			//* Start loading
+			dispatch(showModal(strings.creatingDocument));
+			try {
+				//* Sign document hash
+				let { pkcs7 } = await sign(dataForSign);
+				if (!pkcs7) {
+					//* User did not sign
+					dispatch(hideModal());
+					dispatch({
+						type: SET_WARNING_ERROR,
+						payload: strings.yourSignIsNeeded
+					});
+					await sleep(3000);
+					dispatch(hideError());
+					return;
+				}
+				//* Check if the document is invoice
+				if (data.documentType === 2) {
+					//* Creating upload data for invoice document
+					let sum = data.products.reduce(
+						(prev, current) =>
+							prev + parseFloat(current.DeliverySumWithVat),
+						0
+					);
+					let invoiceData = {
+						invoiceJSON: dataForSign,
+						sign: pkcs7,
+						sum,
+						description: data.description,
+						filePath,
+						fileName
+					};
+					//TODO get facture id
+					// let invoiceData = yield call(
+					// 	requests.documents.getIvoiceId
+					// );
+					// let FacturaId = invoiceData.data.data;
+					requests.documents.create(
+						docIdUrls[data.documentType].url,
+						invoiceData
+					);
+					dispatch(hideModal());
+					dispatch({
+						type: SET_SUCCESS_ERROR,
+						payload: strings.documentCreatedSuccesfully
+					});
+					navigation.navigate("Main");
+					await sleep(3000);
+					dispatch(hideError());
+					return;
+				} else {
+					//* Creating upload data for non-invoice document
+					let { buyerTin: buyer, ...rest } = data;
+					let documentData = {
+						...rest,
+						filePath,
+						fileName,
+						sign: pkcs7,
+						buyerCompanyName: buyer.name,
+						buyerTin: buyer.tin
+					};
+					//* Remove local file path
+					delete documentData.file;
+					delete documentData.type;
+					//* Getting document url specific to documentType
+					let url =
+						docIdUrls[data.documentType].url || docIdUrls.other;
+					//* Creating document
+					let res = await requests.documents.create(
+						url,
+						documentData
+					);
+					dispatch(hideModal());
+					dispatch({
+						type: SET_SUCCESS_ERROR,
+						payload: strings.documentCreatedSuccesfully
+					});
+					navigation.navigate("Main");
+					await sleep(3000);
+					dispatch(hideError());
+				}
+			} catch (error) {
+				console.warn(error.response);
+				dispatch(hideModal());
+				dispatch({
+					type: SET_DANGER_ERROR,
+					payload: strings.somethingWentWrong + `\n${error.message}`
+				});
+				await sleep(3000);
+				dispatch(hideError());
+			}
 			return;
 		}
 		dispatch(acceptDocument(docId));
@@ -83,7 +190,7 @@ const PdfViewer = ({
 					source={{
 						uri: docId
 							? `${url}/document/view/pdf/${docId}`
-							: `${url}/document/instant/view/pdf?path=${filePath}`,
+							: `${url}/document/instant/view/pdf?path=${filePath}/${fileName}`,
 						headers: { Authorization: `Bearer ${accessToken}` }
 					}}
 					onError={error => {
@@ -119,20 +226,6 @@ const PdfViewer = ({
 									</TouchableWithoutFeedback>
 								);
 							})}
-							{/* <RoundButton
-              full
-              flex
-              backgroundColor={colors.red}
-              text={strings.reject}
-              onPress={reject}
-            />
-            <GradientButton
-              textColor={colors.white}
-              fill
-              flex
-              text={strings.sign}
-              onPress={accept}
-            /> */}
 						</View>
 					)}
 			</View>
@@ -144,7 +237,9 @@ let ratio = width / height;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: colors.white
+		backgroundColor: colors.white,
+		width: Dimensions.get("window").width,
+		height: Dimensions.get("window").height
 	},
 	row: {
 		flexDirection: "row",
