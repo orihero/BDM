@@ -75,7 +75,8 @@ const Tariffs: React.FC<TariffsProps> = ({ dispatch, user }) => {
 					<Text
 						style={{
 							color: balance > 0 ? colors.green : colors.red,
-							fontSize: 18
+							fontSize: 18,
+							fontWeight: "bold"
 						}}
 					>{`${user.data.funds} ${strings.uzs}`}</Text>
 				</View>
@@ -103,11 +104,14 @@ const Tariffs: React.FC<TariffsProps> = ({ dispatch, user }) => {
 
 const styles = StyleSheet.create({
 	balance: {
-		fontSize: 18
+		fontSize: 18,
+		textAlign: "center",
+		fontWeight: "bold"
 	},
 	balanceContainer: {
 		marginVertical: 10,
-		flexDirection: "row"
+		flexDirection: "row",
+		justifyContent: "center"
 	}
 });
 

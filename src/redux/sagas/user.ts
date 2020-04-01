@@ -23,6 +23,7 @@ export function* requestUserLogin({
 			hasSign = false;
 		} else {
 			let request = yield call(sign, null);
+			console.warn(request);
 			data = yield call(requests.auth.login, {
 				sign: request.pkcs7
 			});

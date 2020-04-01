@@ -4,41 +4,34 @@ import {
 	Dimensions,
 	StyleSheet,
 	TouchableWithoutFeedback,
-	View,
-	KeyboardAvoidingView
+	View
 } from "react-native";
+import RNFS from "react-native-fs";
 import Pdf from "react-native-pdf";
+import SimpleLine from "react-native-vector-icons/Feather";
 import { connect } from "react-redux";
-import RNFetchBlob from "rn-fetch-blob";
-import { url, requests } from "../../api/requests";
+import { requests, url } from "../../api/requests";
+import Text from "../../components/common/CustomText";
+import RectangularInput from "../../components/common/RectangularInput";
 import BlurWrapper from "../../components/containers/BlurWrapper";
+import Modal from "../../components/Modal";
 import InnerHeader from "../../components/navigation/InnerHeader";
 import { colors } from "../../constants";
+import { strings } from "../../locales/strings";
 import {
 	acceptDocument,
 	hideError,
-	showModal,
-	hideModal
+	hideModal,
+	showModal
 } from "../../redux/actions";
+import { docIdUrls } from "../../redux/sagas/documents";
 import {
 	SET_DANGER_ERROR,
 	SET_SUCCESS_ERROR,
 	SET_WARNING_ERROR
 } from "../../redux/types";
-import { NavigationProps } from "../../utils/defaultPropTypes";
-import SimpleLine from "react-native-vector-icons/Feather";
-import {
-	BoxType,
-	DocumentStatus
-} from "../../components/navigation/DrawerContent";
 import { sign } from "../../utils/bdmImzoProvider";
-import { strings } from "../../locales/strings";
-import { docIdUrls } from "../../redux/sagas/documents";
-import Modal from "../../components/Modal";
-import RectangularInput from "../../components/common/RectangularInput";
-import Text from "../../components/common/CustomText";
-import RNFS from "react-native-fs";
-import { warnUser } from "../../utils/warn";
+import { NavigationProps } from "../../utils/defaultPropTypes";
 
 let { width, height } = Dimensions.get("window");
 
@@ -63,13 +56,8 @@ const PdfViewer = ({
 
 	const [modalVisible, setModalVisible] = useState(false);
 	const [reason, setReason] = useState("");
-
-	/**
-	 * boxType:{
-	 *
-	 * }
-	 */
 	let { boxType, status } = documents;
+
 	let accept = async () => {
 		//* Check if new document
 		if (filePath) {
@@ -166,7 +154,7 @@ const PdfViewer = ({
 			}
 			return;
 		}
-		dispatch(acceptDocument({ documentId: docId, actionType: "sign" }));
+		dispatch(acceptDocument({ documentId: docId, actionType: "accept" }));
 	};
 	let reject = () => {
 		setModalVisible(!modalVisible);
@@ -229,15 +217,31 @@ const PdfViewer = ({
 		{ name: "download", color: colors.blue, size: 18, onPress: download },
 		{ name: "delete", color: colors.red, size: 18, onPress: reject }
 	];
-	let defaultButtons = [
-		status === 10 && {
-			name: "check-circle",
-			color: colors.green,
-			size: 18,
-			onPress: accept
-		},
-		{ name: "download", color: colors.blue, size: 18, onPress: download }
-	];
+
+	let defaultButtons =
+		status === 10
+			? [
+					{
+						name: "check-circle",
+						color: colors.green,
+						size: 18,
+						onPress: accept
+					},
+					{
+						name: "download",
+						color: colors.blue,
+						size: 18,
+						onPress: download
+					}
+			  ]
+			: [
+					{
+						name: "download",
+						color: colors.blue,
+						size: 18,
+						onPress: download
+					}
+			  ];
 	let buttonsToRender = [];
 	if (docId) {
 		buttonsToRender = defaultButtons;
@@ -324,15 +328,16 @@ const PdfViewer = ({
 									{strings.cancel}
 								</Text>
 								<Text
-									onPress={() =>
+									onPress={() => {
 										dispatch(
 											acceptDocument({
 												documentId: docId,
 												actionType: "reject",
 												notes: reason
 											})
-										)
-									}
+										);
+										setModalVisible(false);
+									}}
 									style={styles.textButton}
 								>
 									{strings.confirm}

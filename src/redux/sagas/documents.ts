@@ -400,7 +400,7 @@ export function* documentInteractionHandler({
 		let message = "";
 		if (actionType === "delete") {
 			let response = yield call(requests.documents.delete, documentId);
-			message = "strings.deletedSuccesfully";
+			message = strings.deletedSuccesfully;
 		} else {
 			let signMessage = yield call(
 				requests.documents.getSignMessage,
@@ -415,20 +415,20 @@ export function* documentInteractionHandler({
 					notes
 				});
 				// yield call(requests.documents.sendPush({}))
-				message = strings.reject;
+				message = strings.successfullyRejected;
 			}
 			if (actionType === "accept") {
 				let response = yield call(requests.documents.sign, {
 					documentId,
 					sign: sign.pkcs7
 				});
-				message = strings.documentCreatedSuccesfully;
+				message = strings.signedSuccessfully;
 			}
 		}
 
 		yield put(fetchDocuments());
-
 		yield put(hideModal());
+		NavigationService.navigate("Main");
 		yield put({
 			type: SET_SUCCESS_ERROR,
 			payload: message

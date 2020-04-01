@@ -22,7 +22,8 @@ import {
 	getRegions,
 	hideModal,
 	showModal,
-	hideError
+	hideError,
+	userLoggedOut
 } from "../../redux/actions";
 import BlurWrapper from "../../components/containers/BlurWrapper";
 import { DrawerAction } from "../../components/navigation/DrawerContent";
@@ -31,6 +32,7 @@ import Feather from "react-native-vector-icons/Feather";
 import DocumentPicker from "react-native-document-picker";
 import { requests } from "../../api/requests";
 import { SET_DANGER_ERROR } from "../../redux/types";
+import AsyncStorage from "@react-native-community/async-storage";
 
 // let data: DocumentProps[] = [
 //   {
@@ -97,6 +99,10 @@ const Main = ({
 				console.warn(action);
 
 				fetchDocuments(action);
+				break;
+			case DrawerActionTypes.logout:
+				dispatch(userLoggedOut());
+				navigation.navigate(action.navigateTo);
 				break;
 		}
 		Animated.spring(width, { toValue: expanded ? minW : maxW }).start(() =>

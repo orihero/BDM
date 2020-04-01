@@ -118,7 +118,9 @@ export let strings = new LocalizedStrings({
 		defaultLogin: "Войти при помощи логина",
 		rejectReason: "Причина отказа",
 		fileSavedUnderName: "Документ сохранён в ",
-		uploaded: "Загруженние"
+		uploaded: "Загруженние",
+		deletedSuccesfully: "Успешно удален",
+		successfullyRejected: "Успешно отклонено"
 	},
 	en: {},
 	uz: {}

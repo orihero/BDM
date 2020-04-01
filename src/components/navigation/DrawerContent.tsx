@@ -30,7 +30,8 @@ export enum DocumentStatus {
 
 export enum DrawerActionTypes {
 	navigate = 0,
-	changeBox = 1
+	changeBox = 1,
+	logout
 }
 
 export interface DrawerAction {
@@ -186,7 +187,8 @@ let menus: DrawerItemProps[] = [
 		bottom: true,
 		iconSize: 30,
 		action: {
-			navigateTo: "Login"
+			navigateTo: "Login",
+			type: DrawerActionTypes.logout
 		}
 	}
 ];
