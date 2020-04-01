@@ -112,7 +112,13 @@ export let strings = new LocalizedStrings({
 		empovermentNumber: "№ доверен.",
 		empovermentDate: "Дата доверенности",
 		yourSignIsNeeded: "We need your sign to proceed!",
-		balance: "Баланс"
+		balance: "Баланс",
+		loginWithEImzo: "Войти при помощи E-IMZO",
+		downloadEImzoApp: "Скачайте приложения E-IMZO для входа",
+		defaultLogin: "Войти при помощи логина",
+		rejectReason: "Причина отказа",
+		fileSavedUnderName: "Документ сохранён в ",
+		uploaded: "Загруженние"
 	},
 	en: {},
 	uz: {}

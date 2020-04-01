@@ -1,14 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	ActivityIndicator,
 	Dimensions,
 	StyleSheet,
 	TouchableWithoutFeedback,
-	View
+	View,
+	KeyboardAvoidingView
 } from "react-native";
 import Pdf from "react-native-pdf";
 import { connect } from "react-redux";
-import {} from "rn-fetch-blob";
+import RNFetchBlob from "rn-fetch-blob";
 import { url, requests } from "../../api/requests";
 import BlurWrapper from "../../components/containers/BlurWrapper";
 import InnerHeader from "../../components/navigation/InnerHeader";
@@ -33,6 +34,11 @@ import {
 import { sign } from "../../utils/bdmImzoProvider";
 import { strings } from "../../locales/strings";
 import { docIdUrls } from "../../redux/sagas/documents";
+import Modal from "../../components/Modal";
+import RectangularInput from "../../components/common/RectangularInput";
+import Text from "../../components/common/CustomText";
+import RNFS from "react-native-fs";
+import { warnUser } from "../../utils/warn";
 
 let { width, height } = Dimensions.get("window");
 
@@ -42,7 +48,8 @@ const PdfViewer = ({
 	navigation,
 	accessToken,
 	dispatch,
-	documents
+	documents,
+	user
 }: NavigationProps) => {
 	//* notNull docId -- recieved document
 	let docId = navigation.getParam("docId");
@@ -54,6 +61,14 @@ const PdfViewer = ({
 	let data = navigation.getParam("data");
 	let dataForSign = navigation.getParam("dataForSign");
 
+	const [modalVisible, setModalVisible] = useState(false);
+	const [reason, setReason] = useState("");
+
+	/**
+	 * boxType:{
+	 *
+	 * }
+	 */
 	let { boxType, status } = documents;
 	let accept = async () => {
 		//* Check if new document
@@ -151,11 +166,58 @@ const PdfViewer = ({
 			}
 			return;
 		}
-		dispatch(acceptDocument(docId));
+		dispatch(acceptDocument({ documentId: docId, actionType: "sign" }));
 	};
-	let reject = () => {};
+	let reject = () => {
+		setModalVisible(!modalVisible);
+		// dispatch(acceptDocument({ documentId: docId, actionType: "reject" }));
+	};
 
-	let download = () => {};
+	let onDelete = () => {
+		// setModalVisible(!modalVisible);
+		dispatch(acceptDocument({ documentId: docId, actionType: "delete" }));
+	};
+
+	//TODO
+	let download = async () => {
+		//* Check if new document
+		var path = RNFS.ExternalStorageDirectoryPath;
+		if (filePath) {
+			path += "/" + fileName;
+		} else {
+			path += `/${docId}.pdf`;
+		}
+		console.warn(RNFS.ExternalStorageDirectoryPath);
+
+		// let fileUrl = docId
+		// 	? `${url}/document/view/pdf/${docId}`
+		// 	: `${url}/document/instant/view/pdf?path=${filePath}/${fileName}`;
+		// let data = await RNFetchBlob.fetch("GET", fileUrl, {
+		// 	Authorization: `Bearer ${accessToken}`
+		// });
+		// write the file
+		try {
+			let assets = await RNFS.writeFile(
+				RNFS.DocumentDirectoryPath + "/test.txt",
+				"TRANSLATSIYa jkjkj jjkjkjkjk",
+				"utf8"
+			);
+			console.warn("Success");
+		} catch (error) {
+			console.warn("Wait a minute");
+		}
+
+		// RNFS.writeFile(path, data.data.toString())
+		// 	.then(success => {
+		// 		console.log("FILE WRITTEN!");
+		// 		warnUser(strings.fileSavedUnderName + "\n" + path);
+		// 	})
+		// 	.catch(err => {
+		// 		console.log(err.message);
+		// 	});
+	};
+
+	let { hasSign } = user;
 
 	let newDocumentButtons = [
 		{
@@ -168,20 +230,36 @@ const PdfViewer = ({
 		{ name: "delete", color: colors.red, size: 18, onPress: reject }
 	];
 	let defaultButtons = [
-		{
+		status === 10 && {
 			name: "check-circle",
 			color: colors.green,
 			size: 18,
 			onPress: accept
 		},
-		{ name: "delete", color: colors.red, size: 18, onPress: download },
-		{ name: "trash-2", color: colors.yellow, size: 18, onPress: reject }
+		{ name: "download", color: colors.blue, size: 18, onPress: download }
 	];
-	let buttonsToRender = docId
-		? defaultButtons
-		: filePath
-		? newDocumentButtons
-		: [];
+	let buttonsToRender = [];
+	if (docId) {
+		buttonsToRender = defaultButtons;
+	}
+	if (filePath) {
+		buttonsToRender = newDocumentButtons;
+	}
+	if (status === 10 && boxType === 1) {
+		buttonsToRender.push({
+			name: "delete",
+			color: colors.red,
+			size: 18,
+			onPress: reject
+		});
+	} else {
+		buttonsToRender.push({
+			name: "trash-2",
+			color: colors.yellow,
+			size: 18,
+			onPress: onDelete
+		});
+	}
 	return (
 		<BlurWrapper>
 			<View style={styles.container}>
@@ -206,28 +284,63 @@ const PdfViewer = ({
 					enablePaging
 					style={styles.container}
 				/>
-				{boxType === BoxType.inbox &&
-					status === DocumentStatus.sentOrRecieved && (
-						<View style={styles.row}>
-							{buttonsToRender.map(({ onPress, color, ...e }) => {
-								return (
-									<TouchableWithoutFeedback {...{ onPress }}>
-										<View
-											style={[
-												styles.buttonContainer,
-												{ backgroundColor: color }
-											]}
-										>
-											<SimpleLine
-												{...e}
-												color={colors.white}
-											/>
-										</View>
-									</TouchableWithoutFeedback>
-								);
-							})}
+				<View style={styles.row}>
+					{hasSign &&
+						buttonsToRender.map(({ onPress, color, ...e }) => {
+							return (
+								<TouchableWithoutFeedback {...{ onPress }}>
+									<View
+										style={[
+											styles.buttonContainer,
+											{ backgroundColor: color }
+										]}
+									>
+										<SimpleLine
+											{...e}
+											color={colors.white}
+										/>
+									</View>
+								</TouchableWithoutFeedback>
+							);
+						})}
+				</View>
+				{modalVisible && (
+					<Modal>
+						<View style={styles.modalContainer}>
+							<Text style={styles.modalTitle}>
+								{strings.rejectReason}
+							</Text>
+							<RectangularInput
+								placeholder={strings.rejectReason}
+								multiline={true}
+								value={reason}
+								onChange={e => setReason(e)}
+							/>
+							<View style={styles.buttonsRow}>
+								<Text
+									onPress={reject}
+									style={styles.textButton}
+								>
+									{strings.cancel}
+								</Text>
+								<Text
+									onPress={() =>
+										dispatch(
+											acceptDocument({
+												documentId: docId,
+												actionType: "reject",
+												notes: reason
+											})
+										)
+									}
+									style={styles.textButton}
+								>
+									{strings.confirm}
+								</Text>
+							</View>
 						</View>
-					)}
+					</Modal>
+				)}
 			</View>
 		</BlurWrapper>
 	);
@@ -254,12 +367,33 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		elevation: 2
+	},
+	modalContainer: {
+		padding: 15,
+		backgroundColor: colors.white,
+		width: width - 40
+	},
+	buttonsRow: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		margin: 15
+	},
+	textButton: {
+		textTransform: "uppercase",
+		color: colors.blue,
+		fontSize: 12
+	},
+	modalTitle: {
+		fontSize: 18,
+		color: colors.black,
+		marginVertical: 15
 	}
 });
 
-let mapStateToProps = ({ user: { accessToken }, documents }) => ({
+let mapStateToProps = ({ user: { accessToken, ...user }, documents }) => ({
 	accessToken,
-	documents
+	documents,
+	user
 });
 
 let Connected = connect(mapStateToProps)(PdfViewer);

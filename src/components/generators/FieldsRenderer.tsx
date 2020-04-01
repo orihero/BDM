@@ -32,13 +32,14 @@ const FieldsRenderer = ({
 }: FieldRendererProps) => {
 	const [state, dispatch] = useReducer(reducer, initialValue || {});
 	const [validations, setValidations] = useState(() => {
-		return fields.reduce(
+		let temp = fields.reduce(
 			(prev, current) => ({
 				...prev,
 				[current.name]: current.validation
 			}),
 			{}
 		);
+		return temp;
 	});
 	let initialItems = () =>
 		fields.reduce((prev, current) => {
@@ -160,7 +161,7 @@ const FieldsRenderer = ({
 		return normalState;
 	};
 
-	let renderFields = fields => {
+	let renderFields = (fields: FieldProps[]) => {
 		return fields.map(e => {
 			if (e.visible === false) return null;
 			switch (e.type) {
@@ -351,6 +352,12 @@ const FieldsRenderer = ({
 									onChange={val => updateState(e.name, val)}
 									value={state[e.name]}
 									placeholder={e.placeholder}
+									keyboardType={
+										e.validation?.float ||
+										e.validation?.integer
+											? "number"
+											: null
+									}
 								/>
 							</View>
 						);
@@ -370,6 +377,11 @@ const FieldsRenderer = ({
 								onChange={val => updateState(e.name, val)}
 								value={state[e.name]}
 								placeholder={e.placeholder}
+								keyboardType={
+									e.validation?.float || e.validation?.integer
+										? "number-pad"
+										: null
+								}
 							/>
 						</View>
 					);

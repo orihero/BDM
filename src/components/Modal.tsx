@@ -1,31 +1,54 @@
-import React from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { colors } from '../constants';
-import Text from './common/CustomText';
+import React, { useEffect, useState } from "react";
+import { Animated, StyleSheet, Dimensions } from "react-native";
 
-const Modal = ({ loadingMessage }) => {
-    return (
-        <View style={styles.container}>
-            <ActivityIndicator size={'large'} color={colors.blue} />
-            {loadingMessage && <Text style={styles.text}>{loadingMessage}</Text>}
-        </View>
-    )
-}
+let { width, height } = Dimensions.get("window");
+
+const Modal = ({ isOpen = true, children }) => {
+	const [visible, setVisible] = useState(isOpen);
+	let animation = new Animated.Value(0);
+	let animate = () => {
+		Animated.spring(animation, {
+			toValue: isOpen ? 1 : 0
+		}).start(() => {
+			if (!isOpen) {
+				setVisible(!visible);
+			}
+		});
+		return animate;
+	};
+	let backgroundColor = animation.interpolate({
+		inputRange: [0, 1],
+		outputRange: ["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]
+	});
+	let scale = animation.interpolate({
+		inputRange: [0, 1],
+		outputRange: [0.5, 1],
+		extrapolate: "clamp"
+	});
+	useEffect(animate, [isOpen]);
+	if (!visible) {
+		return null;
+	}
+
+	return (
+		<Animated.View style={[styles.container, { backgroundColor }]}>
+			<Animated.View style={[{ transform: [{ scale }] }]}>
+				{children}
+			</Animated.View>
+		</Animated.View>
+	);
+};
 
 const styles = StyleSheet.create({
-    container: {
-        ...StyleSheet.absoluteFillObject,
-        position: 'absolute',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    text: {
-        color: colors.black,
-        margin: 15,
-        fontWeight: 'bold',
-        fontSize: 18
-    }
-})
+	container: {
+		flex: 1,
+		position: "absolute",
+		width,
+		height,
+		alignItems: "center",
+		zIndex: 100,
+		paddingTop: 40
+	}
+});
 
-
-export default Modal
+export default Modal;

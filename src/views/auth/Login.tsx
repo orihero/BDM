@@ -6,7 +6,11 @@ import {
 	SafeAreaView,
 	StyleSheet,
 	TouchableWithoutFeedback,
-	View
+	View,
+	Linking,
+	KeyboardAvoidingView,
+	ScrollView,
+	Platform
 } from "react-native";
 import { connect } from "react-redux";
 import logo from "../../assets/images/logo.png";
@@ -18,6 +22,8 @@ import { colors, commonStyles } from "../../constants";
 import { strings } from "../../locales/strings";
 import { requestUserLogin } from "../../redux/actions";
 import BlurWrapper from "../../components/containers/BlurWrapper";
+import FA5 from "react-native-vector-icons/FontAwesome5";
+import RectangularInput from "../../components/common/RectangularInput";
 
 let { width } = Dimensions.get("window");
 
@@ -25,25 +31,65 @@ const mapDispatchToProps = {
 	requestUserLogin
 };
 
+let socialIcons = [
+	{ name: "phone-square", url: "tel://+998951942424" },
+	{ name: "telegram-plane", url: "https://t.me/bdm_24m_uz" },
+	{ name: "instagram", url: "https://www.instagram.com/bdmuzb/" },
+	{ name: "facebook-square", url: "https://www.facebook.com/bdmuzb" },
+	{ name: "linkedin", url: "https://t.me/bdm_24m_uz" }
+];
 const Login = ({ navigation, requestUserLogin }) => {
+	let isIos = Platform.OS === "ios";
 	const [remember, setRemember] = useState(true);
-	let onLogin = () => {
-		requestUserLogin(remember);
+	const [isUsername, setIsUsername] = useState(isIos);
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+	let loginWithUsername = () => {
+		requestUserLogin({ remember, username, password });
 	};
-	return (
-		<BlurWrapper>
-			<SafeAreaView style={styles.container}>
-				<View
-					style={[
-						commonStyles.centeredContainer,
-						{ alignItems: "flex-start", padding: 15, flex: 1.2 }
-					]}
-				>
-					<Image source={logo} style={styles.image} />
+	let onLogin = () => {
+		requestUserLogin({ remember });
+	};
+	let onStandartLoginCheck = () => {
+		setIsUsername(!isUsername);
+	};
+	let renderContent = () => {
+		if (!isUsername) {
+			return (
+				<View>
+					<Text style={styles.promptSmallText}>
+						{strings.downloadEImzoApp}
+					</Text>
+					<GradientButton
+						onPress={onLogin}
+						full
+						text={strings.loginWithEImzo}
+					/>
+					<GradientButton
+						onPress={onStandartLoginCheck}
+						full
+						startColor={colors.darkPurple}
+						endColor={colors.lighPurple}
+						text={strings.defaultLogin}
+					/>
 				</View>
-				<View style={{ paddingHorizontal: 20 }}>
+			);
+		}
+		return (
+			<View>
+				<RectangularInput
+					containerStyle={{ marginBottom: 20 }}
+					placeholder={strings.enterLogin}
+					onChange={e => setUsername(e)}
+				/>
+				<RectangularInput
+					containerStyle={{ marginBottom: 20 }}
+					placeholder={strings.enterPassword}
+					secureTextEntry={true}
+					onChange={e => setPassword(e)}
+				/>
+				<View style={styles.rememberContainer}>
 					<DefaultCheckbox
-						style={{ marginBottom: 20 }}
 						isActive={remember}
 						setActive={() => {
 							LayoutAnimation.configureNext(
@@ -57,18 +103,53 @@ const Login = ({ navigation, requestUserLogin }) => {
 						}}
 						title={`  ${strings.remember}`}
 					/>
-					<GradientButton
-						onPress={onLogin}
-						full
-						text={strings.login}
-					/>
+					{!isIos && (
+						<Text
+							onPress={onStandartLoginCheck}
+							style={styles.promptSmallText}
+						>
+							{strings.loginWithEImzo}
+						</Text>
+					)}
 				</View>
+				<GradientButton
+					onPress={loginWithUsername}
+					full
+					text={strings.login}
+				/>
+			</View>
+		);
+	};
+	return (
+		<BlurWrapper>
+			<SafeAreaView style={styles.container}>
+				<View
+					style={[
+						commonStyles.centeredContainer,
+						{ alignItems: "flex-start", flex: 1.2 }
+					]}
+				>
+					<Image source={logo} style={styles.image} />
+				</View>
+				<View style={{ paddingHorizontal: 20 }}>{renderContent()}</View>
 				<View style={styles.footer}>
-					<Text style={{ textAlign: "center" }}>
-						ТЕХНИЧЕСКАЯ ПОДДЕРЖКА {"\n"}
-						+998 95 194 24 24{"\n"}
-						info@24m.uz
-					</Text>
+					{socialIcons.map((e, i) => {
+						return (
+							<View key={i}>
+								<TouchableWithoutFeedback
+									key={i.toString()}
+									onPress={() => Linking.openURL(e.url)}
+								>
+									<FA5
+										name={e.name}
+										size={32}
+										color={colors.blue}
+										style={styles.icon}
+									/>
+								</TouchableWithoutFeedback>
+							</View>
+						);
+					})}
 				</View>
 			</SafeAreaView>
 		</BlurWrapper>
@@ -89,8 +170,8 @@ const styles = StyleSheet.create({
 	},
 	footerBottom: {},
 	image: {
-		width: width - 100,
-		height: (width - 100) / 3.18
+		width: width - 30,
+		height: (width - 30) / 3.18
 	},
 	promptText: {
 		color: colors.lightGray,
@@ -102,8 +183,9 @@ const styles = StyleSheet.create({
 		fontWeight: "bold"
 	},
 	promptSmallText: {
-		color: colors.black,
-		fontSize: 14
+		color: colors.lightGray,
+		fontSize: 12,
+		textAlign: "center"
 	},
 	enterAccount: {
 		color: colors.black,
@@ -112,7 +194,17 @@ const styles = StyleSheet.create({
 	},
 	footer: {
 		flex: 0.8,
-		justifyContent: "flex-end"
+		justifyContent: "center",
+		flexDirection: "row",
+		alignItems: "flex-end"
+	},
+	icon: {
+		margin: 15
+	},
+	rememberContainer: {
+		marginBottom: 20,
+		flexDirection: "row",
+		justifyContent: "space-between"
 	}
 });
 

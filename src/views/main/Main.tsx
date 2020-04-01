@@ -1,16 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, StyleSheet, Animated, Dimensions } from "react-native";
+import {
+	View,
+	FlatList,
+	StyleSheet,
+	Animated,
+	Dimensions,
+	TouchableWithoutFeedback
+} from "react-native";
 import Document, { DocumentProps } from "./Document";
 import DrawerContent, {
-	DrawerActionTypes
+	DrawerActionTypes,
+	BoxType,
+	DocumentStatus
 } from "../../components/navigation/DrawerContent";
 import { colors } from "../../constants";
 import Header from "../../components/navigation/Header";
 import { strings } from "../../locales/strings";
 import { connect } from "react-redux";
-import { fetchDocuments, getRegions, hideModal } from "../../redux/actions";
+import {
+	fetchDocuments,
+	getRegions,
+	hideModal,
+	showModal,
+	hideError
+} from "../../redux/actions";
 import BlurWrapper from "../../components/containers/BlurWrapper";
 import { DrawerAction } from "../../components/navigation/DrawerContent";
+import Text from "../../components/common/CustomText";
+import Feather from "react-native-vector-icons/Feather";
+import DocumentPicker from "react-native-document-picker";
+import { requests } from "../../api/requests";
+import { SET_DANGER_ERROR } from "../../redux/types";
 
 // let data: DocumentProps[] = [
 //   {
@@ -54,12 +74,21 @@ let { height } = Dimensions.get("window");
 const Main = ({
 	navigation,
 	fetchDocuments,
-	documents: { data },
-	hideModal
+	documents: { data, status, boxType },
+	hideModal,
+	showModal,
+	dispatch,
+	hideError
 }) => {
 	const [width, setWidth] = useState(new Animated.Value(minW));
 	const [expanded, setExpanded] = useState(false);
 	let toggle = (action: DrawerAction) => {
+		if (!action || !action.type) {
+			Animated.spring(width, {
+				toValue: expanded ? minW : maxW
+			}).start(() => setExpanded(!expanded));
+			return;
+		}
 		switch (action.type) {
 			case DrawerActionTypes.navigate:
 				navigation.navigate(action.navigateTo);
@@ -74,6 +103,36 @@ const Main = ({
 			setExpanded(!expanded)
 		);
 	};
+
+	let newUpload = async () => {
+		try {
+			showModal(strings.uploadingFile);
+			const res = await DocumentPicker.pick({
+				type: [DocumentPicker.types.allFiles]
+			});
+			console.log(
+				res.uri,
+				res.type, // mime type
+				res.name,
+				res.size
+			);
+			let { uri, type, name } = res;
+			let uploadRes = await requests.documents.uploadExcel({
+				documentTypeId: 19,
+				file: { uri, type, name }
+			});
+		} catch (err) {
+			if (DocumentPicker.isCancel(err)) {
+				// User cancelled the picker, exit any dialogs or menus and move on
+			} else {
+				dispatch({ type: SET_DANGER_ERROR, payload: err.message });
+			}
+		} finally {
+			hideModal();
+			setTimeout(() => hideError(), 3000);
+		}
+	};
+
 	useEffect(() => {
 		// getRegions();
 		fetchDocuments();
@@ -85,6 +144,13 @@ const Main = ({
 				<Header title={strings.inbox} toggleDrawer={toggle} />
 				<View style={styles.row}>
 					<FlatList
+						ListEmptyComponent={() => (
+							<Text
+								style={{ marginTop: 100, textAlign: "center" }}
+							>
+								{strings.noData}
+							</Text>
+						)}
 						contentContainerStyle={styles.flatContainer}
 						data={data}
 						showsVerticalScrollIndicator={false}
@@ -107,6 +173,20 @@ const Main = ({
 						/>
 					</Animated.View>
 				</View>
+				{boxType === BoxType.outbox &&
+					status === DocumentStatus.uploaded && (
+						<View style={styles.roundButtonContainer}>
+							<TouchableWithoutFeedback onPress={newUpload}>
+								<View style={styles.roundButton}>
+									<Feather
+										name="plus"
+										size={36}
+										color={colors.white}
+									/>
+								</View>
+							</TouchableWithoutFeedback>
+						</View>
+					)}
 			</View>
 		</BlurWrapper>
 	);
@@ -117,7 +197,20 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		flex: 1
 	},
-	flatContainer: { paddingBottom: 30, marginLeft: minW }
+	flatContainer: { paddingBottom: 30, marginLeft: minW },
+	roundButtonContainer: {
+		position: "absolute",
+		bottom: 15,
+		right: 15
+	},
+	roundButton: {
+		width: 60,
+		height: 60,
+		backgroundColor: colors.blue,
+		justifyContent: "center",
+		alignItems: "center",
+		borderRadius: 60
+	}
 });
 
 const mapStateToProps = ({ documents }) => ({
@@ -126,7 +219,9 @@ const mapStateToProps = ({ documents }) => ({
 
 const mapDispatchToProps = {
 	fetchDocuments,
-	hideModal
+	hideModal,
+	showModal,
+	hideError
 };
 
 let ConnectedMain = connect(mapStateToProps, mapDispatchToProps)(Main);

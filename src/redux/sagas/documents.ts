@@ -1,7 +1,11 @@
 import { warnUser } from "./../../utils/warn";
 import { sign as eSign } from "./../../utils/bdmImzoProvider";
 import { showModal, hideModal, hideError } from "./../actions/appState";
-import { documentsLoaded, documentsCountLoaded } from "./../actions/documents";
+import {
+	documentsLoaded,
+	documentsCountLoaded,
+	fetchDocuments
+} from "./../actions/documents";
 import { strings } from "./../../locales/strings";
 import {
 	SET_DANGER_ERROR,
@@ -135,6 +139,7 @@ export function* fetchDocumentsAsync({
 			page,
 			perPage
 		}) || {};
+		console.warn({ boxType, status, page, perPage });
 		yield put(documentsLoaded({ data: response.data, boxType, status }));
 		let res = yield call(requests.documents.getDocumentsCount, {});
 		yield put(documentsCountLoaded(res.data));
@@ -386,23 +391,47 @@ export function* createDocument({ payload: data }) {
 	}
 }
 
-export function* documentInteractionHandler({ payload: documentId }) {
+export function* documentInteractionHandler({
+	payload: { documentId, actionType, notes, newInvoiceContent = "" }
+}) {
 	try {
 		//* Show loading
 		yield put(showModal(strings.fetchingData));
-		let signMessage = yield call(
-			requests.documents.getSignMessage,
-			documentId
-		);
-		let sign = yield call(eSign, signMessage.data.data);
-		let response = yield call(requests.documents.sign, {
-			documentId,
-			sign
-		});
+		let message = "";
+		if (actionType === "delete") {
+			let response = yield call(requests.documents.delete, documentId);
+			message = "strings.deletedSuccesfully";
+		} else {
+			let signMessage = yield call(
+				requests.documents.getSignMessage,
+				documentId
+			);
+			let sign = yield call(eSign, signMessage.data.data);
+			if (actionType === "reject") {
+				let response = yield call(requests.documents.reject, {
+					documentId,
+					sign: sign.pkcs7,
+					newInvoiceContent,
+					notes
+				});
+				// yield call(requests.documents.sendPush({}))
+				message = strings.reject;
+			}
+			if (actionType === "accept") {
+				let response = yield call(requests.documents.sign, {
+					documentId,
+					sign: sign.pkcs7
+				});
+				message = strings.documentCreatedSuccesfully;
+			}
+		}
+
+		yield put(fetchDocuments());
+
 		yield put(hideModal());
 		yield put({
 			type: SET_SUCCESS_ERROR,
-			payload: strings.signedSuccessfully
+			payload: message
 		});
 		yield delay(3000);
 		yield put(hideError());

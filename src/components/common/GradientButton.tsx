@@ -23,6 +23,9 @@ export interface RoundButtonProps {
 	onPress?: (event: GestureResponderEvent) => void;
 	fontSize?: number;
 	stylea?: any;
+	startColor?: string;
+	style?: any;
+	endColor?: string;
 }
 
 const GradientButton = ({
@@ -36,7 +39,9 @@ const GradientButton = ({
 	big,
 	flex,
 	fontSize,
-	style
+	style,
+	startColor = colors.darkBlue,
+	endColor = colors.blue
 }: RoundButtonProps) => {
 	return (
 		<TouchableWithoutFeedback onPress={onPress}>
@@ -61,7 +66,7 @@ const GradientButton = ({
 					start={{ x: 0, y: 0 }}
 					end={{ x: 1, y: 0 }}
 					style={StyleSheet.absoluteFill}
-					colors={[colors.darkBlue, colors.blue]}
+					colors={[startColor, endColor]}
 				/>
 				{typeof text === "string" ? (
 					<Text

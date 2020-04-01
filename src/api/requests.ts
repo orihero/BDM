@@ -46,7 +46,12 @@ export let configureAxios = storeInstance => {
 
 export let requests = {
 	auth: {
-		login: sign => axios.post(`${url}/auth/login`, sign),
+		login: data =>
+			axios.post(
+				`${url}/auth/login?type=${data.userName ? 2 : 1}`,
+				data,
+				{ headers: { "Content-Type": "application/json" } }
+			),
 		refreshToken: refreshToken =>
 			axios.post(`${url}/auth/token/refresh`, refreshToken),
 		setDeviceToken: data => axios.post(`${url}/firebase/save`, data)
@@ -54,7 +59,7 @@ export let requests = {
 	documents: {
 		getDocuments: ({ boxType, status, page, perPage }) =>
 			axios.get(
-				`${url}/document/get/data?boxType=${boxType}&status=${status}&page=${page}&perPage=${perPage}`
+				`${url}/document/get/data?boxType=${boxType}&state=${status}&page=${page}&perPage=${perPage}`
 			),
 		getDocumentsCount: () =>
 			axios.get(`${url}/document/get/counts/by/status`),
@@ -66,8 +71,13 @@ export let requests = {
 		getSignMessage: docId =>
 			axios.get(`${url}/document/get/content/forsign/${docId}`),
 		sign: credentials => axios.post(`${url}/document/accept`, credentials),
+		delete: id => axios.get(`${url}/document/delete/${id}`),
+		reject: credentials =>
+			axios.post(`${url}/document/reject`, credentials),
 		getIvoiceId: () => axios.get(`${url}/invoice/get/id`),
-		sendPush: data => axios.post(`${url}/firebase/send`, data)
+		sendPush: data => axios.post(`${url}/firebase/send`, data),
+		uploadExcel: credentials =>
+			axios.post(`${url}/excel/multiple/upload`, formData(credentials))
 	},
 	user: {
 		me: () => axios.get(`${url}/user`),

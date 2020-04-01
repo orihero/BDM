@@ -41,28 +41,28 @@ export interface DrawerAction {
 }
 
 let menus: DrawerItemProps[] = [
-	{
-		iconName: "add-file",
-		title: strings.create,
-		children: [
-			{
-				title: strings.twoSide,
-				iconName: "double",
-				iconSize: 24,
-				action: {
-					navigateTo: "NewDocument"
-				}
-			},
-			{
-				title: strings.threeSide,
-				iconName: "triple",
-				iconSize: 24,
-				action: {
-					navigateTo: "NewDocument"
-				}
-			}
-		]
-	},
+	// {
+	// 	iconName: "add-file",
+	// 	title: strings.create,
+	// 	children: [
+	// 		{
+	// 			title: strings.twoSide,
+	// 			iconName: "double",
+	// 			iconSize: 24,
+	// 			action: {
+	// 				navigateTo: "NewDocument"
+	// 			}
+	// 		},
+	// 		{
+	// 			title: strings.threeSide,
+	// 			iconName: "triple",
+	// 			iconSize: 24,
+	// 			action: {
+	// 				navigateTo: "NewDocument"
+	// 			}
+	// 		}
+	// 	]
+	// },
 	{
 		iconName: "file-down",
 		title: strings.inbox,
@@ -141,6 +141,16 @@ let menus: DrawerItemProps[] = [
 				countPath: "outputBox.signed"
 			},
 			{
+				title: strings.uploaded,
+				iconName: "upload-cloud",
+				feather: true,
+				iconSize: 24,
+				action: {
+					status: DocumentStatus.uploaded
+				},
+				countPath: "outputBox.uploaded"
+			},
+			{
 				title: strings.rejected,
 				iconName: "delete",
 				feather: true,
@@ -188,44 +198,29 @@ const DrawerContent: React.FC<DrawerContentProps> = ({
 	boxType,
 	user
 }) => {
-	let balance = user.data && user.data.funds;
 	return (
 		<View style={{ flex: 1 }}>
 			<SafeAreaView style={styles.container}>
-				<ScrollView
-					contentContainerStyle={{ paddingBottom: 100 }}
-					showsVerticalScrollIndicator={false}
-				>
-					{menus.map((e, i) => {
-						if (e.bottom) {
-							return null;
-						}
-						return (
-							<DrawerItem
-								key={i}
-								{...e}
-								active={boxType === e.action?.boxType}
-								drawerVisible={expanded}
-								onPress={onPress}
-							/>
-						);
-					})}
-				</ScrollView>
+				<View style={{ maxHeight: 400 }}>
+					<ScrollView showsVerticalScrollIndicator={false}>
+						{menus.map((e, i) => {
+							if (e.bottom) {
+								return null;
+							}
+							return (
+								<DrawerItem
+									key={i}
+									{...e}
+									active={boxType === e.action?.boxType}
+									drawerVisible={expanded}
+									onPress={onPress}
+								/>
+							);
+						})}
+					</ScrollView>
+				</View>
 			</SafeAreaView>
 			<View style={styles.logoutWrapper}>
-				{expanded && (
-					<View style={styles.balanceContainer}>
-						<Text
-							style={styles.balance}
-						>{`${strings.balance}: `}</Text>
-						<Text
-							style={{
-								color: balance > 0 ? colors.green : colors.red,
-								fontSize: 18
-							}}
-						>{`${user.data.funds} ${strings.uzs}`}</Text>
-					</View>
-				)}
 				<DrawerItem {...menus[menus.length - 1]} onPress={onPress} />
 			</View>
 		</View>
@@ -241,13 +236,6 @@ const styles = StyleSheet.create({
 		right: 0,
 		left: 0,
 		bottom: 80
-	},
-	balance: {
-		fontSize: 18
-	},
-	balanceContainer: {
-		marginVertical: 10,
-		flexDirection: "row"
 	}
 });
 

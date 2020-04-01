@@ -2,14 +2,13 @@
  * @format
  */
 
-import {AppRegistry, Platform, UIManager} from 'react-native';
-import App from './App';
-import {name as appName} from './app.json';
+import { AppRegistry, Platform, UIManager } from "react-native";
+import App from "./App";
+import { name as appName } from "./app.json";
+import NotificationService from "./src/services/NotificationService";
 
-if (Platform.OS === 'android') {
-  if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-  }
-}
-
+AppRegistry.registerHeadlessTask(
+	"RNFirebaseBackgroundMessage",
+	() => NotificationService.backgroundPushes
+);
 AppRegistry.registerComponent(appName, () => App);

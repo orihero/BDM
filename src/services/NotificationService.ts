@@ -1,4 +1,5 @@
-import { AppState } from "react-native";
+import { warnUser } from "./../utils/warn";
+import { AppState, Clipboard } from "react-native";
 import firebase from "react-native-firebase";
 import { requests } from "../api/requests";
 // import { orderLoaded } from "./../redux/actions/order";
@@ -109,19 +110,32 @@ const requestPermission = async () => {
 	}
 };
 
-const backgroundPushes = async message => {
-	if (AppState.currentState.match(/active/)) {
+const backgroundPushes = async payload => {
+	try {
+		let title = "",
+			message = "";
+		if (payload.data.message === "10") {
+			title = `Вы получили новый документ`;
+			message = `(ID ${payload.data.id}) от ${payload.data.companyName} ( ИНН ${payload.data.tin} ) смотрите полученные`;
+		} else if (payload.data.message === "20") {
+			title = `Ваш документ принять`;
+			message = `(ID ${payload.data.id}) от ${payload.data.companyName} ( ИНН ${payload.data.tin} ) смотрите подписанные`;
+		} else if (payload.data.message === "30") {
+			title = `Ваш документ отказан`;
+			message = `(ID ${payload.data.id}) от ${payload.data.companyName} ( ИНН ${payload.data.tin} ) смотрите отказанные`;
+		}
+		const notification = new firebase.notifications.Notification()
+			.setNotificationId(payload.messageId)
+			.setTitle(title)
+			.setBody(message)
+			.android.setChannelId("insider")
+			.android.setPriority(firebase.notifications.Android.Priority.High)
+			.setSound("default");
+		await firebase.notifications().displayNotification(notification);
 		return Promise.resolve();
+	} catch (error) {
+		warnUser(error.message);
 	}
-	const notification = new firebase.notifications.Notification()
-		.setNotificationId(message.messageId)
-		.setTitle(message.data.title)
-		.setBody(message.data.body)
-		.android.setChannelId("insider")
-		.android.setPriority(firebase.notifications.Android.Priority.High)
-		.setSound("default");
-	await firebase.notifications().displayNotification(notification);
-	return Promise.resolve();
 };
 
 export default { init, backgroundPushes, clearBadge, setState, getFcmToken };
