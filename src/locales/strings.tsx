@@ -14,6 +14,7 @@ export let strings = new LocalizedStrings({
 		certificate: "Сертификат ЭЦП",
 		toMain: "на Главную",
 		inn: "ИНН",
+		inn2: "ИНН",
 		legalName: "Наименование предприятия",
 		address: "Адрес",
 		okedCode: "Код по ОКЭД",
@@ -120,7 +121,9 @@ export let strings = new LocalizedStrings({
 		fileSavedUnderName: "Документ сохранён в ",
 		uploaded: "Загруженние",
 		deletedSuccesfully: "Успешно удален",
-		successfullyRejected: "Успешно отклонено"
+		successfullyRejected: "Успешно отклонено",
+		fileCorrupted:
+			"Файл поврежден или удален из базы данных. Вы не можете загрузить, подписать или отклонить документ"
 	},
 	en: {},
 	uz: {}

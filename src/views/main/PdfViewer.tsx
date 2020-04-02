@@ -4,9 +4,9 @@ import {
 	Dimensions,
 	StyleSheet,
 	TouchableWithoutFeedback,
-	View
+	View,
+	ToastAndroid
 } from "react-native";
-import RNFS from "react-native-fs";
 import Pdf from "react-native-pdf";
 import SimpleLine from "react-native-vector-icons/Feather";
 import { connect } from "react-redux";
@@ -32,6 +32,7 @@ import {
 } from "../../redux/types";
 import { sign } from "../../utils/bdmImzoProvider";
 import { NavigationProps } from "../../utils/defaultPropTypes";
+import RNFB from "rn-fetch-blob";
 
 let { width, height } = Dimensions.get("window");
 
@@ -168,41 +169,27 @@ const PdfViewer = ({
 
 	//TODO
 	let download = async () => {
-		//* Check if new document
-		var path = RNFS.ExternalStorageDirectoryPath;
-		if (filePath) {
-			path += "/" + fileName;
-		} else {
-			path += `/${docId}.pdf`;
-		}
-		console.warn(RNFS.ExternalStorageDirectoryPath);
-
-		// let fileUrl = docId
-		// 	? `${url}/document/view/pdf/${docId}`
-		// 	: `${url}/document/instant/view/pdf?path=${filePath}/${fileName}`;
-		// let data = await RNFetchBlob.fetch("GET", fileUrl, {
-		// 	Authorization: `Bearer ${accessToken}`
-		// });
-		// write the file
-		try {
-			let assets = await RNFS.writeFile(
-				RNFS.DocumentDirectoryPath + "/test.txt",
-				"TRANSLATSIYa jkjkj jjkjkjkjk",
-				"utf8"
-			);
-			console.warn("Success");
-		} catch (error) {
-			console.warn("Wait a minute");
-		}
-
-		// RNFS.writeFile(path, data.data.toString())
-		// 	.then(success => {
-		// 		console.log("FILE WRITTEN!");
-		// 		warnUser(strings.fileSavedUnderName + "\n" + path);
-		// 	})
-		// 	.catch(err => {
-		// 		console.log(err.message);
-		// 	});
+		showModal(strings.fetchingData);
+		//* Get file content
+		let data = await RNFB.fetch(
+			"GET",
+			docId
+				? `${url}/document/view/pdf/${docId}`
+				: `${url}/document/instant/view/pdf?path=${filePath}/${fileName}`,
+			{ Authorization: `Bearer ${accessToken}` }
+		);
+		let tempName = docId ? `${docId}.pdf` : fileName;
+		let res = await RNFB.fs.writeFile(
+			RNFB.fs.dirs.DownloadDir + "/" + tempName,
+			data.base64(),
+			"base64"
+		);
+		dispatch({
+			type: SET_SUCCESS_ERROR,
+			payload: `Файл сохранен в папке загрузок как ${tempName}`
+		});
+		await sleep(3000);
+		dispatch(hideError());
 	};
 
 	let { hasSign } = user;
@@ -278,7 +265,7 @@ const PdfViewer = ({
 					onError={error => {
 						dispatch({
 							type: SET_DANGER_ERROR,
-							payload: error.message
+							payload: strings.fileCorrupted
 						});
 						setTimeout(() => dispatch(hideError()), 3000);
 					}}

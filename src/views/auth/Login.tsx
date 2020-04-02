@@ -36,7 +36,7 @@ let socialIcons = [
 	{ name: "telegram-plane", url: "https://t.me/bdm_24m_uz" },
 	{ name: "instagram", url: "https://www.instagram.com/bdmuzb/" },
 	{ name: "facebook-square", url: "https://www.facebook.com/bdmuzb" },
-	{ name: "linkedin", url: "https://t.me/bdm_24m_uz" }
+	{ name: "linkedin", url: "https://www.linkedin.com/company/bdm-24m" }
 ];
 const Login = ({ navigation, requestUserLogin }) => {
 	let isIos = Platform.OS === "ios";
