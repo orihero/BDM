@@ -13,7 +13,7 @@ interface RectangularInputProps {
 
 const RectangularInput = ({
 	placeholder,
-	onChange = () => {},
+	onChange = () => { },
 	value,
 	disabled,
 	containerStyle,

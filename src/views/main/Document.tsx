@@ -11,7 +11,7 @@ import { strings } from "../../locales/strings";
 import { withNavigation } from "react-navigation";
 import { NavigationProps } from "../../utils/defaultPropTypes";
 import { connect } from "react-redux";
-import icon from "../../assets/images/icon.png";
+import icon from "../../assets/images/logo_100x100-01.png";
 
 export interface DocumentProps {
 	documentId: string;

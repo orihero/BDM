@@ -112,7 +112,8 @@ const Profile = ({ navigation, user }) => {
 				{
 					type: FieldType.INPUT,
 					placeholder: "Рег.номер налогоплат…",
-					size: FieldSize.QUERTER_THREE
+					size: FieldSize.QUERTER_THREE,
+					name: 'registerNumber'
 				}
 			],
 			title: strings.nds,
@@ -124,12 +125,15 @@ const Profile = ({ navigation, user }) => {
 				{
 					size: FieldSize.QUARTER,
 					type: FieldType.INPUT,
-					placeholder: strings.mfo
+					placeholder: strings.mfo,
+					name: 'fullName'
 				},
 				{
 					type: FieldType.INPUT,
 					placeholder: strings.lightAccount,
-					size: FieldSize.QUERTER_THREE
+					size: FieldSize.QUERTER_THREE,
+					name: 'lightAccount'
+
 				}
 			],
 			title: strings.bankAccount,

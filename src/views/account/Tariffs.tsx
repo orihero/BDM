@@ -15,14 +15,14 @@ import Text from "../../components/common/CustomText";
 import { strings } from "../../locales/strings";
 import { colors } from "../../constants";
 
-interface TariffsProps {}
+interface TariffsProps { }
 
 let tariffs: TariffProps[] = {
 	14: {
 		id: 14,
 		title: "Плата за документ",
 		// shortDescription: 'Некое пояснение',
-		price: "1000 сум",
+		price: "500 сум",
 		period: "за исходящий документ",
 		description: `   Плата за исходящий документ
 

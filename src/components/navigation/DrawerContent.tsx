@@ -139,7 +139,7 @@ let menus: DrawerItemProps[] = [
 				action: {
 					status: DocumentStatus.signed
 				},
-				countPath: "outputBox.signed"
+				countPath: "outputBox.signature"
 			},
 			{
 				title: strings.uploaded,
@@ -149,7 +149,7 @@ let menus: DrawerItemProps[] = [
 				action: {
 					status: DocumentStatus.uploaded
 				},
-				countPath: "outputBox.uploaded"
+				countPath: "outputBox.downloaded"
 			},
 			{
 				title: strings.rejected,
@@ -159,7 +159,7 @@ let menus: DrawerItemProps[] = [
 				action: {
 					status: DocumentStatus.rejected
 				},
-				countPath: "outputBox.rejected"
+				countPath: "outputBox.reject"
 			},
 			{
 				title: strings.trash,
