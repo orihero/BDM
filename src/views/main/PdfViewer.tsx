@@ -170,6 +170,11 @@ const PdfViewer = ({
 	//TODO
 	let download = async () => {
 		showModal(strings.fetchingData);
+		let documentNumber = navigation.getParam("documentNumber");
+		let documentDate = navigation.getParam("documentDate");
+		let buyerTin = navigation.getParam("buyerTin");
+		let documentTypeName = navigation.getParam("documentTypeName");
+		let docType = docIdUrls[documentTypeName].name;
 		//* Get file content
 		let data = await RNFB.fetch(
 			"GET",
@@ -178,7 +183,9 @@ const PdfViewer = ({
 				: `${url}/document/instant/view/pdf?path=${filePath}/${fileName}`,
 			{ Authorization: `Bearer ${accessToken}` }
 		);
-		let tempName = docId ? `${docId}.pdf` : fileName;
+		let tempName = docId
+			? `${docType}№${documentNumber}_от${documentDate}_от${buyerTin}.pdf`
+			: fileName;
 		let res = await RNFB.fs.writeFile(
 			RNFB.fs.dirs.DownloadDir + "/" + tempName,
 			data.base64(),

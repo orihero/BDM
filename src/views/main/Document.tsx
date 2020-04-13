@@ -35,13 +35,20 @@ const Document: React.FC<DocumentProps> = ({
 	documentSentDate,
 	navigation,
 	buyerTin2,
+	documentTypeName,
 	boxType,
 	status
 }) => {
 	return (
 		<TouchableWithoutFeedback
 			onPress={() => {
-				navigation.navigate("PdfViewer", { docId: documentId });
+				navigation.navigate("PdfViewer", {
+					docId: documentId,
+					documentDate,
+					documentNumber,
+					buyerTin,
+					documentTypeName
+				});
 			}}
 		>
 			<View style={[commonStyles.shadow, styles.container]}>

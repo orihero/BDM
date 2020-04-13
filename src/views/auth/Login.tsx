@@ -10,7 +10,8 @@ import {
 	Linking,
 	KeyboardAvoidingView,
 	ScrollView,
-	Platform
+	Platform,
+	ToastAndroid
 } from "react-native";
 import { connect } from "react-redux";
 import logo from "../../assets/images/logo.png";
@@ -24,6 +25,7 @@ import { requestUserLogin } from "../../redux/actions";
 import BlurWrapper from "../../components/containers/BlurWrapper";
 import FA5 from "react-native-vector-icons/FontAwesome5";
 import RectangularInput from "../../components/common/RectangularInput";
+import Launcher from "react-native-intent-launcher";
 
 let { width } = Dimensions.get("window");
 
@@ -47,7 +49,13 @@ const Login = ({ navigation, requestUserLogin }) => {
 	let loginWithUsername = () => {
 		requestUserLogin({ remember, username, password });
 	};
-	let onLogin = () => {
+	let onLogin = async () => {
+		try {
+			await Launcher.isAppInstalled("uz.yt.eimzo");
+		} catch (error) {
+			ToastAndroid.show(strings.downloadEImzoApp, 2000);
+			return;
+		}
 		requestUserLogin({ remember });
 	};
 	let onStandartLoginCheck = () => {
@@ -185,7 +193,8 @@ const styles = StyleSheet.create({
 	promptSmallText: {
 		color: colors.lightGray,
 		fontSize: 12,
-		textAlign: "center"
+		textAlign: "center",
+		fontWeight: "bold"
 	},
 	enterAccount: {
 		color: colors.black,

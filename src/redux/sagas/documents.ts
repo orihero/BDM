@@ -106,25 +106,32 @@ let invoice = {
 
 export let docIdUrls = {
 	"1": {
-		url: "/create/contract"
+		url: "/create/contract",
+		name: "Договор"
 	},
 	"2": {
-		url: "/create/invoice"
+		url: "/create/invoice",
+		name: "Счет-фактура"
 	},
 	"3": {
-		url: "/create/act/completed"
+		url: "/create/act/completed",
+		name: "Акт-выпольненных-работ"
 	},
 	"4": {
-		url: "/create/act/acceptance"
+		url: "/create/act/acceptance",
+		name: "Акт-прием-передачи"
 	},
 	5: {
-		url: "/create/act/reconciliation"
+		url: "/create/act/reconciliation",
+		name: "Акт-сверки-взаиморасчетов"
 	},
 	"6": {
-		url: "/create/empowerment"
+		url: "/create/empowerment",
+		name: "Доверенность"
 	},
 	other: {
-		url: "/create/other"
+		url: "/create/other",
+		name: "Прочие"
 	}
 };
 
@@ -392,7 +399,7 @@ export function* createDocument({ payload: data }) {
 }
 
 export function* documentInteractionHandler({
-	payload: { documentId, actionType, notes, newInvoiceContent = "" }
+	payload: { documentId, actionType, notes, newInvoiceContent = "", tin }
 }) {
 	try {
 		//* Show loading
@@ -414,13 +421,22 @@ export function* documentInteractionHandler({
 					newInvoiceContent,
 					notes
 				});
-				// yield call(requests.documents.sendPush({}))
+				yield call(requests.documents.sendPush, {
+					id: documentId,
+					tin,
+					message: 30
+				});
 				message = strings.successfullyRejected;
 			}
 			if (actionType === "accept") {
 				let response = yield call(requests.documents.sign, {
 					documentId,
 					sign: sign.pkcs7
+				});
+				yield call(requests.documents.sendPush, {
+					id: documentId,
+					tin,
+					message: 20
 				});
 				message = strings.signedSuccessfully;
 			}
