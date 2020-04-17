@@ -101,6 +101,7 @@ const Main = ({
 				fetchDocuments(action);
 				break;
 			case DrawerActionTypes.logout:
+				AsyncStorage.setItem('@credentials', '{}');
 				dispatch(userLoggedOut());
 				navigation.navigate(action.navigateTo);
 				break;

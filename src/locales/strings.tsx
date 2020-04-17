@@ -114,8 +114,8 @@ export let strings = new LocalizedStrings({
 		empovermentDate: "Дата доверенности",
 		yourSignIsNeeded: "We need your sign to proceed!",
 		balance: "Баланс",
-		loginWithEImzo: "Войти при помощи Э-ИМЗО",
-		downloadEImzoApp: "Скачайте приложения Э-ИМЗО для входа",
+		loginWithEImzo: "Войти при помощи E-IMZO",
+		downloadEImzoApp: "Скачайте приложения E-IMZO для входа",
 		defaultLogin: "Войти при помощи логина",
 		rejectReason: "Причина отказа",
 		fileSavedUnderName: "Документ сохранён в ",
@@ -123,7 +123,8 @@ export let strings = new LocalizedStrings({
 		deletedSuccesfully: "Успешно удален",
 		successfullyRejected: "Успешно отклонено",
 		fileCorrupted:
-			"Файл поврежден или удален из базы данных. Вы не можете загрузить, подписать или отклонить документ"
+			"Файл поврежден или удален из базы данных. Вы не можете загрузить, подписать или отклонить документ",
+		tariffSuccess: 'Тарифный план успешно изменен', connectToInternet: 'Включите доступ к интернету'
 	},
 	en: {},
 	uz: {}

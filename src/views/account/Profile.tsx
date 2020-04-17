@@ -12,6 +12,9 @@ import { FieldProps, FieldSize, FieldType } from "../auth";
 const Profile = ({ navigation, user }) => {
 	let visible = user.data.legalUser;
 	console.warn(user);
+
+	console.warn("user");
+	//find iin 
 	let fields: FieldProps[] = [
 		{
 			type: FieldType.INPUT,
@@ -113,7 +116,7 @@ const Profile = ({ navigation, user }) => {
 					type: FieldType.INPUT,
 					placeholder: "Рег.номер налогоплат…",
 					size: FieldSize.QUERTER_THREE,
-					name: 'registerNumber'
+					name: 'vatPayerCode'
 				}
 			],
 			title: strings.nds,
@@ -122,17 +125,17 @@ const Profile = ({ navigation, user }) => {
 		{
 			type: FieldType.LINE,
 			columns: [
-				{
-					size: FieldSize.QUARTER,
-					type: FieldType.INPUT,
-					placeholder: strings.mfo,
-					name: 'fullName'
-				},
+				// {
+				// 	size: FieldSize.QUARTER,
+				// 	type: FieldType.INPUT,
+				// 	placeholder: strings.mfo,
+				// 	name: 'fullName'
+				// },
 				{
 					type: FieldType.INPUT,
 					placeholder: strings.lightAccount,
 					size: FieldSize.QUERTER_THREE,
-					name: 'lightAccount'
+					name: 'accountNumber'
 
 				}
 			],

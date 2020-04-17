@@ -159,7 +159,7 @@ export function* fetchDocumentsAsync({
 		if (!response) {
 			yield put({
 				type: SET_DANGER_ERROR,
-				payload: `${strings.somethingWentWrong}: ${error.message}`
+				payload: `${strings.connectToInternet}`
 			});
 		} else {
 			yield put({

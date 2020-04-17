@@ -23,10 +23,15 @@ export function* requestUserLogin({
 			hasSign = false;
 		} else {
 			let request = yield call(sign, null);
-			console.warn(request);
-			data = yield call(requests.auth.login, {
-				sign: request.pkcs7
-			});
+			if (!!request.pkcs7) {
+				console.warn(request);
+				data = yield call(requests.auth.login, {
+					sign: request.pkcs7
+				});
+			} else {
+				yield put(hideModal());
+				return;
+			}
 			hasSign = true;
 		}
 		yield put(

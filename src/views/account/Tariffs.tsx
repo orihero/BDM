@@ -10,7 +10,7 @@ import {
 	hideError
 } from "../../redux/actions";
 import BlurWrapper from "../../components/containers/BlurWrapper";
-import { SET_SUCCESS_ERROR } from "../../redux/types";
+import { SET_SUCCESS_ERROR, SET_DANGER_ERROR } from "../../redux/types";
 import Text from "../../components/common/CustomText";
 import { strings } from "../../locales/strings";
 import { colors } from "../../constants";
@@ -55,11 +55,11 @@ const Tariffs: React.FC<TariffsProps> = ({ dispatch, user }) => {
 		try {
 			dispatch(showModal());
 			let res = await requests.user.changeTariff({ billingPlanId });
-			dispatch({ type: SET_SUCCESS_ERROR, payload: res.data.message });
+			dispatch({ type: SET_SUCCESS_ERROR, payload: strings.tariffSuccess });
 			dispatch(userLoaded({ data: { ...user.data, billingPlanId } }));
 		} catch (error) {
 			let { response: res } = error;
-			dispatch({ type: SET_SUCCESS_ERROR, payload: res.data.message });
+			dispatch({ type: SET_DANGER_ERROR, payload: res.data.message });
 		} finally {
 			dispatch(hideModal());
 			dispatch(hideError());

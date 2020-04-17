@@ -84,6 +84,7 @@ const Login = ({ navigation, requestUserLogin }) => {
 			);
 		}
 		return (
+
 			<View>
 				<RectangularInput
 					containerStyle={{ marginBottom: 20 }}
@@ -126,41 +127,50 @@ const Login = ({ navigation, requestUserLogin }) => {
 					text={strings.login}
 				/>
 			</View>
+
 		);
 	};
 	return (
+		// <ScrollView style={{ flex: 1 }}>
 		<BlurWrapper>
-			<SafeAreaView style={styles.container}>
-				<View
-					style={[
-						commonStyles.centeredContainer,
-						{ alignItems: "flex-start", flex: 1.2 }
-					]}
-				>
-					<Image source={logo} style={styles.image} />
-				</View>
-				<View style={{ paddingHorizontal: 20 }}>{renderContent()}</View>
-				<View style={styles.footer}>
-					{socialIcons.map((e, i) => {
-						return (
-							<View key={i}>
-								<TouchableWithoutFeedback
-									key={i.toString()}
-									onPress={() => Linking.openURL(e.url)}
-								>
-									<FA5
-										name={e.name}
-										size={32}
-										color={colors.blue}
-										style={styles.icon}
-									/>
-								</TouchableWithoutFeedback>
-							</View>
-						);
-					})}
-				</View>
+			<SafeAreaView
+				style={styles.container}
+			>
+
+				<KeyboardAvoidingView behavior={'height'} style={{ flex: 1 }}>
+					<View
+						style={[
+							commonStyles.centeredContainer,
+							{ alignItems: "flex-start", flex: 1.2 }
+						]}
+					>
+						<Image source={logo} style={styles.image} />
+					</View>
+					<View style={{ paddingHorizontal: 20 }}>{renderContent()}</View>
+					<View style={styles.footer}>
+						{socialIcons.map((e, i) => {
+							return (
+								<View key={i}>
+									<TouchableWithoutFeedback
+										key={i.toString()}
+										onPress={() => Linking.openURL(e.url)}
+									>
+										<FA5
+											name={e.name}
+											size={32}
+											color={colors.blue}
+											style={styles.icon}
+										/>
+									</TouchableWithoutFeedback>
+								</View>
+							);
+						})}
+					</View>
+				</KeyboardAvoidingView>
+
 			</SafeAreaView>
 		</BlurWrapper>
+		// </ScrollView>
 	);
 };
 
@@ -223,19 +233,19 @@ export { WrappedLogin as Login };
 
 {
 	/* <TouchableWithoutFeedback
-            onPress={() => navigation.navigate('Register')}>
-            <View style={styles.footerBottom}>
-              <Text style={styles.promptSmallText}>{strings.noAccount}</Text>
-              <Text style={styles.promptBoldText}>
-                {'   '}
-                {strings.register}
-              </Text>
-            </View>
-          </TouchableWithoutFeedback> */
+			onPress={() => navigation.navigate('Register')}>
+			<View style={styles.footerBottom}>
+			  <Text style={styles.promptSmallText}>{strings.noAccount}</Text>
+			  <Text style={styles.promptBoldText}>
+				{'   '}
+				{strings.register}
+			  </Text>
+			</View>
+		  </TouchableWithoutFeedback> */
 }
 
 {
 	/* <View style={{ justifyContent: 'center', flex: 1 }}>
-            <RectangularSelect disabled />
-          </View> */
+			<RectangularSelect disabled />
+		  </View> */
 }
