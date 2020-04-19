@@ -52,17 +52,20 @@ let tariffs: TariffProps[] = {
 
 const Tariffs: React.FC<TariffsProps> = ({ dispatch, user }) => {
 	let subscribe = async billingPlanId => {
+		let res = { subscribe }
 		try {
 			dispatch(showModal());
-			let res = await requests.user.changeTariff({ billingPlanId });
+			res = await requests.user.changeTariff({ billingPlanId });
 			dispatch({ type: SET_SUCCESS_ERROR, payload: strings.tariffSuccess });
-			dispatch(userLoaded({ data: { ...user.data, billingPlanId } }));
 		} catch (error) {
 			let { response: res } = error;
 			dispatch({ type: SET_DANGER_ERROR, payload: res.data.message });
 		} finally {
 			dispatch(hideModal());
-			dispatch(hideError());
+			setTimeout(() => {
+				dispatch(hideError())
+				dispatch(userLoaded({ data: { ...user.data, billingPlanId } }));
+			}, 4000)
 		}
 	};
 	let balance = user.data && user.data.funds;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	Dimensions,
 	Image,
@@ -11,7 +11,8 @@ import {
 	KeyboardAvoidingView,
 	ScrollView,
 	Platform,
-	ToastAndroid
+	ToastAndroid,
+	Keyboard
 } from "react-native";
 import { connect } from "react-redux";
 import logo from "../../assets/images/logo.png";
@@ -33,6 +34,8 @@ const mapDispatchToProps = {
 	requestUserLogin
 };
 
+
+
 let socialIcons = [
 	{ name: "phone-square", url: "tel://+998951942424" },
 	{ name: "telegram-plane", url: "https://t.me/bdm_24m_uz" },
@@ -41,6 +44,20 @@ let socialIcons = [
 	{ name: "linkedin", url: "https://www.linkedin.com/company/bdm-24m" }
 ];
 const Login = ({ navigation, requestUserLogin }) => {
+	let [showSocials, setShowSocials] = useState(true)
+	useEffect(() => {
+		let keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+			setShowSocials(false)
+		});
+		let keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+			setShowSocials(true)
+		});
+		return () => {
+			keyboardDidShowListener.remove();
+			keyboardDidHideListener.remove();
+		}
+	}, [])
+
 	let isIos = Platform.OS === "ios";
 	const [remember, setRemember] = useState(true);
 	const [isUsername, setIsUsername] = useState(isIos);
@@ -71,13 +88,17 @@ const Login = ({ navigation, requestUserLogin }) => {
 					<GradientButton
 						onPress={onLogin}
 						full
+						startColor={colors.customBlue}
+						endColor={colors.customBlue}
 						text={strings.loginWithEImzo}
 					/>
 					<GradientButton
 						onPress={onStandartLoginCheck}
 						full
-						startColor={colors.darkPurple}
-						endColor={colors.lighPurple}
+						// startColor={colors.darkPurple}
+						// endColor={colors.lighPurple}
+						startColor={colors.customPurple}
+						endColor={colors.customPurple}
 						text={strings.defaultLogin}
 					/>
 				</View>
@@ -134,39 +155,39 @@ const Login = ({ navigation, requestUserLogin }) => {
 		// <ScrollView style={{ flex: 1 }}>
 		<BlurWrapper>
 			<SafeAreaView
-				style={styles.container}
+				style={[styles.container,
+				!showSocials && {
+					backgroundColor: colors.gray
+				}]}
 			>
-
-				<KeyboardAvoidingView behavior={'height'} style={{ flex: 1 }}>
-					<View
-						style={[
-							commonStyles.centeredContainer,
-							{ alignItems: "flex-start", flex: 1.2 }
-						]}
-					>
-						<Image source={logo} style={styles.image} />
-					</View>
-					<View style={{ paddingHorizontal: 20 }}>{renderContent()}</View>
-					<View style={styles.footer}>
-						{socialIcons.map((e, i) => {
-							return (
-								<View key={i}>
-									<TouchableWithoutFeedback
-										key={i.toString()}
-										onPress={() => Linking.openURL(e.url)}
-									>
-										<FA5
-											name={e.name}
-											size={32}
-											color={colors.blue}
-											style={styles.icon}
-										/>
-									</TouchableWithoutFeedback>
-								</View>
-							);
-						})}
-					</View>
-				</KeyboardAvoidingView>
+				<View
+					style={[
+						commonStyles.centeredContainer,
+						{ alignItems: "flex-start", flex: 1.2 }
+					]}
+				>
+					{showSocials && <Image source={logo} style={styles.image} />}
+				</View>
+				<View style={{ paddingHorizontal: 20 }}>{renderContent()}</View>
+				{showSocials && (<View style={styles.footer}>
+					{socialIcons.map((e, i) => {
+						return (
+							<View key={i}>
+								<TouchableWithoutFeedback
+									key={i.toString()}
+									onPress={() => Linking.openURL(e.url)}
+								>
+									<FA5
+										name={e.name}
+										size={32}
+										color={colors.blue}
+										style={styles.icon}
+									/>
+								</TouchableWithoutFeedback>
+							</View>
+						);
+					})}
+				</View>)}
 
 			</SafeAreaView>
 		</BlurWrapper>

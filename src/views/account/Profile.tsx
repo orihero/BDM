@@ -10,7 +10,7 @@ import { strings } from "../../locales/strings";
 import { FieldProps, FieldSize, FieldType } from "../auth";
 
 const Profile = ({ navigation, user }) => {
-	let visible = user.data.legalUser;
+	let visible = user.data.legalUser && user.data.legalUser;
 	console.warn(user);
 
 	console.warn("user");
@@ -192,7 +192,8 @@ const Profile = ({ navigation, user }) => {
 				districtId,
 				regionId,
 				addressStreet,
-				addressHomeNumber
+				addressHomeNumber,
+				vatPayerCode, accountNumber
 			} = getSubmitData();
 			let data = {
 				phoneCode,
@@ -202,7 +203,7 @@ const Profile = ({ navigation, user }) => {
 				regionId,
 				addressStreet,
 				addressHomeNumber,
-				address: "L"
+				vatPayerCode, accountNumber
 			};
 			try {
 				let res = await requests.user.update(data);

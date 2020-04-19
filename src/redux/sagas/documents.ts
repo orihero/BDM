@@ -405,16 +405,25 @@ export function* documentInteractionHandler({
 		//* Show loading
 		yield put(showModal(strings.fetchingData));
 		let message = "";
+		console.warn("start document");
 		if (actionType === "delete") {
+			console.warn("delete");
+
 			let response = yield call(requests.documents.delete, documentId);
 			message = strings.deletedSuccesfully;
 		} else {
+			console.warn("not delete");
+
 			let signMessage = yield call(
 				requests.documents.getSignMessage,
 				documentId
 			);
+			console.warn(signMessage);
 			let sign = yield call(eSign, signMessage.data.data);
+			console.warn(sign);
 			if (actionType === "reject") {
+				console.warn("rejecting");
+
 				let response = yield call(requests.documents.reject, {
 					documentId,
 					sign: sign.pkcs7,
@@ -429,6 +438,7 @@ export function* documentInteractionHandler({
 				message = strings.successfullyRejected;
 			}
 			if (actionType === "accept") {
+				console.warn("accepting");
 				let response = yield call(requests.documents.sign, {
 					documentId,
 					sign: sign.pkcs7

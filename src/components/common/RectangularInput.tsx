@@ -23,6 +23,7 @@ const RectangularInput = ({
 		<View style={[styles.container, containerStyle]}>
 			<TextInput
 				{...rest}
+				numberOfLines={2}
 				placeholder={placeholder}
 				editable={!disabled}
 				value={value}

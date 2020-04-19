@@ -84,7 +84,7 @@ const Main = ({
 }) => {
 	const [width, setWidth] = useState(new Animated.Value(minW));
 	const [expanded, setExpanded] = useState(false);
-	let toggle = (action: DrawerAction) => {
+	let toggle = async (action: DrawerAction) => {
 		if (!action || !action.type) {
 			Animated.spring(width, {
 				toValue: expanded ? minW : maxW
@@ -101,7 +101,7 @@ const Main = ({
 				fetchDocuments(action);
 				break;
 			case DrawerActionTypes.logout:
-				AsyncStorage.setItem('@credentials', '{}');
+				await AsyncStorage.setItem('@credentials', '{}');
 				dispatch(userLoggedOut());
 				navigation.navigate(action.navigateTo);
 				break;

@@ -124,7 +124,8 @@ export let strings = new LocalizedStrings({
 		successfullyRejected: "Успешно отклонено",
 		fileCorrupted:
 			"Файл поврежден или удален из базы данных. Вы не можете загрузить, подписать или отклонить документ",
-		tariffSuccess: 'Тарифный план успешно изменен', connectToInternet: 'Включите доступ к интернету'
+		tariffSuccess: 'Тарифный план успешно изменен',
+		connectToInternet: 'Включите доступ к интернету'
 	},
 	en: {},
 	uz: {}

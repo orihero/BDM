@@ -73,7 +73,7 @@ const Document: React.FC<DocumentProps> = ({
 						]}
 					>
 						<Text style={styles.regularText}>{strings.amount}</Text>
-						<Text style={styles.regularText}>{sum} сум</Text>
+						<Text style={styles.regularText}>{`${sum} сум`}</Text>
 					</View>
 					<View
 						style={[

@@ -12,5 +12,7 @@ export const colors = {
 	ultraLightGray: "#F5F5F5",
 	yellow: "#FFD15C",
 	darkPurple: "#3D029D",
-	lighPurple: "#6E36D8"
+	lighPurple: "#6E36D8",
+	customBlue: '#7dc2dc',
+	customPurple: '#3e428c'
 };
