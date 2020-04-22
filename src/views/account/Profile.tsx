@@ -14,13 +14,13 @@ const Profile = ({ navigation, user }) => {
 	console.warn(user);
 
 	console.warn("user");
-	//find iin 
+	//find iin
 	let fields: FieldProps[] = [
 		{
 			type: FieldType.INPUT,
 			size: FieldSize.FULL,
 			title: strings.inn,
-			placeholder: "303911042 - Пономарев Дмитрий",
+			placeholder: strings.inn,
 			disabled: true,
 			name: "tin"
 		},
@@ -28,58 +28,99 @@ const Profile = ({ navigation, user }) => {
 			type: FieldType.INPUT,
 			size: FieldSize.FULL,
 			title: strings.legalName,
-			placeholder: "SMART BUSINESS LAB",
+			placeholder: strings.legalName,
 			disabled: true,
 			name: "name"
 		},
 		{
-			type: FieldType.COMPLEX,
+			name: "regionId",
+			type: FieldType.SELECT,
+			placeholder: strings.region,
+			title: strings.region,
 			size: FieldSize.FULL,
-			title: strings.address,
-			rows: [
-				[
-					{
-						name: "regionId",
-						type: FieldType.SELECT,
-						placeholder: strings.region,
-						size: FieldSize.HALF,
-						fetch: requests.helper.getRegions,
-						map: (e, index) => ({
-							value: index,
-							label: e.name,
-							actualValue: e.id
-						})
-					},
-					{
-						name: "districtId",
-						type: FieldType.SELECT,
-						placeholder: strings.town,
-						size: FieldSize.HALF,
-						fetch: requests.helper.getDistricts,
-						map: (e, index) => ({
-							value: index,
-							label: e.name,
-							actualValue: e.id
-						}),
-						fetchParamFromStateName: "regionId"
-					}
-				],
-				[
-					{
-						type: FieldType.INPUT,
-						placeholder: strings.street,
-						size: FieldSize.HALF,
-						name: "addressStreet"
-					},
-					{
-						type: FieldType.INPUT,
-						placeholder: strings.number,
-						size: FieldSize.HALF,
-						name: "addressHomeNumber"
-					}
-				]
-			]
+			fetch: requests.helper.getRegions,
+			map: (e, index) => ({
+				value: index,
+				label: e.name,
+				actualValue: e.id
+			})
 		},
+		{
+			name: "districtId",
+			type: FieldType.SELECT,
+			placeholder: strings.town,
+			title: strings.town,
+			size: FieldSize.FULL,
+			fetch: requests.helper.getDistricts,
+			map: (e, index) => ({
+				value: index,
+				label: e.name,
+				actualValue: e.id
+			}),
+			fetchParamFromStateName: "regionId"
+		},
+		{
+			type: FieldType.INPUT,
+			placeholder: strings.street,
+			title: strings.street,
+			size: FieldSize.FULL,
+			name: "addressStreet"
+		},
+		{
+			type: FieldType.INPUT,
+			placeholder: strings.number,
+			title: strings.number,
+			size: FieldSize.FULL,
+			name: "addressHomeNumber"
+		},
+		// {
+		// 	type: FieldType.COMPLEX,
+		// 	size: FieldSize.FULL,
+		// 	title: strings.address,
+		// 	rows: [
+		// 		[
+		// 			{
+		// 				name: "regionId",
+		// 				type: FieldType.SELECT,
+		// 				placeholder: strings.region,
+		// 				size: FieldSize.HALF,
+		// 				fetch: requests.helper.getRegions,
+		// 				map: (e, index) => ({
+		// 					value: index,
+		// 					label: e.name,
+		// 					actualValue: e.id
+		// 				})
+		// 			},
+		// 			{
+		// 				name: "districtId",
+		// 				type: FieldType.SELECT,
+		// 				placeholder: strings.town,
+		// 				size: FieldSize.HALF,
+		// 				fetch: requests.helper.getDistricts,
+		// 				map: (e, index) => ({
+		// 					value: index,
+		// 					label: e.name,
+		// 					actualValue: e.id
+		// 				}),
+		// 				fetchParamFromStateName: "regionId"
+		// 			}
+		// 		],
+		// 		[
+		// 			{
+		// 				type: FieldType.INPUT,
+		// 				placeholder: strings.street,
+		// 				size: FieldSize.HALF,
+		// 				name: "addressStreet"
+		// 			},
+		// 			{
+		// 				type: FieldType.INPUT,
+		// 				placeholder: strings.number,
+		// 				size: FieldSize.HALF,
+		// 				name: "addressHomeNumber"
+		// 			}
+		// 		]
+		// 	]
+		// },
 		{
 			type: FieldType.INPUT,
 			placeholder: strings.okedCode,
@@ -110,33 +151,45 @@ const Profile = ({ navigation, user }) => {
 				{
 					size: FieldSize.QUARTER,
 					type: FieldType.SELECT,
-					placeholder: "Да"
+					placeholder: "Да",
+					staticValue: [
+						{ label: "Да", value: 0, actualValue: true },
+						{ label: "Нет", value: 1, actualValue: false }
+					],
+					name: "hasVatPayer"
 				},
 				{
 					type: FieldType.INPUT,
-					placeholder: "Рег.номер налогоплат…",
+					placeholder: "Рег.номер",
 					size: FieldSize.QUERTER_THREE,
-					name: 'vatPayerCode'
+					name: "vatPayerCode"
 				}
 			],
 			title: strings.nds,
 			visible
 		},
+		// {
+		// 	type: FieldType.INPUT,
+		// 	placeholder: strings.bankAccount,
+		// 	size: FieldSize.FULL,
+		// 	title: strings.bankAccount,
+		// 	name: "bankAccountNumber",
+		// 	visible
+		// },
 		{
 			type: FieldType.LINE,
 			columns: [
-				// {
-				// 	size: FieldSize.QUARTER,
-				// 	type: FieldType.INPUT,
-				// 	placeholder: strings.mfo,
-				// 	name: 'fullName'
-				// },
+				{
+					size: FieldSize.QUARTER,
+					type: FieldType.INPUT,
+					placeholder: strings.mfo,
+					name: "bankCode"
+				},
 				{
 					type: FieldType.INPUT,
 					placeholder: strings.lightAccount,
 					size: FieldSize.QUERTER_THREE,
-					name: 'accountNumber'
-
+					name: "bankAccountNumber"
 				}
 			],
 			title: strings.bankAccount,
@@ -149,18 +202,7 @@ const Profile = ({ navigation, user }) => {
 					size: FieldSize.QUARTER,
 					type: FieldType.INPUT,
 					placeholder: strings.code,
-					name: "phoneCode",
-					staticValue: [
-						{ label: "99", value: 99, actualValue: 99 },
-						{ label: "98", value: "98", actualValue: "99" },
-						{ label: "97", value: "97", actualValue: "99" },
-						{ label: "95", value: "95", actualValue: "99" },
-						{ label: "94", value: "94", actualValue: "99" },
-						{ label: "93", value: "93", actualValue: "99" },
-						{ label: "90", value: "90", actualValue: "99" },
-						{ label: "71", value: "71", actualValue: "99" },
-						{ label: "66", value: "66", actualValue: "99" }
-					]
+					name: "phoneCode"
 				},
 				{
 					type: FieldType.INPUT,
@@ -177,11 +219,11 @@ const Profile = ({ navigation, user }) => {
 			size: FieldSize.FULL,
 			title: strings.email,
 			name: "email"
-		},
-		{
-			type: FieldType.CHECKBOX,
-			title: `  ${strings.accept}`
 		}
+		// {
+		// 	type: FieldType.CHECKBOX,
+		// 	title: `  ${strings.accept}`
+		// }
 	];
 	let footer = ({ getSubmitData }) => {
 		let save = async () => {
@@ -193,7 +235,14 @@ const Profile = ({ navigation, user }) => {
 				regionId,
 				addressStreet,
 				addressHomeNumber,
-				vatPayerCode, accountNumber
+				vatPayerCode,
+				accountNumber,
+				hasVatPayer,
+				bankCode,
+				bankAccountNumber,
+				okedId,
+				mainDirector,
+				mainAccountant
 			} = getSubmitData();
 			let data = {
 				phoneCode,
@@ -203,7 +252,14 @@ const Profile = ({ navigation, user }) => {
 				regionId,
 				addressStreet,
 				addressHomeNumber,
-				vatPayerCode, accountNumber
+				vatPayerCode,
+				accountNumber,
+				hasVatPayer,
+				bankCode,
+				bankAccountNumber,
+				okedId,
+				mainDirector,
+				mainAccountant
 			};
 			try {
 				let res = await requests.user.update(data);
@@ -218,18 +274,9 @@ const Profile = ({ navigation, user }) => {
 		return (
 			<View style={styles.row}>
 				<View style={{ flex: 1 }}>
-					<RoundButton
-						full
-						flex
-						backgroundColor={colors.gray}
-						text={strings.cancel}
-						onPress={cancel}
-					/>
-				</View>
-				<View style={{ flex: 1 }}>
 					<GradientButton
 						textColor={colors.white}
-						fill
+						full
 						flex
 						text={strings.save}
 						onPress={save}
@@ -295,6 +342,9 @@ const mapStateToProps = ({ user }) => ({
 
 const mapDispatchToProps = {};
 
-let Connected = connect(mapStateToProps, mapDispatchToProps)(Profile);
+let Connected = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Profile);
 
 export { Connected as Profile };

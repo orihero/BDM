@@ -37,6 +37,7 @@ export interface FieldProps {
 	validation?: Validation;
 	//! Very specific if needed to pass param from state to fetch
 	fetchParamFromStateName?: string;
+	componentProps?: any;
 }
 
 export enum TitleType {

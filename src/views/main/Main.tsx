@@ -33,6 +33,7 @@ import DocumentPicker from "react-native-document-picker";
 import { requests } from "../../api/requests";
 import { SET_DANGER_ERROR } from "../../redux/types";
 import AsyncStorage from "@react-native-community/async-storage";
+import { storeName } from "../../redux/reducers/user";
 
 // let data: DocumentProps[] = [
 //   {
@@ -91,6 +92,8 @@ const Main = ({
 			}).start(() => setExpanded(!expanded));
 			return;
 		}
+		console.warn(action);
+
 		switch (action.type) {
 			case DrawerActionTypes.navigate:
 				navigation.navigate(action.navigateTo);
@@ -101,7 +104,12 @@ const Main = ({
 				fetchDocuments(action);
 				break;
 			case DrawerActionTypes.logout:
-				await AsyncStorage.setItem('@credentials', '{}');
+				console.warn("CLEARING");
+
+				await AsyncStorage.setItem(storeName, "{}");
+
+				console.warn("DONE");
+
 				dispatch(userLoggedOut());
 				navigation.navigate(action.navigateTo);
 				break;
@@ -231,6 +239,9 @@ const mapDispatchToProps = {
 	hideError
 };
 
-let ConnectedMain = connect(mapStateToProps, mapDispatchToProps)(Main);
+let ConnectedMain = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Main);
 
 export { ConnectedMain as Main };

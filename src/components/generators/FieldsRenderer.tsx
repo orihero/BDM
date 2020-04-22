@@ -128,8 +128,10 @@ const FieldsRenderer = ({
 	let getSubmitData = () => {
 		let normalState = { ...state };
 		Object.keys(normalState).forEach((key, i) => {
+			
 			//* Check if item is select
 			if (items[key] && items[key].data) {
+				if(items[key].data[normalState[key]])
 				normalState[key] =
 					items[key].data[normalState[key]].actualValue;
 			}
@@ -335,6 +337,7 @@ const FieldsRenderer = ({
 								value={state[e.name]}
 								onChange={val => updateState(e.name, val)}
 								placeholder={e.placeholder}
+								{...e.componentProps}
 							/>
 						</View>
 					);
@@ -358,6 +361,7 @@ const FieldsRenderer = ({
 											? "number"
 											: null
 									}
+									{...e.componentProps}
 								/>
 							</View>
 						);
@@ -382,6 +386,7 @@ const FieldsRenderer = ({
 										? "number-pad"
 										: null
 								}
+								{...e.componentProps}
 							/>
 						</View>
 					);
@@ -495,12 +500,12 @@ export const styles = StyleSheet.create({
 		marginBottom: 7.5
 	},
 	quarter: {
-		flex: 0.4,
+		flex: 0.3,
 		paddingRight: 5,
 		marginBottom: 7.5
 	},
 	quarterThree: {
-		flex: 0.6,
+		flex: 0.7,
 		paddingRight: 5,
 		marginBottom: 7.5
 	},

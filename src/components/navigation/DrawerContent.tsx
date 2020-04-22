@@ -31,7 +31,7 @@ export enum DocumentStatus {
 export enum DrawerActionTypes {
 	navigate = 0,
 	changeBox = 1,
-	logout
+	logout=2
 }
 
 export interface DrawerAction {

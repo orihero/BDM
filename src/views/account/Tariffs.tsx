@@ -15,7 +15,7 @@ import Text from "../../components/common/CustomText";
 import { strings } from "../../locales/strings";
 import { colors } from "../../constants";
 
-interface TariffsProps { }
+interface TariffsProps {}
 
 let tariffs: TariffProps[] = {
 	14: {
@@ -52,56 +52,56 @@ let tariffs: TariffProps[] = {
 
 const Tariffs: React.FC<TariffsProps> = ({ dispatch, user }) => {
 	let subscribe = async billingPlanId => {
-		let res = { subscribe }
+		let res = { subscribe };
 		try {
 			dispatch(showModal());
 			res = await requests.user.changeTariff({ billingPlanId });
-			dispatch({ type: SET_SUCCESS_ERROR, payload: strings.tariffSuccess });
+			dispatch({
+				type: SET_SUCCESS_ERROR,
+				payload: strings.tariffSuccess
+			});
 		} catch (error) {
 			let { response: res } = error;
 			dispatch({ type: SET_DANGER_ERROR, payload: res.data.message });
 		} finally {
 			dispatch(hideModal());
 			setTimeout(() => {
-				dispatch(hideError())
+				dispatch(hideError());
 				dispatch(userLoaded({ data: { ...user.data, billingPlanId } }));
-			}, 4000)
+			}, 4000);
 		}
 	};
 	let balance = user.data && user.data.funds;
 
 	return (
-		<BlurWrapper>
-			<ScrollView showsVerticalScrollIndicator={false}>
-				<View style={styles.balanceContainer}>
-					<Text style={styles.balance}>{`${strings.balance}: `}</Text>
-					<Text
-						style={{
-							color: balance > 0 ? colors.green : colors.red,
-							fontSize: 18,
-							fontWeight: "bold"
-						}}
-					>{`${user.data.funds} ${strings.uzs}`}</Text>
-				</View>
-				{user.data.billingPlanId && (
-					<Text
-						style={{
-							margin: 15,
-							textAlign: "center",
-							fontWeight: "bold",
-							fontSize: 18
-						}}
-					>
-						{strings.yourPlan}{" "}
-						{tariffs[user.data.billingPlanId].title}
-					</Text>
-				)}
-				{Object.keys(tariffs).map(key => {
-					let e = tariffs[key];
-					return <Tariff {...e} onPress={() => subscribe(e.id)} />;
-				})}
-			</ScrollView>
-		</BlurWrapper>
+		<ScrollView showsVerticalScrollIndicator={false}>
+			<View style={styles.balanceContainer}>
+				<Text style={styles.balance}>{`${strings.balance}: `}</Text>
+				<Text
+					style={{
+						color: balance > 0 ? colors.green : colors.red,
+						fontSize: 18,
+						fontWeight: "bold"
+					}}
+				>{`${user.data.funds} ${strings.uzs}`}</Text>
+			</View>
+			{user.data.billingPlanId && (
+				<Text
+					style={{
+						margin: 15,
+						textAlign: "center",
+						fontWeight: "bold",
+						fontSize: 18
+					}}
+				>
+					{strings.yourPlan} {tariffs[user.data.billingPlanId].title}
+				</Text>
+			)}
+			{Object.keys(tariffs).map(key => {
+				let e = tariffs[key];
+				return <Tariff {...e} onPress={() => subscribe(e.id)} />;
+			})}
+		</ScrollView>
 	);
 };
 

@@ -26,7 +26,7 @@ const Splash = ({
 			let data = JSON.parse(credentials);
 			userLoaded(data);
 			let res = await requests.user.me();
-			userLoaded({ data: res.data.data, ...data });
+			userLoaded({ ...data, data: res.data.data });
 			let userData = res.data.data;
 			NotificationService.init();
 			let token = await NotificationService.getFcmToken();
@@ -82,4 +82,7 @@ const mapDispatchToProps = {
 	hideError
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Splash);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Splash);

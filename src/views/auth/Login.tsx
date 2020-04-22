@@ -34,29 +34,33 @@ const mapDispatchToProps = {
 	requestUserLogin
 };
 
-
-
 let socialIcons = [
-	{ name: "phone-square", url: "tel://+998951942424" },
+	{ name: "phone-square", url: "tel:+998951942424" },
 	{ name: "telegram-plane", url: "https://t.me/bdm_24m_uz" },
 	{ name: "instagram", url: "https://www.instagram.com/bdmuzb/" },
 	{ name: "facebook-square", url: "https://www.facebook.com/bdmuzb" },
 	{ name: "linkedin", url: "https://www.linkedin.com/company/bdm-24m" }
 ];
 const Login = ({ navigation, requestUserLogin }) => {
-	let [showSocials, setShowSocials] = useState(true)
+	let [showSocials, setShowSocials] = useState(true);
 	useEffect(() => {
-		let keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-			setShowSocials(false)
-		});
-		let keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-			setShowSocials(true)
-		});
+		let keyboardDidShowListener = Keyboard.addListener(
+			"keyboardDidShow",
+			() => {
+				setShowSocials(false);
+			}
+		);
+		let keyboardDidHideListener = Keyboard.addListener(
+			"keyboardDidHide",
+			() => {
+				setShowSocials(true);
+			}
+		);
 		return () => {
 			keyboardDidShowListener.remove();
 			keyboardDidHideListener.remove();
-		}
-	}, [])
+		};
+	}, []);
 
 	let isIos = Platform.OS === "ios";
 	const [remember, setRemember] = useState(true);
@@ -105,7 +109,6 @@ const Login = ({ navigation, requestUserLogin }) => {
 			);
 		}
 		return (
-
 			<View>
 				<RectangularInput
 					containerStyle={{ marginBottom: 20 }}
@@ -146,19 +149,22 @@ const Login = ({ navigation, requestUserLogin }) => {
 					onPress={loginWithUsername}
 					full
 					text={strings.login}
+					startColor={colors.customPurple}
+					endColor={colors.customPurple}
 				/>
 			</View>
-
 		);
 	};
 	return (
 		// <ScrollView style={{ flex: 1 }}>
 		<BlurWrapper>
 			<SafeAreaView
-				style={[styles.container,
-				!showSocials && {
-					backgroundColor: colors.gray
-				}]}
+				style={[
+					styles.container,
+					!showSocials && {
+						backgroundColor: colors.gray
+					}
+				]}
 			>
 				<View
 					style={[
@@ -166,29 +172,32 @@ const Login = ({ navigation, requestUserLogin }) => {
 						{ alignItems: "flex-start", flex: 1.2 }
 					]}
 				>
-					{showSocials && <Image source={logo} style={styles.image} />}
+					{showSocials && (
+						<Image source={logo} style={styles.image} />
+					)}
 				</View>
 				<View style={{ paddingHorizontal: 20 }}>{renderContent()}</View>
-				{showSocials && (<View style={styles.footer}>
-					{socialIcons.map((e, i) => {
-						return (
-							<View key={i}>
-								<TouchableWithoutFeedback
-									key={i.toString()}
-									onPress={() => Linking.openURL(e.url)}
-								>
-									<FA5
-										name={e.name}
-										size={32}
-										color={colors.blue}
-										style={styles.icon}
-									/>
-								</TouchableWithoutFeedback>
-							</View>
-						);
-					})}
-				</View>)}
-
+				{showSocials && (
+					<View style={styles.footer}>
+						{socialIcons.map((e, i) => {
+							return (
+								<View key={i}>
+									<TouchableWithoutFeedback
+										key={i.toString()}
+										onPress={() => Linking.openURL(e.url)}
+									>
+										<FA5
+											name={e.name}
+											size={32}
+											color={colors.customPurple}
+											style={styles.icon}
+										/>
+									</TouchableWithoutFeedback>
+								</View>
+							);
+						})}
+					</View>
+				)}
 			</SafeAreaView>
 		</BlurWrapper>
 		// </ScrollView>
@@ -248,7 +257,10 @@ const styles = StyleSheet.create({
 	}
 });
 
-let WrappedLogin = connect(null, mapDispatchToProps)(Login);
+let WrappedLogin = connect(
+	null,
+	mapDispatchToProps
+)(Login);
 
 export { WrappedLogin as Login };
 
