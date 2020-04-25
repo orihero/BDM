@@ -49,7 +49,7 @@ export const Tariff: React.FC<TariffProps> = ({
 						start={{ x: 0, y: 0 }}
 						end={{ x: 1, y: 0 }}
 						style={StyleSheet.absoluteFill}
-						colors={[colors.darkBlue, colors.blue]}
+						colors={[colors.customPurple, colors.customPurple]}
 					/>
 					<Text style={styles.title}>{strings.select}</Text>
 				</View>

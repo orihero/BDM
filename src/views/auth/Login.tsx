@@ -27,6 +27,7 @@ import BlurWrapper from "../../components/containers/BlurWrapper";
 import FA5 from "react-native-vector-icons/FontAwesome5";
 import RectangularInput from "../../components/common/RectangularInput";
 import Launcher from "react-native-intent-launcher";
+import InnerHeader from "../../components/navigation/InnerHeader";
 
 let { width } = Dimensions.get("window");
 
@@ -141,7 +142,7 @@ const Login = ({ navigation, requestUserLogin }) => {
 							onPress={onStandartLoginCheck}
 							style={styles.promptSmallText}
 						>
-							{strings.loginWithEImzo}
+							{}
 						</Text>
 					)}
 				</View>
@@ -156,51 +157,62 @@ const Login = ({ navigation, requestUserLogin }) => {
 		);
 	};
 	return (
-		// <ScrollView style={{ flex: 1 }}>
 		<BlurWrapper>
-			<SafeAreaView
-				style={[
-					styles.container,
-					!showSocials && {
-						backgroundColor: colors.gray
-					}
-				]}
-			>
-				<View
+			<>
+				{isUsername && !isIos && showSocials ? (
+					<InnerHeader
+						transparent
+						back={() => setIsUsername(false)}
+						title={strings.enterAccount}
+					/>
+				) : null}
+				<SafeAreaView
 					style={[
-						commonStyles.centeredContainer,
-						{ alignItems: "flex-start", flex: 1.2 }
+						styles.container,
+						!showSocials && {
+							backgroundColor: colors.gray
+						}
 					]}
 				>
-					{showSocials && (
-						<Image source={logo} style={styles.image} />
-					)}
-				</View>
-				<View style={{ paddingHorizontal: 20 }}>{renderContent()}</View>
-				{showSocials && (
-					<View style={styles.footer}>
-						{socialIcons.map((e, i) => {
-							return (
-								<View key={i}>
-									<TouchableWithoutFeedback
-										key={i.toString()}
-										onPress={() => Linking.openURL(e.url)}
-									>
-										<FA5
-											name={e.name}
-											size={32}
-											color={colors.customPurple}
-											style={styles.icon}
-										/>
-									</TouchableWithoutFeedback>
-								</View>
-							);
-						})}
+					<View
+						style={[
+							commonStyles.centeredContainer,
+							{ alignItems: "flex-start", flex: 1.2 }
+						]}
+					>
+						{showSocials && (
+							<Image source={logo} style={styles.image} />
+						)}
 					</View>
-				)}
-			</SafeAreaView>
+					<View style={{ paddingHorizontal: 20 }}>
+						{renderContent()}
+					</View>
+					{showSocials && (
+						<View style={styles.footer}>
+							{socialIcons.map((e, i) => {
+								return (
+									<View key={i}>
+										<TouchableWithoutFeedback
+											key={i.toString()}
+											onPress={() =>
+												Linking.openURL(e.url)
+											}
+										>
+											<FA5
+												name={e.name}
+												size={32}
+												color={colors.customPurple}
+												style={styles.icon}
+											/>
+										</TouchableWithoutFeedback>
+									</View>
+								);
+							})}
+						</View>
+					)}
+				</SafeAreaView>
+			</>
 		</BlurWrapper>
-		// </ScrollView>
 	);
 };
 

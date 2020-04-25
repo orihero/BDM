@@ -323,6 +323,17 @@ const PdfViewer = ({
 								</Text>
 								<Text
 									onPress={() => {
+										if (reason === "") {
+											dispatch({
+												type: SET_DANGER_ERROR,
+												payload:
+													strings.pleaseFillAllOfTheFields
+											});
+											setTimeout(() => {
+												dispatch(hideError());
+											}, 4000);
+											return;
+										}
 										dispatch(
 											acceptDocument({
 												documentId: docId,

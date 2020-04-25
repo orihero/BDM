@@ -153,7 +153,7 @@ const FieldsRenderer = ({
 				delete normalState[key];
 			}
 			//* Parse to corresponding dataType
-			console.warn(validations[key]);
+			// console.warn(validations[key]);
 
 			if (validations[key]?.float) {
 				normalState[key] = parseFloat(normalState[key]);

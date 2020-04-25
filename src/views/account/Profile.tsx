@@ -8,8 +8,18 @@ import FieldsRenderer from "../../components/generators/FieldsRenderer";
 import { colors } from "../../constants";
 import { strings } from "../../locales/strings";
 import { FieldProps, FieldSize, FieldType } from "../auth";
+import { showModal, hideModal, hideError } from "../../redux/actions";
+import { SET_DANGER_ERROR, SET_SUCCESS_ERROR } from "../../redux/types";
+import NavigationService from "../../services/NavigationService";
 
-const Profile = ({ navigation, user }) => {
+const Profile = ({
+	navigation,
+	user,
+	showModal,
+	dispatch,
+	hideModal,
+	hideError
+}) => {
 	let visible = user.data.legalUser && user.data.legalUser;
 	console.warn(user);
 
@@ -227,6 +237,7 @@ const Profile = ({ navigation, user }) => {
 	];
 	let footer = ({ getSubmitData }) => {
 		let save = async () => {
+			dispatch(showModal(strings.loading));
 			let {
 				phoneCode,
 				phoneNumber,
@@ -263,9 +274,17 @@ const Profile = ({ navigation, user }) => {
 			};
 			try {
 				let res = await requests.user.update(data);
-				console.warn(res);
+				dispatch({
+					type: SET_SUCCESS_ERROR,
+					payload: strings.updatedSuccessfully
+				});
+				dispatch(hideModal());
+				await new Promise(resolve => setTimeout(resolve, 4000));
+				hideError();
 			} catch (error) {
-				console.warn(error.response);
+				dispatch({ type: SET_DANGER_ERROR, payload: error.message });
+				dispatch(hideModal());
+				setTimeout(() => dispatch(hideError()), 4000);
 			}
 		};
 		let cancel = () => {
@@ -280,6 +299,8 @@ const Profile = ({ navigation, user }) => {
 						flex
 						text={strings.save}
 						onPress={save}
+						startColor={colors.customPurple}
+						endColor={colors.customPurple}
 					/>
 				</View>
 			</View>
@@ -340,7 +361,14 @@ const mapStateToProps = ({ user }) => ({
 	user
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = dispatch => {
+	return {
+		showModal: data => showModal(data),
+		hideModal: () => hideModal(),
+		hideError: () => hideError(),
+		dispatch
+	};
+};
 
 let Connected = connect(
 	mapStateToProps,

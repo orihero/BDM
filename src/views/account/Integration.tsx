@@ -4,7 +4,8 @@ import {
 	StyleSheet,
 	Image,
 	KeyboardAvoidingView,
-	ScrollView
+	ScrollView,
+	Dimensions
 } from "react-native";
 import { colors, Icons } from "../../constants";
 import { strings } from "../../locales/strings";
@@ -112,10 +113,7 @@ const Integration: React.FC<Props> = ({ user, dispatch }) => {
 		return (
 			<View
 				style={[
-					styles.flex,
 					{
-						justifyContent: "flex-end",
-						paddingHorizontal: 40,
 						marginTop: 40
 					}
 				]}
@@ -132,6 +130,9 @@ const Integration: React.FC<Props> = ({ user, dispatch }) => {
 							? () => update(getSubmitData())
 							: () => register(getSubmitData())
 					}
+					startColor={colors.customPurple}
+					endColor={colors.customPurple}
+					flex
 				/>
 			</View>
 		);

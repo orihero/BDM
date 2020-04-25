@@ -2,9 +2,11 @@ import LocalizedStrings from "react-native-localization";
 
 export let strings = new LocalizedStrings({
 	ru: {
+		pleaseFillAllOfTheFields: "Пожалуйста, заполните причину отказа",
 		login: "Войти",
+		updatedSuccessfully: "Успешно Обновлено",
 		toBegin: "Для начала работы",
-		enterAccount: "войдите в свой аккаунт",
+		enterAccount: "Войдите в свой аккаунт",
 		enterLogin: "Введите логин",
 		enterPassword: "Введите пароль",
 		noAccount: "Нет аккаунта?",
@@ -124,8 +126,8 @@ export let strings = new LocalizedStrings({
 		successfullyRejected: "Успешно отклонено",
 		fileCorrupted:
 			"Файл поврежден или удален из базы данных. Вы не можете загрузить, подписать или отклонить документ",
-		tariffSuccess: 'Тарифный план успешно изменен',
-		connectToInternet: 'Включите доступ к интернету'
+		tariffSuccess: "Тарифный план успешно изменен",
+		connectToInternet: "Включите доступ к интернету"
 	},
 	en: {},
 	uz: {}
