@@ -8,13 +8,29 @@ let message = `{
 
                     "fullName":"BARATOV BEGZOD RUSTAM O‘G‘LI",
                     "organization":"BARATOV BEGZOD RUSTAM O‘G‘LI"
-                   }`;
+				   }`;
+
 /**
  *
  * @param append_pkcs7 Message ti sign
- * @returns Object : {pkcs7,result}
+ * @returns Object : {pkcs7,resultCode}
  */
-export let sign = append_pkcs7 => {
+interface SignResult {
+	pkcs7: string;
+	resultCode: Number;
+	signature: string;
+}
+
+interface SignProps {
+	append_pkcs7?: string;
+}
+
+interface AttachProps {
+	append_pkcs7: string;
+	tst: string;
+}
+
+export let sign: Promise<SignResult> = (append_pkcs7: string) => {
 	let obj = {
 		packageName: "uz.yt.eimzo",
 		className: "uz.yt.eimzo.activity.MainActivity",
@@ -23,4 +39,19 @@ export let sign = append_pkcs7 => {
 		message: append_pkcs7 ? append_pkcs7 : message
 	};
 	return IntentLauncher.startActivity(obj);
+};
+
+export let attach: Promise<SignResult> = (
+	append_pkcs7: string,
+	tst: string
+) => {
+	let obj = {
+		packageName: "uz.yt.eimzo",
+		className: "uz.yt.eimzo.activity.MainActivity",
+		serial_number,
+		api_key,
+		append_pkcs7,
+		tst
+	};
+	return IntentLauncher.attachTimestamp(obj);
 };

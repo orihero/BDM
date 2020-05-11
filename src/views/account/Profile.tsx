@@ -53,7 +53,8 @@ const Profile = ({
 				value: index,
 				label: e.name,
 				actualValue: e.id
-			})
+			}),
+			disabled: true
 		},
 		{
 			name: "districtId",
@@ -67,21 +68,24 @@ const Profile = ({
 				label: e.name,
 				actualValue: e.id
 			}),
-			fetchParamFromStateName: "regionId"
+			fetchParamFromStateName: "regionId",
+			disabled: true
 		},
 		{
 			type: FieldType.INPUT,
 			placeholder: strings.street,
 			title: strings.street,
 			size: FieldSize.FULL,
-			name: "addressStreet"
+			name: "addressStreet",
+			disabled: true
 		},
 		{
 			type: FieldType.INPUT,
 			placeholder: strings.number,
 			title: strings.number,
 			size: FieldSize.FULL,
-			name: "addressHomeNumber"
+			name: "addressHomeNumber",
+			disabled: true
 		},
 		// {
 		// 	type: FieldType.COMPLEX,
@@ -137,7 +141,8 @@ const Profile = ({
 			size: FieldSize.FULL,
 			title: strings.okedCode,
 			name: "okedId",
-			visible
+			visible,
+			disabled: true
 		},
 		{
 			type: FieldType.INPUT,
@@ -145,7 +150,8 @@ const Profile = ({
 			size: FieldSize.FULL,
 			title: strings.director,
 			name: "mainDirector",
-			visible
+			visible,
+			disabled: true
 		},
 		{
 			type: FieldType.INPUT,
@@ -153,7 +159,8 @@ const Profile = ({
 			size: FieldSize.FULL,
 			title: strings.accauntant,
 			name: "mainAccountant",
-			visible
+			visible,
+			disabled: true
 		},
 		{
 			type: FieldType.LINE,
@@ -166,7 +173,8 @@ const Profile = ({
 						{ label: "Да", value: 0, actualValue: true },
 						{ label: "Нет", value: 1, actualValue: false }
 					],
-					name: "hasVatPayer"
+					name: "hasVatPayer",
+					disabled: true
 				},
 				{
 					type: FieldType.INPUT,
@@ -193,13 +201,15 @@ const Profile = ({
 					size: FieldSize.QUARTER,
 					type: FieldType.INPUT,
 					placeholder: strings.mfo,
-					name: "bankCode"
+					name: "bankCode",
+					disabled: true
 				},
 				{
 					type: FieldType.INPUT,
 					placeholder: strings.lightAccount,
 					size: FieldSize.QUERTER_THREE,
-					name: "bankAccountNumber"
+					name: "bankAccountNumber",
+					disabled: true
 				}
 			],
 			title: strings.bankAccount,
@@ -212,13 +222,15 @@ const Profile = ({
 					size: FieldSize.QUARTER,
 					type: FieldType.INPUT,
 					placeholder: strings.code,
-					name: "phoneCode"
+					name: "phoneCode",
+					disabled: true
 				},
 				{
 					type: FieldType.INPUT,
 					placeholder: strings.phoneNumber,
 					size: FieldSize.QUERTER_THREE,
-					name: "phoneNumber"
+					name: "phoneNumber",
+					disabled: true
 				}
 			],
 			title: strings.phone
@@ -228,7 +240,8 @@ const Profile = ({
 			placeholder: "Ваш email",
 			size: FieldSize.FULL,
 			title: strings.email,
-			name: "email"
+			name: "email",
+			disabled: true
 		}
 		// {
 		// 	type: FieldType.CHECKBOX,
@@ -292,7 +305,7 @@ const Profile = ({
 		};
 		return (
 			<View style={styles.row}>
-				<View style={{ flex: 1 }}>
+				{/* <View style={{ flex: 1 }}>
 					<GradientButton
 						textColor={colors.white}
 						full
@@ -302,7 +315,7 @@ const Profile = ({
 						startColor={colors.customPurple}
 						endColor={colors.customPurple}
 					/>
-				</View>
+				</View> */}
 			</View>
 		);
 	};

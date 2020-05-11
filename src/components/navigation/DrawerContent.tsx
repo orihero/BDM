@@ -1,11 +1,19 @@
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import {
+	ScrollView,
+	StyleSheet,
+	View,
+	Dimensions,
+	Animated,
+	TouchableWithoutFeedback
+} from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { strings } from "../../locales/strings";
 import DrawerItem, { DrawerItemProps } from "./DrawerItem";
 import { connect } from "react-redux";
 import Text from "../common/CustomText";
 import { colors } from "../../constants";
+import { closeDrawer } from "react-navigation-drawer/lib/typescript/src/routers/DrawerActions";
 
 interface DrawerContentProps {
 	navigation: any;
@@ -13,6 +21,7 @@ interface DrawerContentProps {
 	expanded?: boolean;
 	user?: any;
 	boxType?: number;
+	progress?: Animated.Value;
 }
 
 export enum BoxType {
@@ -31,7 +40,7 @@ export enum DocumentStatus {
 export enum DrawerActionTypes {
 	navigate = 0,
 	changeBox = 1,
-	logout=2
+	logout = 2
 }
 
 export interface DrawerAction {
@@ -193,17 +202,25 @@ let menus: DrawerItemProps[] = [
 	}
 ];
 
+let { width } = Dimensions.get("window");
+
 const DrawerContent: React.FC<DrawerContentProps> = ({
 	navigation,
 	onPress,
 	expanded,
 	boxType,
-	user
+	user,
+	progress
 }) => {
+	let backgroundColor = progress.interpolate({
+		inputRange: [0, width],
+		outputRange: ["transparent", "rgba(1, 1, 1, 0.3)"],
+		extrapolate: "clamp"
+	});
 	return (
-		<View style={{ flex: 1 }}>
+		<View style={{ flex: 1, flexDirection: "row" }}>
 			<SafeAreaView style={styles.container}>
-				<View style={{ maxHeight: 400 }}>
+				<View style={{ maxHeight: 480 }}>
 					<ScrollView showsVerticalScrollIndicator={false}>
 						{menus.map((e, i) => {
 							if (e.bottom) {
@@ -213,7 +230,10 @@ const DrawerContent: React.FC<DrawerContentProps> = ({
 								<DrawerItem
 									key={i}
 									{...e}
-									active={boxType === e.action?.boxType}
+									active={
+										!!e.action &&
+										boxType === e.action.boxType
+									}
 									drawerVisible={expanded}
 									onPress={onPress}
 								/>
@@ -225,12 +245,20 @@ const DrawerContent: React.FC<DrawerContentProps> = ({
 			<View style={styles.logoutWrapper}>
 				<DrawerItem {...menus[menus.length - 1]} onPress={onPress} />
 			</View>
+			<TouchableWithoutFeedback onPress={() => onPress({})}>
+				<Animated.View style={{ backgroundColor, flex: 1 }} />
+			</TouchableWithoutFeedback>
 		</View>
 	);
 };
 
 const styles = StyleSheet.create({
-	container: { paddingVertical: 30, paddingHorizontal: 5, flex: 1 },
+	container: {
+		paddingVertical: 10,
+		paddingHorizontal: 5,
+		maxWidth: 400,
+		backgroundColor: colors.white
+	},
 	logo: { width: 200, height: 200 / 3.18 },
 	logoutWrapper: {
 		padding: 15,

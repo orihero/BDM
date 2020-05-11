@@ -5,7 +5,8 @@ import {
 	StyleSheet,
 	Animated,
 	Dimensions,
-	TouchableWithoutFeedback
+	TouchableWithoutFeedback,
+	BackHandler
 } from "react-native";
 import Document, { DocumentProps } from "./Document";
 import DrawerContent, {
@@ -34,45 +35,11 @@ import { requests } from "../../api/requests";
 import { SET_DANGER_ERROR } from "../../redux/types";
 import AsyncStorage from "@react-native-community/async-storage";
 import { storeName } from "../../redux/reducers/user";
+import Modal from "../../components/Modal";
 
-// let data: DocumentProps[] = [
-//   {
-//     id: '#4465',
-//     number: '№001',
-//     date: '26.11.2019',
-//     name: 'OOO The Mind',
-//     amount: '150 000 сум',
-//     type: 'Электронный',
-//     sent: '15.10.2019',
-//     signed: 'Да',
-//     inn: '45862185',
-//   },
-//   {
-//     id: '#4465',
-//     number: '№001',
-//     date: '26.11.2019',
-//     name: 'OOO The Mind',
-//     amount: '150 000 сум',
-//     type: 'Электронный',
-//     sent: '15.10.2019',
-//     signed: 'Да',
-//     inn: '45862185',
-//   },
-//   {
-//     id: '#4465',
-//     number: '№001',
-//     date: '26.11.2019',
-//     name: 'OOO The Mind',
-//     amount: '150 000 сум',
-//     type: 'Электронный',
-//     sent: '15.10.2019',
-//     signed: 'Да',
-//     inn: '45862185',
-//   },
-// ];
 const minW = 60;
-const maxW = 300;
-let { height } = Dimensions.get("window");
+let { height, width } = Dimensions.get("window");
+const maxW = width;
 
 const Main = ({
 	navigation,
@@ -85,6 +52,15 @@ const Main = ({
 }) => {
 	const [width, setWidth] = useState(new Animated.Value(minW));
 	const [expanded, setExpanded] = useState(false);
+	let defaultModal = {
+		visible: false,
+		title: "",
+		number: "",
+		tin: "",
+		date: "",
+		text: ""
+	};
+	const [modalData, setModalData] = useState(defaultModal);
 	let toggle = async (action: DrawerAction) => {
 		if (!action || !action.type) {
 			Animated.spring(width, {
@@ -92,29 +68,20 @@ const Main = ({
 			}).start(() => setExpanded(!expanded));
 			return;
 		}
-		console.warn(action);
-
 		switch (action.type) {
 			case DrawerActionTypes.navigate:
 				navigation.navigate(action.navigateTo);
 				break;
 			case DrawerActionTypes.changeBox:
-				console.warn(action);
-
 				fetchDocuments(action);
 				break;
 			case DrawerActionTypes.logout:
-				console.warn("CLEARING");
-
 				await AsyncStorage.setItem(storeName, "{}");
-
-				console.warn("DONE");
-
 				dispatch(userLoggedOut());
 				navigation.navigate(action.navigateTo);
 				break;
 		}
-		Animated.spring(width, { toValue: expanded ? minW : maxW }).start(() =>
+		Animated.spring(width, { toValue: minW }).start(() =>
 			setExpanded(!expanded)
 		);
 	};
@@ -148,10 +115,21 @@ const Main = ({
 		}
 	};
 
+	let handleBackButton = () => {
+		setModalData(defaultModal);
+		return true;
+	};
+
 	useEffect(() => {
 		// getRegions();
 		fetchDocuments();
 		hideModal();
+		BackHandler.addEventListener("hardwareBackPress", handleBackButton);
+		return () =>
+			BackHandler.removeEventListener(
+				"hardwareBackPress",
+				handleBackButton
+			);
 	}, []);
 	return (
 		<BlurWrapper>
@@ -161,7 +139,10 @@ const Main = ({
 					<FlatList
 						ListEmptyComponent={() => (
 							<Text
-								style={{ marginTop: 100, textAlign: "center" }}
+								style={{
+									marginTop: 100,
+									textAlign: "center"
+								}}
 							>
 								{strings.noData}
 							</Text>
@@ -170,13 +151,17 @@ const Main = ({
 						data={data}
 						showsVerticalScrollIndicator={false}
 						keyExtractor={(e, i) => i.toString()}
-						renderItem={({ item }) => <Document {...item} />}
+						renderItem={({ item }) => (
+							<Document
+								{...{ item }}
+								showDescription={data => setModalData(data)}
+							/>
+						)}
 					/>
 					<Animated.View
 						style={{
 							width,
 							zIndex: 5,
-							backgroundColor: colors.white,
 							height,
 							position: "absolute"
 						}}
@@ -185,6 +170,7 @@ const Main = ({
 							navigation={navigation}
 							expanded={expanded}
 							onPress={toggle}
+							progress={width}
 						/>
 					</Animated.View>
 				</View>
@@ -202,6 +188,47 @@ const Main = ({
 							</TouchableWithoutFeedback>
 						</View>
 					)}
+				{modalData.visible && (
+					<Modal>
+						<View style={styles.modalContent}>
+							<Text style={styles.modalTitle}>
+								{modalData.title}
+							</Text>
+							<Text style={styles.modalDescription}>
+								{strings.senderTin}:{" "}
+								<Text style={styles.modalActive}>
+									{modalData.tin}
+								</Text>
+							</Text>
+							<Text style={styles.modalDescription}>
+								{strings.documentNumber}:{" "}
+								<Text style={styles.modalActive}>
+									{modalData.number}
+								</Text>
+							</Text>
+							<Text style={styles.modalDescription}>
+								{strings.documentDate}:{" "}
+								<Text style={styles.modalActive}>
+									{modalData.date}
+								</Text>
+							</Text>
+							<Text style={styles.modalText}>
+								{modalData.text}
+							</Text>
+							<Text
+								onPress={() =>
+									setModalData({
+										...defaultModal,
+										visible: false
+									})
+								}
+								style={styles.modalButton}
+							>
+								{strings.cancel}
+							</Text>
+						</View>
+					</Modal>
+				)}
 			</View>
 		</BlurWrapper>
 	);
@@ -225,6 +252,40 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		borderRadius: 60
+	},
+	modalContent: {
+		padding: 20,
+		backgroundColor: colors.white,
+		left: 10,
+		right: 10,
+		borderRadius: 8,
+		width: width - 40
+	},
+	modalTitle: {
+		color: colors.black,
+		fontSize: 18,
+		fontWeight: "bold"
+	},
+	modalText: {
+		color: colors.darkGray,
+		margin: 10,
+		fontSize: 16
+	},
+	modalButton: {
+		textTransform: "uppercase",
+		color: colors.customBlue,
+		fontSize: 12,
+		textAlign: "right"
+	},
+	modalDescription: {
+		fontWeight: "bold",
+		fontSize: 16,
+		color: colors.black
+	},
+	modalActive: {
+		fontWeight: "bold",
+		fontSize: 16,
+		color: colors.customBlue
 	}
 });
 

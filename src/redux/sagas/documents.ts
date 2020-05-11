@@ -1,29 +1,27 @@
-import { warnUser } from "./../../utils/warn";
+import { Platform } from "react-native";
+import RnFs from "react-native-fs";
+import { call, delay, put, takeEvery } from "redux-saga/effects";
+import NavigationService from "../../services/NavigationService";
+import { constructFileFromUri } from "../../utils/formData";
+import { requests } from "./../../api/requests";
+import { strings } from "./../../locales/strings";
 import { sign as eSign } from "./../../utils/bdmImzoProvider";
-import { showModal, hideModal, hideError } from "./../actions/appState";
+import { hideError, hideModal, showModal } from "./../actions/appState";
 import {
-	documentsLoaded,
 	documentsCountLoaded,
+	documentsLoaded,
 	fetchDocuments
 } from "./../actions/documents";
-import { strings } from "./../../locales/strings";
 import {
-	SET_DANGER_ERROR,
-	FETCH_DOCUMENTS,
-	GET_DOCUMENT_COUNT,
-	SET_SUCCESS_ERROR,
-	CREATE_DOCUMENT,
 	ACCEPT_DOCUMENT,
-	REJECT_DOCUMENT,
+	CREATE_DOCUMENT,
 	DELETE_DOCUMENT,
-	GET_REGIONS
+	FETCH_DOCUMENTS,
+	GET_REGIONS,
+	REJECT_DOCUMENT,
+	SET_DANGER_ERROR,
+	SET_SUCCESS_ERROR
 } from "./../types";
-import { requests } from "./../../api/requests";
-import { call, put, takeEvery, delay, fork } from "redux-saga/effects";
-import { constructFileFromUri } from "../../utils/formData";
-import RnFs from "react-native-fs";
-import { Platform } from "react-native";
-import NavigationService from "../../services/NavigationService";
 
 let invoice = {
 	FacturaId: "5d8b79047f398c00010b2cb7",
@@ -146,11 +144,11 @@ export function* fetchDocumentsAsync({
 			page,
 			perPage
 		}) || {};
-		console.warn({ boxType, status, page, perPage });
-		yield put(documentsLoaded({ data: response.data, boxType, status }));
+		yield put(
+			documentsLoaded({ data: response.data.data, boxType, status })
+		);
 		let res = yield call(requests.documents.getDocumentsCount, {});
 		yield put(documentsCountLoaded(res.data));
-		console.warn("HIDING MODAL");
 		yield put(delay(100));
 		yield put(hideModal());
 	} catch (error) {
@@ -399,37 +397,124 @@ export function* createDocument({ payload: data }) {
 }
 
 export function* documentInteractionHandler({
-	payload: { documentId, actionType, notes, newInvoiceContent = "", tin }
+	payload: {
+		documentId,
+		actionType,
+		notes,
+		newInvoiceContent = "",
+		tin,
+		boxType,
+		status,
+		docTypeId
+	}
 }) {
 	try {
 		//* Show loading
 		yield put(showModal(strings.fetchingData));
-		let message = "";
-		console.warn("start document");
-		if (actionType === "delete") {
-			console.warn("delete");
+		let message = ""; //* For showing success message
 
-			let response = yield call(requests.documents.delete, documentId);
-			message = strings.deletedSuccesfully;
-		} else {
-			console.warn("not delete");
+		//* Check the action type
+		switch (actionType) {
+			case "delete":
+				{
+					//* Remove the document from TaxDep if its type is invoice
+					//* docTypeId === 2 && boxType === 2 means: it is sent invoice
+					// if (docTypeId === 2 && boxType === 2) {
+					// 	//* invoice content as json
+					// 	let signMessage = yield call(
+					// 		requests.documents.getJsonContent,
+					// 		documentId
+					// 	);
+					// 	//* parsed content for signing
+					// 	let newJson = JSON.parse(signMessage.data.data);
+					// 	//* signing
+					// 	let sign = yield call(eSign, newJson);
+					// 	//* cancel invoice from TaxDep
+					// 	let cancelResult = call(
+					// 		requests.documents.cancelInvoice,
+					// 		documentId,
+					// 		{
+					// 			sign
+					// 		}
+					// 	);
+					// }
+					//* regular delete documents
+					let response = yield call(
+						requests.documents.delete,
+						documentId
+					);
+					message = strings.deletedSuccesfully;
+				}
+				break;
+			case "accept": {
+				//* Different method for accept content
+				let signMessage = yield call(
+					requests.documents.getSignMessageForAccept,
+					documentId
+				);
+				//* signing
+				let sign = yield call(eSign, signMessage.data.data);
+				let response = yield call(requests.documents.sign, {
+					documentId,
+					sign: sign.pkcs7
+				});
+				//* sending push
+				let pushResult = yield call(requests.documents.sendPush, {
+					id: documentId.toString(),
+					tin,
+					message: 20
+				});
+				message = strings.signedSuccessfully;
+			}
+			case "reject": {
+				//* store sign
+				let sign;
+				//* if the document is invoice delete it from TaxDep
+				console.warn(docTypeId);
 
-			let signMessage = yield call(
-				requests.documents.getSignMessage,
-				documentId
-			);
-			console.warn(signMessage);
-			let sign = yield call(eSign, signMessage.data.data);
-			console.warn(sign);
-			if (actionType === "reject") {
-				console.warn("rejecting");
+				// if (docTypeId === 2) {
+				// 	//* getting content for signing
+				// 	let signMessage = yield call(
+				// 		requests.documents.getJsonContent,
+				// 		documentId
+				// 	);
+				// 	//* forming sign request
+				// 	let newJson = {
+				// 		Factura: signMessage.data.data,
+				// 		Notes: notes
+				// 	};
+				// 	console.warn({ newJson });
 
+				// 	//* signing
+				// 	let rawSign = yield call(eSign, JSON.stringify(newJson));
+				// 	console.warn({ rawSign });
+
+				// 	//* getting timestamp from
+				// 	let tst = yield call(
+				// 		requests.documents.getTimestamp,
+				// 		rawSign.signature
+				// 	);
+				// 	console.warn({ tst });
+
+				// 	sign = yield call(
+				// 		attach,
+				// 		JSON.stringify(newJson),
+				// 		tst.data.data
+				// 	);
+				// 	console.warn({ sign });
+				// } else {
+				let signMessage = yield call(
+					requests.documents.getSignMessage,
+					documentId
+				);
+				sign = yield call(eSign, signMessage.data.data);
+				// }
 				let response = yield call(requests.documents.reject, {
 					documentId,
 					sign: sign.pkcs7,
-					newInvoiceContent,
 					notes
 				});
+
 				yield call(requests.documents.sendPush, {
 					id: documentId,
 					tin,
@@ -437,18 +522,14 @@ export function* documentInteractionHandler({
 				});
 				message = strings.successfullyRejected;
 			}
+			default:
+				break;
+		}
+		if (actionType === "") {
+		} else {
+			if (actionType === "reject") {
+			}
 			if (actionType === "accept") {
-				console.warn("accepting");
-				let response = yield call(requests.documents.sign, {
-					documentId,
-					sign: sign.pkcs7
-				});
-				yield call(requests.documents.sendPush, {
-					id: documentId,
-					tin,
-					message: 20
-				});
-				message = strings.signedSuccessfully;
 			}
 		}
 

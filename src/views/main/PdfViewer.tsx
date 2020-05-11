@@ -4,12 +4,12 @@ import {
 	Dimensions,
 	StyleSheet,
 	TouchableWithoutFeedback,
-	View,
-	ToastAndroid
+	View
 } from "react-native";
 import Pdf from "react-native-pdf";
 import SimpleLine from "react-native-vector-icons/Feather";
 import { connect } from "react-redux";
+import RNFB from "rn-fetch-blob";
 import { requests, url } from "../../api/requests";
 import Text from "../../components/common/CustomText";
 import RectangularInput from "../../components/common/RectangularInput";
@@ -32,7 +32,6 @@ import {
 } from "../../redux/types";
 import { sign } from "../../utils/bdmImzoProvider";
 import { NavigationProps } from "../../utils/defaultPropTypes";
-import RNFB from "rn-fetch-blob";
 
 let { width, height } = Dimensions.get("window");
 
@@ -155,7 +154,17 @@ const PdfViewer = ({
 			}
 			return;
 		}
-		dispatch(acceptDocument({ documentId: docId, actionType: "accept" }));
+		let payload = {
+			documentId: docId,
+			actionType: "accept",
+			tin: navigation.getParam("tin"),
+			boxType,
+			status,
+			docTypeId: navigation.getParam("type")
+		};
+		console.warn({ payload });
+		return;
+		dispatch(acceptDocument(payload));
 	};
 	let reject = () => {
 		setModalVisible(!modalVisible);
@@ -334,13 +343,17 @@ const PdfViewer = ({
 											}, 4000);
 											return;
 										}
-										dispatch(
-											acceptDocument({
-												documentId: docId,
-												actionType: "reject",
-												notes: reason
-											})
-										);
+										let payload = {
+											documentId: docId,
+											actionType: "reject",
+											tin: navigation.getParam("tin"),
+											boxType,
+											status,
+											docTypeId: navigation.getParam(
+												"type"
+											)
+										};
+										dispatch(acceptDocument(payload));
 										setModalVisible(false);
 									}}
 									style={styles.textButton}

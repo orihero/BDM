@@ -12,6 +12,10 @@ import { withNavigation } from "react-navigation";
 import { NavigationProps } from "../../utils/defaultPropTypes";
 import { connect } from "react-redux";
 import icon from "../../assets/images/logo_100x100-01.png";
+import { statuses } from "../../components/navigation/Header";
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import Feather from "react-native-vector-icons/Feather";
+import { requests } from "../../api/requests";
 
 export interface DocumentProps {
 	documentId: string;
@@ -26,84 +30,168 @@ export interface DocumentProps {
 }
 
 const Document: React.FC<DocumentProps> = ({
-	documentId,
-	documentDate,
-	documentNumber,
-	buyerName,
-	sum,
-	buyerTin,
-	documentSentDate,
 	navigation,
-	buyerTin2,
-	documentTypeName,
 	boxType,
-	status
+	status,
+	item,
+	showDescription
 }) => {
+	let {
+		id,
+		tin,
+		name,
+		tin2,
+		name2,
+		type,
+		typeName,
+		number,
+		date,
+		createdDate,
+		sum,
+		actedDate,
+		description
+	} = item;
 	return (
-		<TouchableWithoutFeedback
-			onPress={() => {
-				navigation.navigate("PdfViewer", {
-					docId: documentId,
-					documentDate,
-					documentNumber,
-					buyerTin,
-					documentTypeName
-				});
-			}}
-		>
-			<View style={[commonStyles.shadow, styles.container]}>
-				<View style={styles.row}>
-					<Image source={icon} style={{ width: 32, height: 32 }} />
-					<View style={{ alignItems: "flex-end" }}>
-						<Text style={styles.secondaryText}>#{documentId}</Text>
-						<Text
-							style={styles.secondaryText}
-						>{`${documentDate}   №${documentNumber}`}</Text>
+		<View style={[commonStyles.shadow, styles.container]}>
+			<View style={styles.row}>
+				<View>
+					<TouchableWithoutFeedback
+						onPress={() => {
+							navigation.navigate("PdfViewer", {
+								docId: id,
+								date,
+								number,
+								tin,
+								type
+							});
+						}}
+					>
+						<Image
+							source={icon}
+							style={{ width: 32, height: 32, marginRight: 10 }}
+						/>
+					</TouchableWithoutFeedback>
+					<View
+						style={{
+							position: "absolute",
+							left: 40,
+							alignSelf: "center",
+							flexDirection: "row"
+						}}
+					>
+						{!!description && (
+							<TouchableWithoutFeedback
+								onPress={() =>
+									showDescription({
+										visible: true,
+										title: strings.comments,
+										text: description,
+										date,
+										number,
+										tin
+									})
+								}
+							>
+								<SimpleLineIcons
+									name={"envelope"}
+									color={colors.blue}
+									size={24}
+									style={{
+										alignSelf: "center",
+										padding: 5
+									}}
+								/>
+							</TouchableWithoutFeedback>
+						)}
+						{status === 60 && (
+							<TouchableWithoutFeedback
+								onPress={async () => {
+									try {
+										let result = await requests.documents.getReason(
+											id
+										);
+										showDescription({
+											visible: true,
+											title: strings.rejectReason,
+											text: result.data.data,
+											date,
+											number,
+											tin
+										});
+									} catch (error) {}
+								}}
+							>
+								<Feather
+									name={"alert-triangle"}
+									color={colors.blue}
+									size={24}
+									style={{
+										alignSelf: "center",
+										padding: 5
+									}}
+								/>
+							</TouchableWithoutFeedback>
+						)}
 					</View>
 				</View>
-				<Text style={styles.title}>{buyerName}</Text>
-				<View>
-					<View
-						style={[
-							styles.row,
-							{
-								borderBottomWidth: 1,
-								borderBottomColor: colors.ultraLightGray
-							}
-						]}
-					>
-						<Text style={styles.regularText}>{strings.amount}</Text>
-						<Text style={styles.regularText}>{`${sum} сум`}</Text>
-					</View>
-					<View
-						style={[
-							styles.row,
-							{
-								borderBottomWidth: 1,
-								borderBottomColor: colors.ultraLightGray
-							}
-						]}
-					>
-						<Text style={styles.regularText}>
-							{strings.documentSentDate}
-						</Text>
-						<Text style={styles.regularText}>
-							{documentSentDate}
-						</Text>
-					</View>
-					<View
-						style={[
-							styles.row,
-							{
-								borderBottomWidth: 1,
-								borderBottomColor: colors.ultraLightGray
-							}
-						]}
-					>
-						<Text style={styles.regularText}>{strings.inn}</Text>
-						<Text style={styles.regularText}>{buyerTin}</Text>
-					</View>
-					{buyerTin2 ? (
+
+				<View
+					style={{ alignItems: "flex-end", justifyContent: "center" }}
+				>
+					<Text selectable style={styles.secondaryText}>
+						ID {id}
+					</Text>
+				</View>
+			</View>
+			<Text
+				selectable
+				style={[styles.secondaryText, { textAlign: "center" }]}
+			>{`№${number}`}</Text>
+			<Text
+				selectable
+				style={[styles.secondaryText, { textAlign: "center" }]}
+			>
+				{typeName}
+			</Text>
+			<Text
+				selectable
+				style={[styles.secondaryText, { textAlign: "center" }]}
+			>
+				{date}
+			</Text>
+			<Text
+				selectable
+				style={[
+					styles.regularText,
+					{
+						textAlign: "center",
+						fontSize: 18,
+						paddingVertical: 8,
+						fontWeight: "bold"
+					}
+				]}
+			>{`${sum} сум`}</Text>
+			<Text style={styles.title}>{name}</Text>
+			<View>
+				<View
+					style={[
+						styles.row,
+						{
+							borderBottomWidth: 1,
+							borderBottomColor: colors.ultraLightGray
+						}
+					]}
+				>
+					<Text selectable style={styles.regularText}>
+						{strings.inn}
+					</Text>
+					<Text selectable style={styles.regularText}>
+						{tin}
+					</Text>
+				</View>
+				{tin2 ? (
+					<>
+						<Text style={styles.title}>{name2}</Text>
 						<View
 							style={[
 								styles.row,
@@ -113,15 +201,51 @@ const Document: React.FC<DocumentProps> = ({
 								}
 							]}
 						>
-							<Text style={styles.regularText}>
+							<Text selectable style={styles.regularText}>
 								{strings.inn2}
 							</Text>
-							<Text style={styles.regularText}>{buyerTin2}</Text>
+							<Text selectable style={styles.regularText}>
+								{tin2}
+							</Text>
 						</View>
-					) : null}
+					</>
+				) : null}
+				<View
+					style={[
+						styles.row,
+						{
+							borderBottomWidth: 1,
+							borderBottomColor: colors.ultraLightGray
+						}
+					]}
+				>
+					<Text selectable style={styles.regularText}>
+						{statuses[boxType][status].date}
+					</Text>
+					<Text selectable style={styles.regularText}>
+						{createdDate}
+					</Text>
 				</View>
+				{status !== 10 && (
+					<View
+						style={[
+							styles.row,
+							{
+								borderBottomWidth: 1,
+								borderBottomColor: colors.ultraLightGray
+							}
+						]}
+					>
+						<Text selectable style={styles.regularText}>
+							{statuses[boxType][status].acted}
+						</Text>
+						<Text selectable style={styles.regularText}>
+							{actedDate}
+						</Text>
+					</View>
+				)}
 			</View>
-		</TouchableWithoutFeedback>
+		</View>
 	);
 };
 

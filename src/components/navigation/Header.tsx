@@ -12,8 +12,60 @@ interface Props {
 	toggleDrawer?: Function;
 }
 
-let Header = ({ navigation, toggleDrawer = () => {}, boxType }: Props) => {
-	let title = boxType === 2 ? strings.outbox : strings.inbox;
+export let statuses = {
+	1: {
+		10: { header: "Полученные", date: "Получен" },
+		30: {
+			header: "Подписанные",
+			date: "Получен",
+			acted: "Подписан"
+		},
+		60: {
+			header: "Отказанные",
+			date: "Получен",
+			acted: "Отказан"
+		},
+		71: {
+			header: "Корзина",
+			date: "Получен",
+			acted: "Удалён"
+		}
+	},
+	2: {
+		10: { header: "Отправленные", date: "Отправлен" },
+		30: {
+			header: "Подписанные",
+			date: "Отправлен",
+			acted: "Подписан"
+		},
+		60: {
+			header: "Отказанные",
+			date: "Отправлен",
+			acted: "Отказан"
+		},
+		71: {
+			header: "Корзина",
+			date: "Отправлен",
+			acted: "Удалён"
+		},
+		11: {
+			header: "Загруженные",
+			date: "Отправлен",
+			acted: "Удалён"
+		}
+	}
+};
+
+let Header = ({
+	navigation,
+	toggleDrawer = () => {},
+	boxType,
+	status
+}: Props) => {
+	let statusText = statuses[boxType][status].header;
+	let title = `${
+		boxType === 2 ? strings.outbox : strings.inbox
+	} (${statusText})`;
 	return (
 		<SafeAreaView style={styles.wrapper}>
 			<View style={styles.container}>
@@ -44,7 +96,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between"
 	},
 	title: {
-		fontSize: 18,
+		fontSize: 17,
 		color: colors.black,
 		fontWeight: "bold"
 	},

@@ -113,8 +113,7 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
 					)}
 				</View>
 				<View style={styles.childsContainer}>
-					{expanded &&
-						children &&
+					{children &&
 						children.map(el => {
 							return (
 								<DrawerItem
@@ -135,9 +134,10 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: "row",
-		padding: 10,
+		padding: 6,
 		justifyContent: "space-between",
-		alignItems: "center"
+		alignItems: "center",
+		paddingHorizontal: 10
 	},
 	iconWrapper: {
 		justifyContent: "center",
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
 		fontWeight: "400",
 		fontSize: 18,
 		textAlignVertical: "center",
-		width: 150
+		width: 180
 	},
 	left: {
 		flexDirection: "row"

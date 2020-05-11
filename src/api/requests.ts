@@ -50,7 +50,11 @@ export let requests = {
 			axios.post(
 				`${url}/auth/login?type=${data.userName ? 2 : 1}`,
 				data,
-				{ headers: { "Content-Type": "application/json" } }
+				{
+					headers: {
+						"Content-Type": "application/json"
+					}
+				}
 			),
 		refreshToken: refreshToken =>
 			axios.post(`${url}/auth/token/refresh`, refreshToken),
@@ -68,13 +72,23 @@ export let requests = {
 		create: (path, data) => axios.post(`${url}/document${path}`, data),
 		uploadFile: data =>
 			axios.post(`${url}/document/get/path/for/view/pdf`, formData(data)),
+		getSignMessageForAccept: docId =>
+			axios.get(`${url}/document/get/signed/content/${docId}`),
 		getSignMessage: docId =>
-			axios.get(`${url}/document/get/content/forsign/${docId}`),
+			axios.get(`${url}/document/get/content/${docId}`),
 		sign: credentials => axios.post(`${url}/document/accept`, credentials),
 		delete: id => axios.get(`${url}/document/delete/${id}`),
 		reject: credentials =>
 			axios.post(`${url}/document/reject`, credentials),
+		getReason: docId => axios.get(`${url}/document/get/reason/${docId}`),
 		getIvoiceId: () => axios.get(`${url}/invoice/get/id`),
+		getJsonContent: id => axios.get(`${url}/document/get/content/${id}`),
+		getTimestamp: signatureHex =>
+			axios.post(`${url}/invoice/get/timestamp`, {
+				signatureHex
+			}),
+		cancelInvoice: (id, credentials) =>
+			axios.post(`${url}/document//cancel/invoice/${id}`, credentials),
 		sendPush: data => axios.post(`${url}/firebase/send`, data),
 		uploadExcel: credentials =>
 			axios.post(`${url}/excel/multiple/upload`, formData(credentials))
