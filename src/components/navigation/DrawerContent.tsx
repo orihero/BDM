@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	ScrollView,
 	StyleSheet,
@@ -210,8 +210,10 @@ const DrawerContent: React.FC<DrawerContentProps> = ({
 	expanded,
 	boxType,
 	user,
-	progress
+	progress,
+	status
 }) => {
+	const [height, setHeight] = useState(-1);
 	let backgroundColor = progress.interpolate({
 		inputRange: [0, width],
 		outputRange: ["transparent", "rgba(1, 1, 1, 0.3)"],
@@ -219,8 +221,15 @@ const DrawerContent: React.FC<DrawerContentProps> = ({
 	});
 	return (
 		<View style={{ flex: 1, flexDirection: "row" }}>
-			<SafeAreaView style={styles.container}>
-				<View style={{ maxHeight: 480 }}>
+			<View
+				style={styles.container}
+				onLayout={e => {
+					if (height === -1) {
+						setHeight(e.nativeEvent.layout.height);
+					}
+				}}
+			>
+				<View style={{ maxHeight: height - 160 }}>
 					<ScrollView showsVerticalScrollIndicator={false}>
 						{menus.map((e, i) => {
 							if (e.bottom) {
@@ -231,8 +240,7 @@ const DrawerContent: React.FC<DrawerContentProps> = ({
 									key={i}
 									{...e}
 									active={
-										!!e.action &&
-										boxType === e.action.boxType
+										e.action?status === e.action.status&&boxType===e.action?.boxType:false
 									}
 									drawerVisible={expanded}
 									onPress={onPress}
@@ -241,7 +249,7 @@ const DrawerContent: React.FC<DrawerContentProps> = ({
 						})}
 					</ScrollView>
 				</View>
-			</SafeAreaView>
+			</View>
 			<View style={styles.logoutWrapper}>
 				<DrawerItem {...menus[menus.length - 1]} onPress={onPress} />
 			</View>

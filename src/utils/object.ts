@@ -44,7 +44,10 @@ export let normalizePrice = (str: string, chunk: number = 3) => {
 		//* Seperate decimal and inregral parts
 		let [decimalPart, integralPart] = str.split(".");
 		//* Make it easy to append to the result
-		let reverseDecimal = decimalPart;
+		let reverseDecimal = decimalPart
+			.split("")
+			.reverse()
+			.join("");
 
 		//* Result to store
 		let result = "";
@@ -55,9 +58,19 @@ export let normalizePrice = (str: string, chunk: number = 3) => {
 			if (i + chunk < reverseDecimal.length) result += " ";
 		}
 		//* The `.` has been removed so we add it
-		return result + "." + integralPart;
+		return (
+			result
+				.split("")
+				.reverse()
+				.join("") +
+			"." +
+			integralPart
+		);
 	} else {
-		let reverseDecimal = str;
+		let reverseDecimal = str
+			.split("")
+			.reverse()
+			.join("");
 		//* Result to store
 		let result = "";
 		for (let i = 0; i < reverseDecimal.length; i += chunk) {
@@ -66,6 +79,9 @@ export let normalizePrice = (str: string, chunk: number = 3) => {
 			//* Append seperating space only if it is not last chunk
 			if (i + chunk < reverseDecimal.length) result += " ";
 		}
-		return result;
+		return result
+			.split("")
+			.reverse()
+			.join("");
 	}
 };

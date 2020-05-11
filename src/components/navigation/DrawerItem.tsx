@@ -43,7 +43,8 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
 	active,
 	action,
 	count,
-	countPath
+	countPath,
+	boxType,status
 }) => {
 	const [expanded, setExpanded] = useState(false);
 	let closeDrawer = (action: DrawerAction) => {
@@ -94,13 +95,13 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
 						<View style={{ justifyContent: "center" }}>
 							<Text style={styles.title}>
 								{title}{" "}
-								{countPath &&
-									`(${getObjectProperty(count, countPath) ||
-										"0"})`}
 							</Text>
+							{!!countPath &&<Text style={{textAlign:'right'}}>{
+									`(${getObjectProperty(count, countPath) ||
+										"0"})`}</Text>}
 						</View>
 					</View>
-					{children && (
+					{/* {children && (
 						<Icons
 							name={"down-chevron"}
 							style={{
@@ -110,13 +111,16 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
 							}}
 							size={18}
 						/>
-					)}
+					)} */}
 				</View>
 				<View style={styles.childsContainer}>
 					{children &&
 						children.map(el => {
 							return (
 								<DrawerItem
+									active={
+										el.action?status === el.action.status&&boxType===action?.boxType:false
+									}
 									count={count}
 									{...el}
 									style={{ width: 40 }}
@@ -145,7 +149,7 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontWeight: "400",
-		fontSize: 18,
+		fontSize: 15,
 		textAlignVertical: "center",
 		width: 180
 	},
@@ -164,7 +168,7 @@ const styles = StyleSheet.create({
 	}
 });
 
-const mapStateToProps = ({ documents: { count } }) => ({
+const mapStateToProps = ({ documents: { count,status,boxType } }) => ({
 	count
 });
 

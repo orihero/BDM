@@ -208,7 +208,7 @@ const PdfViewer = ({
 
 	let backHandler = () => {
 		navigation.navigate("Main");
-		return false;
+		return true;
 	};
 
 	useEffect(() => {

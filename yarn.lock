@@ -5599,6 +5599,11 @@ react-localization@^1.0.14:
   dependencies:
     localized-strings "^0.2.0"
 
+react-native-auto-scrolling@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-auto-scrolling/-/react-native-auto-scrolling-2.0.0.tgz#febeccc8602cdab9bc5e8f412362415b2679807c"
+  integrity sha512-gGrfq2GUZ/c1rmPmAE4mnNq5MuSuW0WgABjUpH+mdqtSePjcp0HsIIfSxfe2Us4QD6sWTn1/FRa3Tq9PTcKAWg==
+
 react-native-autocomplete-input@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/react-native-autocomplete-input/-/react-native-autocomplete-input-4.1.0.tgz#979ece28d891b245ecb967b6d31f1f924445b8ab"
@@ -5637,7 +5642,7 @@ react-native-gesture-handler@^1.5.2:
 
 "react-native-intent-launcher@git+https://github.com/orihero/react-native-intent-launcher.git":
   version "0.2.1"
-  resolved "git+https://github.com/orihero/react-native-intent-launcher.git#9e1e85cb298bfc0b3dc19d2cabe9a3db1dfda255"
+  resolved "git+https://github.com/orihero/react-native-intent-launcher.git#6a9a3ccb1f9b859e68c8f39fada0cf81d3437282"
 
 react-native-linear-gradient@^2.5.6:
   version "2.5.6"

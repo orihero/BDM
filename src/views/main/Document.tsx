@@ -53,8 +53,6 @@ const Document: React.FC<DocumentProps> = ({
 		description
 	} = item;
 	let price = normalizePrice(sum ? sum.toString() : sum);
-	console.log({ price, sum: parseFloat(sum) });
-
 	return (
 		<View style={[commonStyles.shadow, styles.container]}>
 			<View style={styles.row}>

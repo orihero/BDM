@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     container: {
         borderRadius: 8,
         backgroundColor: colors.ultraLightGray,
-        padding: 24,
+        padding: 23,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',

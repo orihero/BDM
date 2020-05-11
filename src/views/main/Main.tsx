@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
 	View,
 	FlatList,
@@ -48,7 +48,8 @@ const Main = ({
 	hideModal,
 	showModal,
 	dispatch,
-	hideError
+	hideError,
+	user
 }) => {
 	const [width, setWidth] = useState(new Animated.Value(minW));
 	const [expanded, setExpanded] = useState(false);
@@ -92,12 +93,6 @@ const Main = ({
 			const res = await DocumentPicker.pick({
 				type: [DocumentPicker.types.allFiles]
 			});
-			console.log(
-				res.uri,
-				res.type, // mime type
-				res.name,
-				res.size
-			);
 			let { uri, type, name } = res;
 			let uploadRes = await requests.documents.uploadExcel({
 				documentTypeId: 19,
@@ -120,21 +115,32 @@ const Main = ({
 		return true;
 	};
 
+	const ref = useRef(null);
+
+	useEffect(() => {
+		if (modalData.visible) {
+			ref.current = BackHandler.addEventListener(
+				"hardwareBackPress",
+				handleBackButton
+			);
+		} else {
+			if (ref.current) ref.current.remove();
+		}
+	}, [modalData]);
+
 	useEffect(() => {
 		// getRegions();
 		fetchDocuments();
 		hideModal();
-		BackHandler.addEventListener("hardwareBackPress", handleBackButton);
-		return () =>
-			BackHandler.removeEventListener(
-				"hardwareBackPress",
-				handleBackButton
-			);
 	}, []);
 	return (
 		<BlurWrapper>
 			<View style={{ flex: 1 }}>
-				<Header title={strings.inbox} toggleDrawer={toggle} />
+				<Header
+					title={user.data ? user.data.name : ""}
+					toggleDrawer={toggle}
+					scroll={!!user.data}
+				/>
 				<View style={styles.row}>
 					<FlatList
 						ListEmptyComponent={() => (
@@ -289,8 +295,9 @@ const styles = StyleSheet.create({
 	}
 });
 
-const mapStateToProps = ({ documents }) => ({
-	documents
+const mapStateToProps = ({ documents, user }) => ({
+	documents,
+	user
 });
 
 const mapDispatchToProps = {

@@ -180,7 +180,8 @@ const Profile = ({
 					type: FieldType.INPUT,
 					placeholder: "Рег.номер",
 					size: FieldSize.QUERTER_THREE,
-					name: "vatPayerCode"
+					name: "vatPayerCode",
+					disabled: true
 				}
 			],
 			title: strings.nds,

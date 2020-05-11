@@ -5,6 +5,7 @@ import Text from "../common/CustomText";
 import { SafeAreaView, withNavigation } from "react-navigation";
 import { connect } from "react-redux";
 import { strings } from "../../locales/strings";
+import AutoScroll from "react-native-auto-scrolling";
 
 interface Props {
 	title?: string;
@@ -60,19 +61,30 @@ let Header = ({
 	navigation,
 	toggleDrawer = () => {},
 	boxType,
-	status
+	status,
+	user,
+	scroll = false,
+	title
 }: Props) => {
 	let statusText = statuses[boxType][status].header;
-	let title = `${
-		boxType === 2 ? strings.outbox : strings.inbox
-	} (${statusText})`;
 	return (
 		<SafeAreaView style={styles.wrapper}>
 			<View style={styles.container}>
 				<TouchableWithoutFeedback onPress={toggleDrawer}>
-					<Icons name={"menu"} color={colors.black} size={18} />
+					<Icons
+						name={"menu"}
+						color={colors.black}
+						style={{ paddingRight: 20 }}
+						size={18}
+					/>
 				</TouchableWithoutFeedback>
-				<Text style={styles.title}>{title}</Text>
+				{scroll ? (
+					<AutoScroll>
+						<Text style={styles.title}>{title}</Text>
+					</AutoScroll>
+				) : (
+					<Text style={styles.title}>{title}</Text>
+				)}
 				<View style={styles.row}>
 					{/* <Icons name="filter" color={colors.black} style={styles.mr10} size={18} />
           <Icons name="search" color={colors.black} size={18} /> */}
@@ -82,9 +94,10 @@ let Header = ({
 	);
 };
 
-const mapStateToProps = ({ documents: { boxType, status } }) => ({
+const mapStateToProps = ({ documents: { boxType, status }, user }) => ({
 	boxType,
-	status
+	status,
+	user
 });
 
 export default connect(mapStateToProps)(withNavigation(Header));
