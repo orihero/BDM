@@ -16,6 +16,7 @@ import { statuses } from "../../components/navigation/Header";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import Feather from "react-native-vector-icons/Feather";
 import { requests } from "../../api/requests";
+import { normalizePrice } from "../../utils/object";
 
 export interface DocumentProps {
 	documentId: string;
@@ -51,6 +52,9 @@ const Document: React.FC<DocumentProps> = ({
 		actedDate,
 		description
 	} = item;
+	let price = normalizePrice(sum ? sum.toString() : sum);
+	console.log({ price, sum: parseFloat(sum) });
+
 	return (
 		<View style={[commonStyles.shadow, styles.container]}>
 			<View style={styles.row}>
@@ -170,7 +174,7 @@ const Document: React.FC<DocumentProps> = ({
 						fontWeight: "bold"
 					}
 				]}
-			>{`${sum} сум`}</Text>
+			>{`${price} сум`}</Text>
 			<Text style={styles.title}>{name}</Text>
 			<View>
 				<View

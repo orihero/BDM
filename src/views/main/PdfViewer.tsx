@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	ActivityIndicator,
 	Dimensions,
 	StyleSheet,
 	TouchableWithoutFeedback,
-	View
+	View,
+	BackHandler
 } from "react-native";
 import Pdf from "react-native-pdf";
 import SimpleLine from "react-native-vector-icons/Feather";
@@ -162,8 +163,6 @@ const PdfViewer = ({
 			status,
 			docTypeId: navigation.getParam("type")
 		};
-		console.warn({ payload });
-		return;
 		dispatch(acceptDocument(payload));
 	};
 	let reject = () => {
@@ -176,13 +175,12 @@ const PdfViewer = ({
 		dispatch(acceptDocument({ documentId: docId, actionType: "delete" }));
 	};
 
-	//TODO
 	let download = async () => {
 		showModal(strings.fetchingData);
-		let documentNumber = navigation.getParam("documentNumber");
-		let documentDate = navigation.getParam("documentDate");
-		let buyerTin = navigation.getParam("buyerTin");
-		let documentTypeName = navigation.getParam("documentTypeName");
+		let documentNumber = navigation.getParam("number");
+		let documentDate = navigation.getParam("date");
+		let buyerTin = navigation.getParam("tin");
+		let documentTypeName = navigation.getParam("type");
 		let docType = docIdUrls[documentTypeName].name;
 		//* Get file content
 		let data = await RNFB.fetch(
@@ -207,6 +205,19 @@ const PdfViewer = ({
 		await sleep(3000);
 		dispatch(hideError());
 	};
+
+	let backHandler = () => {
+		navigation.navigate("Main");
+		return false;
+	};
+
+	useEffect(() => {
+		BackHandler.addEventListener("hardwareBackPress", backHandler);
+		return BackHandler.removeEventListener(
+			"hardwareBackPress",
+			backHandler
+		);
+	}, []);
 
 	let { hasSign } = user;
 
