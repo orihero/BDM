@@ -116,8 +116,6 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
 				<View style={styles.childsContainer}>
 					{children &&
 						children.map(el => {
-							console.log(status );
-							
 							return (
 								<DrawerItem
 									active={

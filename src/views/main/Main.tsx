@@ -218,9 +218,7 @@ const Main = ({
 		try {
 			showModal();
 			let normData = normalizeFilters(data);
-			console.log(normData);
 			let docs = await requests.documents.filterDocuments(normData);
-			console.log(docs.data);
 			setFilters(data);
 			toggleFilters();
 			documentsLoaded({ data: docs.data.data, status, boxType });

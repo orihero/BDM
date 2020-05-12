@@ -24,7 +24,6 @@ export function* requestUserLogin({
 		} else {
 			let request = yield call(sign, null);
 			if (!!request.pkcs7) {
-				console.warn(request);
 				data = yield call(requests.auth.login, {
 					sign: request.pkcs7
 				});

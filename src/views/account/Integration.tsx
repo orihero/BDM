@@ -67,7 +67,6 @@ const Integration: React.FC<Props> = ({ user, dispatch }) => {
 				oldPassword,
 				newPassword
 			});
-			console.warn(res);
 			dispatch({ type: SET_SUCCESS_ERROR, payload: res.data.message });
 		} catch (error) {
 			if (error.response)
@@ -90,7 +89,6 @@ const Integration: React.FC<Props> = ({ user, dispatch }) => {
 		try {
 			dispatch(showModal());
 			let res = await requests.user.create1CAccount({ password });
-			console.warn(res);
 			dispatch({ type: SET_SUCCESS_ERROR, payload: res.data.message });
 		} catch (error) {
 			if (error.response)

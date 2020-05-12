@@ -106,12 +106,6 @@ const FieldsRenderer = ({
 			const res = await DocumentPicker.pick({
 				type: [DocumentPicker.types.allFiles]
 			});
-			console.log(
-				res.uri,
-				res.type, // mime type
-				res.name,
-				res.size
-			);
 			updateState(e.name, res);
 		} catch (err) {
 			if (DocumentPicker.isCancel(err)) {

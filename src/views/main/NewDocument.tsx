@@ -259,7 +259,6 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 	let footer = ({ getSubmitData }) => {
 		let onSubmit = () => {
 			let data = getSubmitData();
-			console.warn(user);
 			createDocument({
 				...data,
 				documentType: documentTypes[documentType].actualValue,

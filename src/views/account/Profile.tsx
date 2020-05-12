@@ -21,10 +21,6 @@ const Profile = ({
 	hideError
 }) => {
 	let visible = user.data.legalUser && user.data.legalUser;
-	console.warn(user);
-
-	console.warn("user");
-	//find iin
 	let fields: FieldProps[] = [
 		{
 			type: FieldType.INPUT,
