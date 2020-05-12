@@ -42,7 +42,7 @@ export let sign: Promise<SignResult> = (append_pkcs7: string) => {
 };
 
 export let attach: Promise<SignResult> = (
-	append_pkcs7: string,
+	attach_pkcs7: string,
 	tst: string
 ) => {
 	let obj = {
@@ -50,8 +50,9 @@ export let attach: Promise<SignResult> = (
 		className: "uz.yt.eimzo.activity.MainActivity",
 		serial_number,
 		api_key,
-		append_pkcs7,
+		attach_pkcs7,
 		tst
 	};
+	console.log({ obj });
 	return IntentLauncher.attachTimestamp(obj);
 };

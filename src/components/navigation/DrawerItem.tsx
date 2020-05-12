@@ -116,6 +116,8 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
 				<View style={styles.childsContainer}>
 					{children &&
 						children.map(el => {
+							console.log(status );
+							
 							return (
 								<DrawerItem
 									active={
@@ -160,16 +162,17 @@ const styles = StyleSheet.create({
 		paddingLeft: 10
 	},
 	activeIndicator: {
-		padding: 25,
+		padding: 18,
 		borderRadius: 60,
 		backgroundColor: colors.lightGray,
 		position: "absolute",
-		transform: [{ translateX: -10 }]
+		transform: [{ translateX: -6 }]
 	}
 });
 
 const mapStateToProps = ({ documents: { count,status,boxType } }) => ({
-	count
+	count,
+	status,boxType
 });
 
 const mapDispatchToProps = {};
