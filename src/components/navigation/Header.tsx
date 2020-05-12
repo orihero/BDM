@@ -1,5 +1,10 @@
 import React from "react";
-import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import {
+	View,
+	StyleSheet,
+	TouchableWithoutFeedback,
+	Dimensions
+} from "react-native";
 import { Icons, colors } from "../../constants";
 import Text from "../common/CustomText";
 import { SafeAreaView, withNavigation } from "react-navigation";
@@ -64,9 +69,9 @@ let Header = ({
 	status,
 	user,
 	scroll = false,
-	title
+	title,
+	filter = () => {}
 }: Props) => {
-	let statusText = statuses[boxType][status].header;
 	return (
 		<SafeAreaView style={styles.wrapper}>
 			<View style={styles.container}>
@@ -78,16 +83,26 @@ let Header = ({
 						size={18}
 					/>
 				</TouchableWithoutFeedback>
-				{scroll ? (
+				<View style={{ flex: 1 }}>
 					<AutoScroll>
 						<Text style={styles.title}>{title}</Text>
 					</AutoScroll>
-				) : (
-					<Text style={styles.title}>{title}</Text>
-				)}
+				</View>
 				<View style={styles.row}>
-					{/* <Icons name="filter" color={colors.black} style={styles.mr10} size={18} />
-          <Icons name="search" color={colors.black} size={18} /> */}
+					{/* <Icons
+						name="filter"
+						color={colors.black}
+						style={styles.mr10}
+						size={18}
+					/> */}
+					<TouchableWithoutFeedback onPress={filter}>
+						<Icons
+							name="search"
+							style={{ paddingLeft: 20 }}
+							color={colors.black}
+							size={18}
+						/>
+					</TouchableWithoutFeedback>
 				</View>
 			</View>
 		</SafeAreaView>

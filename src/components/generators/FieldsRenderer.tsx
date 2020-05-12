@@ -277,7 +277,7 @@ const FieldsRenderer = ({
 									disabled={e.disabled}
 									value={state[e.name]}
 									items={
-										items[e.name] ? items[e.name].data : []
+										!!items[e.name] ? items[e.name].data : []
 									}
 									onChange={val => {
 										updateState(e.name, val);
@@ -300,7 +300,7 @@ const FieldsRenderer = ({
 							<RectangularSelect
 								disabled={e.disabled}
 								value={state[e.name]}
-								items={items[e.name] ? items[e.name].data : []}
+								items={!!items[e.name] ? items[e.name].data : []}
 								onChange={val => {
 									updateState(e.name, val);
 								}}

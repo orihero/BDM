@@ -247,9 +247,7 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 					actualValue: e.docTypeCode
 				}))
 			);
-		} catch (res) {
-			console.warn(res.response);
-		}
+		} catch (res) {}
 	};
 	useEffect(() => {
 		setFields(initialFields);
@@ -405,6 +403,9 @@ const mapDispatchToProps = {
 	createDocument
 };
 
-let Connected = connect(mapStateToProps, mapDispatchToProps)(NewDocument);
+let Connected = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(NewDocument);
 
 export { Connected as NewDocument };

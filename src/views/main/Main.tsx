@@ -6,7 +6,8 @@ import {
 	Animated,
 	Dimensions,
 	TouchableWithoutFeedback,
-	BackHandler
+	BackHandler,
+	ScrollView
 } from "react-native";
 import Document, { DocumentProps } from "./Document";
 import DrawerContent, {
@@ -24,7 +25,8 @@ import {
 	hideModal,
 	showModal,
 	hideError,
-	userLoggedOut
+	userLoggedOut,
+	documentsLoaded
 } from "../../redux/actions";
 import BlurWrapper from "../../components/containers/BlurWrapper";
 import { DrawerAction } from "../../components/navigation/DrawerContent";
@@ -36,10 +38,81 @@ import { SET_DANGER_ERROR } from "../../redux/types";
 import AsyncStorage from "@react-native-community/async-storage";
 import { storeName } from "../../redux/reducers/user";
 import Modal from "../../components/Modal";
+import FieldsRenderer from "../../components/generators/FieldsRenderer";
+import { FieldProps, FieldType, FieldSize } from "../auth";
+import RoundButton from "../../components/common/RoundButton";
+import GradientButton from "../../components/common/GradientButton";
+import { normalizeFilters } from "../../utils/object";
+import { bindActionCreators, AnyAction, Dispatch } from "redux";
 
 const minW = 60;
 let { height, width } = Dimensions.get("window");
 const maxW = width;
+
+let filterFields: FieldProps[] = [
+	{
+		type: FieldType.LINE,
+		title: strings.documentDate,
+		columns: [
+			{
+				type: FieldType.DATE_PICKER,
+				size: FieldSize.HALF,
+				placeholder: strings.from,
+				name: "dateFrom"
+			},
+			{
+				type: FieldType.DATE_PICKER,
+				size: FieldSize.HALF,
+				placeholder: strings.to,
+				name: "dateTo"
+			}
+		]
+	},
+	{
+		title: strings.documentId,
+		type: FieldType.INPUT,
+		name: "id",
+		placeholder: strings.documentId
+	},
+	{
+		title: strings.documentNumber,
+		type: FieldType.INPUT,
+		name: "number",
+		placeholder: strings.documentNumber
+	},
+	{
+		title: strings.type,
+		type: FieldType.SELECT,
+		name: "type",
+		placeholder: strings.type,
+		fetch: () => requests.documents.getDocumentTypes(1),
+		map: (e, index) => {
+			return {
+				label: e.typeName,
+				value: index,
+				actualValue: e.type
+			};
+		}
+	},
+	{
+		title: strings.inn,
+		type: FieldType.INPUT,
+		name: "tin",
+		placeholder: strings.inn
+	},
+	{
+		title: strings.amount,
+		type: FieldType.INPUT,
+		name: "sum",
+		placeholder: strings.amount
+	},
+	{
+		title: strings.companyName,
+		type: FieldType.INPUT,
+		name: "companyName",
+		placeholder: strings.companyName
+	}
+];
 
 const Main = ({
 	navigation,
@@ -49,7 +122,9 @@ const Main = ({
 	showModal,
 	dispatch,
 	hideError,
-	user
+	user,
+	userLoggedOut,
+	documentsLoaded
 }) => {
 	const [width, setWidth] = useState(new Animated.Value(minW));
 	const [expanded, setExpanded] = useState(false);
@@ -62,6 +137,8 @@ const Main = ({
 		text: ""
 	};
 	const [modalData, setModalData] = useState(defaultModal);
+	const [filters, setFilters] = useState({});
+	const [filterVisible, setFilterVisible] = useState(false);
 	let toggle = async (action: DrawerAction) => {
 		if (!action || !action.type) {
 			Animated.spring(width, {
@@ -78,7 +155,7 @@ const Main = ({
 				break;
 			case DrawerActionTypes.logout:
 				await AsyncStorage.setItem(storeName, "{}");
-				dispatch(userLoggedOut());
+				userLoggedOut();
 				navigation.navigate(action.navigateTo);
 				break;
 		}
@@ -128,11 +205,61 @@ const Main = ({
 		}
 	}, [modalData]);
 
+	let toggleFilters = () => {
+		setFilterVisible(!filterVisible);
+	};
+
 	useEffect(() => {
-		// getRegions();
 		fetchDocuments();
 		hideModal();
 	}, []);
+
+	let applyFilters = async (data: object) => {
+		try {
+			showModal();
+			let normData = normalizeFilters(data);
+			console.log(normData);
+			let docs = await requests.documents.filterDocuments(normData);
+			console.log(docs.data);
+			setFilters(data);
+			toggleFilters();
+			documentsLoaded({ data: docs.data.data, status, boxType });
+		} catch (error) {
+			dispatch({
+				type: SET_DANGER_ERROR,
+				payload: strings.somethingWentWrong
+			});
+		}
+		hideModal();
+		await new Promise(resolve => setTimeout(() => resolve(), 4000));
+		hideError();
+	};
+
+	let filterFooter = ({ getSubmitData }) => {
+		return (
+			<View style={styles.footerContainer}>
+				<GradientButton
+					textColor={colors.white}
+					full
+					flex
+					text={strings.cancel}
+					onPress={toggleFilters}
+					startColor={colors.gray}
+					endColor={colors.gray}
+				/>
+				<GradientButton
+					textColor={colors.white}
+					full
+					flex
+					text={strings.apply}
+					onPress={() => applyFilters(getSubmitData())}
+					startColor={colors.customPurple}
+					endColor={colors.customPurple}
+				/>
+			</View>
+		);
+	};
+
 	return (
 		<BlurWrapper>
 			<View style={{ flex: 1 }}>
@@ -140,6 +267,7 @@ const Main = ({
 					title={user.data ? user.data.name : ""}
 					toggleDrawer={toggle}
 					scroll={!!user.data}
+					filter={toggleFilters}
 				/>
 				<View style={styles.row}>
 					<FlatList
@@ -235,6 +363,27 @@ const Main = ({
 						</View>
 					</Modal>
 				)}
+				{filterVisible && (
+					<Modal>
+						<View
+							style={[
+								styles.modalContent,
+								{ height: height - 120 }
+							]}
+						>
+							<ScrollView showsVerticalScrollIndicator={false}>
+								<Text style={styles.modalTitle}>
+									{strings.filter}
+								</Text>
+								<FieldsRenderer
+									initialValue={filters}
+									footer={filterFooter}
+									fields={filterFields}
+								/>
+							</ScrollView>
+						</View>
+					</Modal>
+				)}
 			</View>
 		</BlurWrapper>
 	);
@@ -262,8 +411,6 @@ const styles = StyleSheet.create({
 	modalContent: {
 		padding: 20,
 		backgroundColor: colors.white,
-		left: 10,
-		right: 10,
 		borderRadius: 8,
 		width: width - 40
 	},
@@ -292,6 +439,9 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		fontSize: 16,
 		color: colors.customBlue
+	},
+	footerContainer: {
+		flexDirection: "row"
 	}
 });
 
@@ -300,11 +450,21 @@ const mapStateToProps = ({ documents, user }) => ({
 	user
 });
 
-const mapDispatchToProps = {
-	fetchDocuments,
-	hideModal,
-	showModal,
-	hideError
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
+	return {
+		dispatch,
+		...bindActionCreators(
+			{
+				fetchDocuments,
+				hideModal,
+				showModal,
+				hideError,
+				userLoggedOut,
+				documentsLoaded
+			},
+			dispatch
+		)
+	};
 };
 
 let ConnectedMain = connect(

@@ -128,7 +128,12 @@ export let strings = new LocalizedStrings({
 			"Файл поврежден или удален из базы данных. Вы не можете загрузить, подписать или отклонить документ",
 		tariffSuccess: "Тарифный план успешно изменен",
 		connectToInternet: "Включите доступ к интернету",
-		senderTin: "ИНН отправителя"
+		senderTin: "ИНН отправителя",
+		from: "От",
+		to: "До",
+		documentId: "ID документа",
+		filter: "Фильтры",
+		apply: "Применить"
 	},
 	en: {},
 	uz: {}

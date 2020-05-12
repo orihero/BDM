@@ -50,7 +50,8 @@ const Document: React.FC<DocumentProps> = ({
 		createdDate,
 		sum,
 		actedDate,
-		description
+		description,
+		currency
 	} = item;
 	let price = normalizePrice(sum ? sum.toString() : sum);
 	return (
@@ -70,7 +71,11 @@ const Document: React.FC<DocumentProps> = ({
 					>
 						<Image
 							source={icon}
-							style={{ width: 32, height: 32, marginRight: 10 }}
+							style={{
+								width: 32,
+								height: 32,
+								marginRight: 10
+							}}
 						/>
 					</TouchableWithoutFeedback>
 					<View
@@ -138,7 +143,10 @@ const Document: React.FC<DocumentProps> = ({
 				</View>
 
 				<View
-					style={{ alignItems: "flex-end", justifyContent: "center" }}
+					style={{
+						alignItems: "flex-end",
+						justifyContent: "center"
+					}}
 				>
 					<Text selectable style={styles.secondaryText}>
 						ID {id}
@@ -172,7 +180,7 @@ const Document: React.FC<DocumentProps> = ({
 						fontWeight: "bold"
 					}
 				]}
-			>{`${price} сум`}</Text>
+			>{`${price} ${currency}`}</Text>
 			<Text style={styles.title}>{name}</Text>
 			<View>
 				<View

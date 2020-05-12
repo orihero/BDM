@@ -65,6 +65,8 @@ export let requests = {
 			axios.get(
 				`${url}/document/get/data?boxType=${boxType}&state=${status}&page=${page}&perPage=${perPage}`
 			),
+		filterDocuments: filters =>
+			axios.get(`${url}/document/get/data${filters}`),
 		getDocumentsCount: () =>
 			axios.get(`${url}/document/get/counts/by/status`),
 		getDocumentTypes: type =>
