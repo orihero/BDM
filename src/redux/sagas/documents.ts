@@ -5,7 +5,7 @@ import NavigationService from "../../services/NavigationService";
 import { constructFileFromUri } from "../../utils/formData";
 import { requests } from "./../../api/requests";
 import { strings } from "./../../locales/strings";
-import { sign as eSign } from "./../../utils/bdmImzoProvider";
+import { sign as eSign, attach, append } from "./../../utils/bdmImzoProvider";
 import { hideError, hideModal, showModal } from "./../actions/appState";
 import {
 	documentsCountLoaded,
@@ -472,43 +472,43 @@ export function* documentInteractionHandler({
 				//* if the document is invoice delete it from TaxDep
 				console.warn(docTypeId);
 
-				// if (docTypeId === 2) {
-				// 	//* getting content for signing
-				// 	let signMessage = yield call(
-				// 		requests.documents.getJsonContent,
-				// 		documentId
-				// 	);
-				// 	//* forming sign request
-				// 	let newJson = {
-				// 		Factura: signMessage.data.data,
-				// 		Notes: notes
-				// 	};
-				// 	console.warn({ newJson });
+				if (docTypeId === 2) {
+					//* getting content for signing
+					let signMessage = yield call(
+						requests.documents.getJsonContent,
+						documentId
+					);
+					//* forming sign request
+					let newJson = {
+						Factura: signMessage.data.data,
+						Notes: notes
+					};
+					console.warn({ newJson });
 
-				// 	//* signing
-				// 	let rawSign = yield call(eSign, JSON.stringify(newJson));
-				// 	console.warn({ rawSign });
+					//* signing
+					let createdSign = yield call(
+						eSign,
+						JSON.stringify(newJson)
+					);
+					let rawSign = yield call(append, createdSign.pkcs7);
+					console.warn({ rawSign });
 
-				// 	//* getting timestamp from
-				// 	let tst = yield call(
-				// 		requests.documents.getTimestamp,
-				// 		rawSign.signature
-				// 	);
-				// 	console.warn({ tst });
+					//* getting timestamp from
+					let tst = yield call(
+						requests.documents.getTimestamp,
+						rawSign.signature
+					);
+					console.warn({ tst });
 
-				// 	sign = yield call(
-				// 		attach,
-				// 		JSON.stringify(newJson),
-				// 		tst.data.data
-				// 	);
-				// 	console.warn({ sign });
-				// } else {
-				let signMessage = yield call(
-					requests.documents.getSignMessage,
-					documentId
-				);
-				sign = yield call(eSign, signMessage.data.data);
-				// }
+					sign = yield call(attach, rawSign.pkcs7, tst.data.data);
+					console.warn({ sign });
+				} else {
+					let signMessage = yield call(
+						requests.documents.getSignMessage,
+						documentId
+					);
+					sign = yield call(eSign, signMessage.data.data);
+				}
 				let response = yield call(requests.documents.reject, {
 					documentId,
 					sign: sign.pkcs7,
@@ -525,14 +525,6 @@ export function* documentInteractionHandler({
 			default:
 				break;
 		}
-		if (actionType === "") {
-		} else {
-			if (actionType === "reject") {
-			}
-			if (actionType === "accept") {
-			}
-		}
-
 		yield put(fetchDocuments());
 		yield put(hideModal());
 		NavigationService.navigate("Main");

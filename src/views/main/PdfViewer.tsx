@@ -155,6 +155,7 @@ const PdfViewer = ({
 			}
 			return;
 		}
+		//* Creating accept request
 		let payload = {
 			documentId: docId,
 			actionType: "accept",
@@ -163,6 +164,7 @@ const PdfViewer = ({
 			status,
 			docTypeId: navigation.getParam("type")
 		};
+		console.log({ payload });
 		dispatch(acceptDocument(payload));
 	};
 	let reject = () => {
