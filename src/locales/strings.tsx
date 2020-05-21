@@ -133,7 +133,8 @@ export let strings = new LocalizedStrings({
 		to: "До",
 		documentId: "ID документа",
 		filter: "Фильтры",
-		apply: "Применить"
+		apply: "Применить",
+		close: "ЗАКРЫТ"
 	},
 	en: {},
 	uz: {}

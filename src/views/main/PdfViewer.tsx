@@ -54,6 +54,7 @@ const PdfViewer = ({
 	let content = navigation.getParam("content");
 	let data = navigation.getParam("data");
 	let dataForSign = navigation.getParam("dataForSign");
+	let signed = navigation.getParam("signed");
 
 	const [modalVisible, setModalVisible] = useState(false);
 	const [reason, setReason] = useState("");
@@ -234,34 +235,26 @@ const PdfViewer = ({
 		{ name: "delete", color: colors.red, size: 18, onPress: reject }
 	];
 
-	let defaultButtons =
-		status === 10
-			? [
-					{
-						name: "check-circle",
-						color: colors.green,
-						size: 18,
-						onPress: accept
-					},
-					{
-						name: "download",
-						color: colors.blue,
-						size: 18,
-						onPress: download
-					}
-			  ]
-			: [
-					{
-						name: "download",
-						color: colors.blue,
-						size: 18,
-						onPress: download
-					}
-			  ];
 	let buttonsToRender = [];
+
+	//* Opening existing document
 	if (docId) {
-		buttonsToRender = defaultButtons;
+		if (!signed) {
+			buttonsToRender.push({
+				name: "check-circle",
+				color: colors.green,
+				size: 18,
+				onPress: accept
+			});
+		}
+		buttonsToRender.push({
+			name: "download",
+			color: colors.blue,
+			size: 18,
+			onPress: download
+		});
 	}
+	//* Creating document
 	if (filePath) {
 		buttonsToRender = newDocumentButtons;
 	}

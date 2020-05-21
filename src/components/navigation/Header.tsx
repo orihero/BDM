@@ -62,6 +62,8 @@ export let statuses = {
 	}
 };
 
+let { width } = Dimensions.get("window");
+
 let Header = ({
 	navigation,
 	toggleDrawer = () => {},
@@ -83,18 +85,12 @@ let Header = ({
 						size={18}
 					/>
 				</TouchableWithoutFeedback>
-				<View style={{ flex: 1 }}>
+				<View style={{ flexWrap: "wrap", flexShrink: 1 }}>
 					<AutoScroll>
 						<Text style={styles.title}>{title}</Text>
 					</AutoScroll>
 				</View>
 				<View style={styles.row}>
-					{/* <Icons
-						name="filter"
-						color={colors.black}
-						style={styles.mr10}
-						size={18}
-					/> */}
 					<TouchableWithoutFeedback onPress={filter}>
 						<Icons
 							name="search"

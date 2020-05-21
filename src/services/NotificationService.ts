@@ -50,6 +50,7 @@ const createNotificationListeners = async channelId => {
 		notifications.onNotification(async notification => {
 			notification.android.setChannelId(channelId).setSound("default");
 			firebase.notifications().displayNotification(notification);
+			console.log(notification);
 			if (AppState.currentState.match(/active/)) {
 				notificationConsumer(notification);
 				clearBadge();
@@ -116,13 +117,19 @@ const backgroundPushes = async payload => {
 			message = "";
 		if (payload.data.message === "10") {
 			title = `Вы получили новый документ`;
-			message = `(ID ${payload.data.id}) от ${payload.data.companyName} ( ИНН ${payload.data.tin} ) смотрите полученные`;
+			message = `(ID ${payload.data.id}) от ${
+				payload.data.companyName
+			} ( ИНН ${payload.data.tin} ) смотрите полученные`;
 		} else if (payload.data.message === "20") {
 			title = `Ваш документ принять`;
-			message = `(ID ${payload.data.id}) от ${payload.data.companyName} ( ИНН ${payload.data.tin} ) смотрите подписанные`;
+			message = `(ID ${payload.data.id}) от ${
+				payload.data.companyName
+			} ( ИНН ${payload.data.tin} ) смотрите подписанные`;
 		} else if (payload.data.message === "30") {
 			title = `Ваш документ отказан`;
-			message = `(ID ${payload.data.id}) от ${payload.data.companyName} ( ИНН ${payload.data.tin} ) смотрите отказанные`;
+			message = `(ID ${payload.data.id}) от ${
+				payload.data.companyName
+			} ( ИНН ${payload.data.tin} ) смотрите отказанные`;
 		}
 		const notification = new firebase.notifications.Notification()
 			.setNotificationId(payload.messageId)

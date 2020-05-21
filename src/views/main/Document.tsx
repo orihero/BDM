@@ -51,7 +51,8 @@ const Document: React.FC<DocumentProps> = ({
 		sum,
 		actedDate,
 		description,
-		currency
+		currency,
+		signed
 	} = item;
 	let price = normalizePrice(sum ? sum.toString() : sum);
 	return (
@@ -65,7 +66,8 @@ const Document: React.FC<DocumentProps> = ({
 								date,
 								number,
 								tin,
-								type
+								type,
+								signed
 							});
 						}}
 					>
@@ -138,6 +140,17 @@ const Document: React.FC<DocumentProps> = ({
 									}}
 								/>
 							</TouchableWithoutFeedback>
+						)}
+						{!!signed && (
+							<Feather
+								name={"check-circle"}
+								color={colors.blue}
+								size={24}
+								style={{
+									alignSelf: "center",
+									padding: 5
+								}}
+							/>
 						)}
 					</View>
 				</View>

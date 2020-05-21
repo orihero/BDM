@@ -7,7 +7,8 @@ import {
 	Dimensions,
 	TouchableWithoutFeedback,
 	BackHandler,
-	ScrollView
+	ScrollView,
+	KeyboardAvoidingView
 } from "react-native";
 import Document, { DocumentProps } from "./Document";
 import DrawerContent, {
@@ -33,7 +34,7 @@ import { DrawerAction } from "../../components/navigation/DrawerContent";
 import Text from "../../components/common/CustomText";
 import Feather from "react-native-vector-icons/Feather";
 import DocumentPicker from "react-native-document-picker";
-import { requests } from "../../api/requests";
+import { requests, url } from "../../api/requests";
 import { SET_DANGER_ERROR } from "../../redux/types";
 import AsyncStorage from "@react-native-community/async-storage";
 import { storeName } from "../../redux/reducers/user";
@@ -188,6 +189,10 @@ const Main = ({
 	};
 
 	let handleBackButton = () => {
+		if (filterVisible) {
+			setFilterVisible(false);
+			return true;
+		}
 		setModalData(defaultModal);
 		return true;
 	};
@@ -195,7 +200,7 @@ const Main = ({
 	const ref = useRef(null);
 
 	useEffect(() => {
-		if (modalData.visible) {
+		if (modalData.visible || filterVisible) {
 			ref.current = BackHandler.addEventListener(
 				"hardwareBackPress",
 				handleBackButton
@@ -203,7 +208,7 @@ const Main = ({
 		} else {
 			if (ref.current) ref.current.remove();
 		}
-	}, [modalData]);
+	}, [modalData, filterVisible]);
 
 	let toggleFilters = () => {
 		setFilterVisible(!filterVisible);
@@ -217,7 +222,8 @@ const Main = ({
 	let applyFilters = async (data: object) => {
 		try {
 			showModal();
-			let normData = normalizeFilters(data);
+			let normData = normalizeFilters({ ...data, boxType, status });
+			console.log("REQUESTING : ", `${url}/document/get/data${normData}`);
 			let docs = await requests.documents.filterDocuments(normData);
 			setFilters(data);
 			toggleFilters();
@@ -356,7 +362,7 @@ const Main = ({
 								}
 								style={styles.modalButton}
 							>
-								{strings.cancel}
+								{strings.close}
 							</Text>
 						</View>
 					</Modal>
@@ -366,19 +372,22 @@ const Main = ({
 						<View
 							style={[
 								styles.modalContent,
-								{ height: height - 120 }
+								{ height: height - 120, overflow: "hidden" }
 							]}
 						>
-							<ScrollView showsVerticalScrollIndicator={false}>
-								<Text style={styles.modalTitle}>
-									{strings.filter}
-								</Text>
-								<FieldsRenderer
-									initialValue={filters}
-									footer={filterFooter}
-									fields={filterFields}
-								/>
-							</ScrollView>
+							<KeyboardAvoidingView behavior={"position"}>
+								<ScrollView
+									showsVerticalScrollIndicator={false}
+								>
+									<Text style={styles.modalTitle}>
+										{strings.filter}
+									</Text>
+									<FieldsRenderer
+										footer={filterFooter}
+										fields={filterFields}
+									/>
+								</ScrollView>
+							</KeyboardAvoidingView>
 						</View>
 					</Modal>
 				)}

@@ -30,8 +30,8 @@ const RectangularDatePicker = ({
 		let year = selectedDate.getFullYear();
 		let month =
 			selectedDate.getMonth() >= 10
-				? selectedDate.getMonth().toString()
-				: "0" + selectedDate.getMonth().toString();
+				? (selectedDate.getMonth() + 1).toString()
+				: "0" + (selectedDate.getMonth() + 1).toString();
 
 		let date = `${day}.${month}.${year}`;
 		return date;

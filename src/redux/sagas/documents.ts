@@ -446,31 +446,38 @@ export function* documentInteractionHandler({
 					message = strings.deletedSuccesfully;
 				}
 				break;
-			case "accept": {
-				//* Different method for accept content
-				let signMessage = yield call(
-					requests.documents.getSignMessageForAccept,
-					documentId
-				);
-				//* signing
-				let sign = yield call(eSign, signMessage.data.data);
-				let response = yield call(requests.documents.sign, {
-					documentId,
-					sign: sign.pkcs7
-				});
-				//* sending push
-				let pushResult = yield call(requests.documents.sendPush, {
-					id: documentId.toString(),
-					tin,
-					message: 20
-				});
-				message = strings.signedSuccessfully;
-			}
+			case "accept":
+				{
+					console.log("ACCEPTING");
+					//* Different method for accept content
+					let signMessage = yield call(
+						requests.documents.getSignMessageForAccept,
+						documentId
+					);
+					//* signing
+					console.log("GETTING SIGN TO", {
+						message: signMessage.data.data
+					});
+					let sign = yield call(append, signMessage.data.data);
+					console.log("RECIEVED SIGN", sign);
+					let response = yield call(requests.documents.sign, {
+						documentId,
+						sign: sign.pkcs7
+					});
+					//* sending push
+					let pushResult = yield call(requests.documents.sendPush, {
+						id: documentId.toString(),
+						tin,
+						message: 20
+					});
+					message = strings.signedSuccessfully;
+				}
+				break;
 			case "reject": {
 				//* store sign
 				let sign;
 				//* if the document is invoice delete it from TaxDep
-				console.warn(docTypeId);
+				console.warn({ reject: docTypeId });
 
 				if (docTypeId === 2) {
 					//* getting content for signing
@@ -493,7 +500,7 @@ export function* documentInteractionHandler({
 					let rawSign = yield call(append, createdSign.pkcs7);
 					console.warn({ rawSign });
 
-					//* getting timestamp from
+					//* getting timestamp from api
 					let tst = yield call(
 						requests.documents.getTimestamp,
 						rawSign.signature
@@ -521,6 +528,7 @@ export function* documentInteractionHandler({
 					message: 30
 				});
 				message = strings.successfullyRejected;
+				break;
 			}
 			default:
 				break;

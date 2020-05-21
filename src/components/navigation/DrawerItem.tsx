@@ -92,7 +92,7 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
 									/>
 								))}
 						</View>
-						<View style={{ justifyContent: "center" }}>
+						<View style={{ justifyContent: "space-between",flexDirection:'row',alignItems:'center' }}>
 							<Text style={styles.title}>
 								{title}{" "}
 							</Text>
@@ -138,10 +138,10 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: "row",
-		padding: 6,
+		padding: 3,
 		justifyContent: "space-between",
 		alignItems: "center",
-		paddingHorizontal: 10
+		paddingHorizontal: 6
 	},
 	iconWrapper: {
 		justifyContent: "center",
