@@ -26,7 +26,7 @@ import { requestUserLogin } from "../../redux/actions";
 import BlurWrapper from "../../components/containers/BlurWrapper";
 import FA5 from "react-native-vector-icons/FontAwesome5";
 import RectangularInput from "../../components/common/RectangularInput";
-import Launcher from "react-native-intent-launcher";
+// import Launcher from "react-native-intent-launcher";
 import InnerHeader from "../../components/navigation/InnerHeader";
 
 let { width } = Dimensions.get("window");
@@ -73,7 +73,7 @@ const Login = ({ navigation, requestUserLogin }) => {
 	};
 	let onLogin = async () => {
 		try {
-			await Launcher.isAppInstalled("uz.yt.eimzo");
+			// await Launcher.isAppInstalled("uz.yt.eimzo");
 		} catch (error) {
 			ToastAndroid.show(strings.downloadEImzoApp, 2000);
 			return;

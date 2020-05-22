@@ -5640,10 +5640,6 @@ react-native-gesture-handler@^1.5.2:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
-"react-native-intent-launcher@git+https://github.com/orihero/react-native-intent-launcher.git":
-  version "0.2.1"
-  resolved "git+https://github.com/orihero/react-native-intent-launcher.git#6a9a3ccb1f9b859e68c8f39fada0cf81d3437282"
-
 react-native-linear-gradient@^2.5.6:
   version "2.5.6"
   resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.5.6.tgz#96215cbc5ec7a01247a20890888aa75b834d44a0"

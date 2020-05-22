@@ -1,4 +1,6 @@
-import IntentLauncher from "react-native-intent-launcher";
+// import IntentLauncher from "react-native-intent-launcher";
+
+import { NativeModules } from "react-native";
 
 let api_key =
 	"86E2F10BA6CD237ADA76579102E1FD147561C390055B062FE5AC49957B1D1A54A266EF04A0E3C9AF6DFD65104E78B08524FF3FA769FDAB47C49DFEC1021A77D4";
@@ -38,7 +40,7 @@ export let sign: Promise<SignResult> = (append_pkcs7: string) => {
 		api_key,
 		message: append_pkcs7 ? append_pkcs7 : message
 	};
-	return IntentLauncher.startActivity(obj);
+	return NativeModules.EImzo.createSign(obj);
 };
 
 export let attach: Promise<SignResult> = (
@@ -54,7 +56,7 @@ export let attach: Promise<SignResult> = (
 		tst
 	};
 	console.log({ obj });
-	return IntentLauncher.attachTimestamp(obj);
+	// return IntentLauncher.attachTimestamp(obj);
 };
 
 export let append: Promise<SignResult> = (append_pkcs7: string) => {
@@ -66,5 +68,4 @@ export let append: Promise<SignResult> = (append_pkcs7: string) => {
 		append_pkcs7
 	};
 	console.log({ obj });
-	return IntentLauncher.append(obj);
 };
