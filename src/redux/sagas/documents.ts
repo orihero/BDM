@@ -458,7 +458,15 @@ export function* documentInteractionHandler({
 					console.log("GETTING SIGN TO", {
 						message: signMessage.data.data
 					});
-					let sign = yield call(append, signMessage.data.data);
+					let apppendResult = yield call(
+						append,
+						signMessage.data.data
+					);
+					let tst = yield call(
+						requests.documents.getTimestamp,
+						apppendResult.signature
+					);
+					let sign = yield call(attach, tst.data.data);
 					console.log("RECIEVED SIGN", sign);
 					let response = yield call(requests.documents.sign, {
 						documentId,

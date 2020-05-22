@@ -61,11 +61,11 @@ public class EImzoModule extends ReactContextBaseJavaModule implements ActivityE
     @ReactMethod
     public void attachTimestamp(ReadableMap params, final Promise promise) {
         this.promise = promise;
-        if (params.hasKey(Constants.EXTRA_PARAM_APPEND_PKCS7)) {
-            this.horcrux.appendPkcs7(getCurrentActivity(), params.getString(Constants.EXTRA_PARAM_APPEND_PKCS7));
+        if (!params.hasKey(Constants.EXTRA_PARAM_ATTACH_TST)) {
+            this.promise.reject("attachTimestamp()  error", "No timestamp provided");
             return;
         }
-        this.horcrux.appendPkcs7(getCurrentActivity());
+        this.horcrux.attachPkcs7(getCurrentActivity(), params.getString(Constants.EXTRA_PARAM_ATTACH_TST));
     }
 
     public static String encodeHex(byte[] bytes) {
@@ -89,13 +89,19 @@ public class EImzoModule extends ReactContextBaseJavaModule implements ActivityE
         }
         WritableMap params = Arguments.createMap();
         if (data != null) {
+            if (requestCode == Constants.ATTACH_CODE) {
+                byte[] pkcs = data.getByteArrayExtra(Constants.EXTRA_RESULT_PKCS7);
+                params.putString(Constants.EXTRA_RESULT_PKCS7, Base64.encodeToString(pkcs, Base64.NO_WRAP));
+                this.promise.resolve(params);
+                return;
+            }
             params.putInt("resultCode", resultCode);
             this.horcrux.parsePFX(data);
-            params.putString(Constants.EXTRA_RESULT_PKCS7, Base64.encodeToString(data.getByteArrayExtra(Constants.EXTRA_RESULT_PKCS7), Base64.NO_WRAP));
+            params.putString(Constants.EXTRA_RESULT_PKCS7, this.horcrux.getPKCS());
             try {
                 params.putString(Constants.EXTRA_RESULT_SIGNATURE, encodeHex(data.getByteArrayExtra(Constants.EXTRA_RESULT_SIGNATURE)));
             } catch (Exception e) {
-                this.promise.reject(e);
+//                this.promise.reject(e);
             }
         }
         this.promise.resolve(params);

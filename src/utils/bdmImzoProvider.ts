@@ -43,20 +43,16 @@ export let sign: Promise<SignResult> = (append_pkcs7: string) => {
 	return NativeModules.EImzo.createSign(obj);
 };
 
-export let attach: Promise<SignResult> = (
-	attach_pkcs7: string,
-	tst: string
-) => {
+export let attach: Promise<SignResult> = (tst: string) => {
 	let obj = {
 		packageName: "uz.yt.eimzo",
 		className: "uz.yt.eimzo.activity.MainActivity",
 		serial_number,
 		api_key,
-		attach_pkcs7,
 		tst
 	};
 	console.log({ obj });
-	// return IntentLauncher.attachTimestamp(obj);
+	return NativeModules.EImzo.attachTimestamp(obj);
 };
 
 export let append: Promise<SignResult> = (append_pkcs7: string) => {
@@ -67,5 +63,5 @@ export let append: Promise<SignResult> = (append_pkcs7: string) => {
 		api_key,
 		append_pkcs7
 	};
-	console.log({ obj });
+	return NativeModules.EImzo.appendSign(obj);
 };
