@@ -2,6 +2,7 @@ package com.bdm;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -42,8 +43,8 @@ public class EImzoModule extends ReactContextBaseJavaModule implements ActivityE
         this.promise = promise;
         if (params.hasKey(Constants.EXTRA_PARAM_MESSAGE)) {
             this.horcrux.createPKCS7(getCurrentActivity(), params.getString(Constants.EXTRA_PARAM_MESSAGE));
-        }else{
-            this.horcrux.createPKCS7(getCurrentActivity(),"login");
+        } else {
+            this.horcrux.createPKCS7(getCurrentActivity(), "login");
         }
     }
 
@@ -104,5 +105,16 @@ public class EImzoModule extends ReactContextBaseJavaModule implements ActivityE
     @Override
     public void onNewIntent(Intent intent) {
 
+    }
+
+    @ReactMethod
+    public void isAppInstalled(String packageName, final Promise promise) {
+        try {
+            this.reactContext.getPackageManager().getPackageInfo(packageName, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            promise.reject("app not found");
+            return;
+        }
+        promise.resolve(true);
     }
 }
