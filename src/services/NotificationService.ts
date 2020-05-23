@@ -48,13 +48,15 @@ const createNotificationListeners = async channelId => {
 	try {
 		let notifications = firebase.notifications();
 		notifications.onNotification(async notification => {
+			console.log("WTF");
+
 			notification.android.setChannelId(channelId).setSound("default");
 			firebase.notifications().displayNotification(notification);
 			console.log(notification);
-			if (AppState.currentState.match(/active/)) {
-				notificationConsumer(notification);
-				clearBadge();
-			}
+			// if (AppState.currentState.match(/active/)) {
+			// 	notificationConsumer(notification);
+			// 	clearBadge();
+			// }
 		});
 		notifications.onNotificationOpened(async notification => {
 			// Process data of the notification

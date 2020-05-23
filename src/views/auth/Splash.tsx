@@ -35,8 +35,7 @@ const Splash = ({
 				id: userData.id,
 				tin: userData.tin
 			});
-			console.warn("FCM TOKEN:", token);
-
+			console.log("FCM TOKEN:", token);
 			hideModal();
 			hideError();
 			navigation.navigate("Main");

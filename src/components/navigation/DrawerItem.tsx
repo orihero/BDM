@@ -115,9 +115,10 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
 				</View>
 				<View style={styles.childsContainer}>
 					{children &&
-						children.map(el => {
+						children.map((el,id) => {
 							return (
 								<DrawerItem
+									key={id}
 									active={
 										el.action?status === el.action.status&&boxType===action?.boxType:false
 									}

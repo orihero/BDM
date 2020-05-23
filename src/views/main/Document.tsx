@@ -168,7 +168,10 @@ const Document: React.FC<DocumentProps> = ({
 			</View>
 			<Text
 				selectable
-				style={[styles.secondaryText, { textAlign: "center" }]}
+				style={[
+					styles.secondaryText,
+					{ textAlign: "center", fontWeight: "bold" }
+				]}
 			>{`№${number}`}</Text>
 			<Text
 				selectable
@@ -180,7 +183,7 @@ const Document: React.FC<DocumentProps> = ({
 				selectable
 				style={[styles.secondaryText, { textAlign: "center" }]}
 			>
-				{date}
+				от {date}
 			</Text>
 			<Text
 				selectable
