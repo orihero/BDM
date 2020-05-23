@@ -357,7 +357,8 @@ const PdfViewer = ({
 											status,
 											docTypeId: navigation.getParam(
 												"type"
-											)
+											),
+											notes: reason
 										};
 										dispatch(acceptDocument(payload));
 										setModalVisible(false);

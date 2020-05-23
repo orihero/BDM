@@ -495,35 +495,48 @@ export function* documentInteractionHandler({
 					);
 					//* forming sign request
 					let newJson = {
-						Factura: signMessage.data.data,
+						Factura: JSON.parse(signMessage.data.data),
 						Notes: notes
 					};
-					console.warn({ newJson });
-
 					//* signing
 					let createdSign = yield call(
 						eSign,
 						JSON.stringify(newJson)
 					);
-					let rawSign = yield call(append, createdSign.pkcs7);
-					console.warn({ rawSign });
+
+					// //* signing
+					// let rawSign = yield call(append, createdSign.pkcs7);
 
 					//* getting timestamp from api
 					let tst = yield call(
 						requests.documents.getTimestamp,
-						rawSign.signature
+						createdSign.signature
 					);
-					console.warn({ tst });
+					console.log({
+						tst
+					});
 
-					sign = yield call(attach, rawSign.pkcs7, tst.data.data);
-					console.warn({ sign });
+					sign = yield call(attach, tst.data.data);
+					console.log({
+						sign
+					});
 				} else {
+					//* handling reject of other types
 					let signMessage = yield call(
 						requests.documents.getSignMessage,
 						documentId
 					);
 					sign = yield call(eSign, signMessage.data.data);
 				}
+
+				console.log({
+					rejectContent: {
+						documentId,
+						sign: sign.pkcs7,
+						notes
+					}
+				});
+
 				let response = yield call(requests.documents.reject, {
 					documentId,
 					sign: sign.pkcs7,
