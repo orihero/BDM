@@ -1,7 +1,9 @@
+import { fetchDocuments } from "./../redux/actions/documents";
 import { warnUser } from "./../utils/warn";
 import { AppState, Clipboard, Alert } from "react-native";
-import firebase from "react-native-firebase";
+import firebase, { Firebase } from "react-native-firebase";
 import { requests } from "../api/requests";
+import { Notification } from "react-native-firebase/notifications";
 // import { orderLoaded } from "./../redux/actions/order";
 
 let store = null;
@@ -15,9 +17,31 @@ function setState(state) {
 }
 
 let notificationConsumer = async notification => {
-	console.log(notification);
-	console.log(firebase.notifications);
+	try {
+		let data = JSON.parse(notification.notification.android.tag);
+		// console.log();
 
+		let status;
+		switch (data.message) {
+			case "20":
+				status = 30;
+				break;
+			case "30":
+				status = 60;
+				break;
+			default:
+				status = 10;
+				break;
+		}
+		let payload = {
+			status,
+			notification: { id: data.id },
+			boxType: data.message === "10" ? 1 : 2
+		};
+		console.log(payload);
+
+		store.dispatch(fetchDocuments(payload));
+	} catch (error) {}
 	// switch (notification.data.actionType) {
 	// 	case "accepted": {
 	// 	}
@@ -64,6 +88,9 @@ const createNotificationListeners = async channelId => {
 			// Process data of the notification
 			// console.log(notification.notification.data);
 			notificationConsumer(notification);
+			notifications.cancelNotification(
+				notification.notification.notificationId
+			);
 			// clearBadge();
 		});
 	} catch (error) {
@@ -135,7 +162,6 @@ const backgroundPushes = async payload => {
 				payload.data.companyName
 			} ( ИНН ${payload.data.tin} ) смотрите отказанные`;
 		}
-		let { message: msg, id, tin, companyName } = payload.data;
 		console.log(payload.data);
 		const notification = new firebase.notifications.Notification()
 			.setNotificationId(payload.messageId)
@@ -143,9 +169,9 @@ const backgroundPushes = async payload => {
 			.setBody(message)
 			.android.setChannelId("insider")
 			.android.setPriority(firebase.notifications.Android.Priority.High)
-			.setSound("default");
-		await firebase.notifications().displayNotification(notification);
-		return Promise.resolve();
+			.setSound("default")
+			.android.setTag(JSON.stringify(payload.data));
+		return firebase.notifications().displayNotification(notification);
 	} catch (error) {
 		warnUser(error.message);
 	}

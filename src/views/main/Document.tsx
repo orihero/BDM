@@ -183,9 +183,12 @@ const Document: React.FC<DocumentProps> = ({
 			</Text>
 			<Text
 				selectable
-				style={[styles.secondaryText, { textAlign: "center" }]}
+				style={[
+					styles.secondaryText,
+					{ textAlign: "center", fontWeight: "bold" }
+				]}
 			>
-				от <Text style={{ fontWeight: "bold" }}>{newDate}</Text>
+				от {newDate}
 			</Text>
 			<Text
 				selectable
