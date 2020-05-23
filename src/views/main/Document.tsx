@@ -17,6 +17,7 @@ import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import Feather from "react-native-vector-icons/Feather";
 import { requests } from "../../api/requests";
 import { normalizePrice } from "../../utils/object";
+import moment from "moment";
 
 export interface DocumentProps {
 	documentId: string;
@@ -55,6 +56,7 @@ const Document: React.FC<DocumentProps> = ({
 		signed
 	} = item;
 	let price = normalizePrice(sum ? sum.toString() : sum);
+	let newDate = moment(date, "DD-MM-YYYY").format("DD-MM-YYYY");
 	return (
 		<View style={[commonStyles.shadow, styles.container]}>
 			<View style={styles.row}>
@@ -183,7 +185,7 @@ const Document: React.FC<DocumentProps> = ({
 				selectable
 				style={[styles.secondaryText, { textAlign: "center" }]}
 			>
-				от {date}
+				от <Text style={{ fontWeight: "bold" }}>{newDate}</Text>
 			</Text>
 			<Text
 				selectable
