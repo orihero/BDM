@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
 	View,
 	StyleSheet,
 	TouchableWithoutFeedback,
-	Image
+	Image,
+	Animated,
+	Easing
 } from "react-native";
 import { commonStyles, Icons, colors } from "../../constants";
 import Text from "../../components/common/CustomText";
@@ -36,7 +38,8 @@ const Document: React.FC<DocumentProps> = ({
 	boxType,
 	status,
 	item,
-	showDescription
+	showDescription,
+	notification
 }) => {
 	let {
 		id,
@@ -57,8 +60,51 @@ const Document: React.FC<DocumentProps> = ({
 	} = item;
 	let price = normalizePrice(sum ? sum.toString() : sum);
 	let newDate = moment(date, "DD-MM-YYYY").format("DD-MM-YYYY");
+	const [animatedValue, setAnimatedValue] = useState(new Animated.Value(0));
+	let startShake = () => {
+		Animated.sequence([
+			Animated.timing(animatedValue, {
+				toValue: 10,
+				duration: 100,
+				useNativeDriver: true,
+				delay: 800
+			}),
+			Animated.timing(animatedValue, {
+				toValue: -10,
+				duration: 100,
+				useNativeDriver: true
+			}),
+			Animated.timing(animatedValue, {
+				toValue: 10,
+				duration: 100,
+				useNativeDriver: true
+			}),
+			Animated.timing(animatedValue, {
+				toValue: 0,
+				duration: 100,
+				useNativeDriver: true
+			})
+		]).start();
+	};
+	useEffect(() => {
+		if (notification && id.toString() === notification.id) {
+			startShake();
+		}
+	}, [notification]);
 	return (
-		<View style={[commonStyles.shadow, styles.container]}>
+		<Animated.View
+			style={[
+				commonStyles.shadow,
+				styles.container,
+				{
+					transform: [
+						{
+							translateX: animatedValue
+						}
+					]
+				}
+			]}
+		>
 			<View style={styles.row}>
 				<View>
 					<TouchableWithoutFeedback
@@ -276,7 +322,7 @@ const Document: React.FC<DocumentProps> = ({
 					</View>
 				)}
 			</View>
-		</View>
+		</Animated.View>
 	);
 };
 
@@ -310,9 +356,10 @@ const styles = StyleSheet.create({
 	}
 });
 
-const mapStateToProps = ({ documents: { boxType, status } }) => ({
+const mapStateToProps = ({ documents: { boxType, status, notification } }) => ({
 	boxType,
-	status
+	status,
+	notification
 });
 
 export default connect(mapStateToProps)(withNavigation(Document));

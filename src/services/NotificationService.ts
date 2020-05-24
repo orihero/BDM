@@ -38,18 +38,10 @@ let notificationConsumer = async notification => {
 			notification: { id: data.id },
 			boxType: data.message === "10" ? 1 : 2
 		};
-		console.log(payload);
-
 		store.dispatch(fetchDocuments(payload));
-	} catch (error) {}
-	// switch (notification.data.actionType) {
-	// 	case "accepted": {
-	// 	}
-	// 	default:
-	// 		console.warn("UNHANDLED ACTION");
-	// 		console.warn(notification.data);
-	// 		break;
-	// }
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 function init() {
@@ -91,7 +83,14 @@ const createNotificationListeners = async channelId => {
 			notifications.cancelNotification(
 				notification.notification.notificationId
 			);
-			// clearBadge();
+			console.log({
+				notification: notification.notification.notificationId
+			});
+
+			notifications.removeDeliveredNotification(
+				notification.notification.notificationId
+			);
+			clearBadge();
 		});
 	} catch (error) {
 		console.log(error);

@@ -15,7 +15,8 @@ const initialState = {
 			reject: -1,
 			downloaded: -1
 		}
-	}
+	},
+	notification: null
 };
 
 export default (state = initialState, { type, payload }) => {
@@ -23,8 +24,8 @@ export default (state = initialState, { type, payload }) => {
 		case DOCUMENTS_COUNT_LOADED:
 			return { ...state, count: payload };
 		case DOCUMENTS_LOADED: {
-			let { data, boxType, status } = payload;
-			return { ...state, data, boxType, status };
+			let { data, boxType, status, ...rest } = payload;
+			return { ...state, data, boxType, status, ...rest };
 		}
 		default:
 			return state;

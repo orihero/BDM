@@ -1,50 +1,48 @@
-import React, { useState, useEffect, useRef } from "react";
+import AsyncStorage from "@react-native-community/async-storage";
+import React, { useEffect, useRef, useState } from "react";
 import {
-	View,
-	FlatList,
-	StyleSheet,
 	Animated,
-	Dimensions,
-	TouchableWithoutFeedback,
 	BackHandler,
+	Dimensions,
+	FlatList,
+	KeyboardAvoidingView,
 	ScrollView,
-	KeyboardAvoidingView
+	StyleSheet,
+	TouchableWithoutFeedback,
+	View
 } from "react-native";
-import Document, { DocumentProps } from "./Document";
-import DrawerContent, {
-	DrawerActionTypes,
-	BoxType,
-	DocumentStatus
-} from "../../components/navigation/DrawerContent";
-import { colors } from "../../constants";
-import Header from "../../components/navigation/Header";
-import { strings } from "../../locales/strings";
+import DocumentPicker from "react-native-document-picker";
+import Feather from "react-native-vector-icons/Feather";
 import { connect } from "react-redux";
+import { AnyAction, bindActionCreators, Dispatch } from "redux";
+import { requests, url } from "../../api/requests";
+import Text from "../../components/common/CustomText";
+import GradientButton from "../../components/common/GradientButton";
+import BlurWrapper from "../../components/containers/BlurWrapper";
+import FieldsRenderer from "../../components/generators/FieldsRenderer";
+import Modal from "../../components/Modal";
+import DrawerContent, {
+	BoxType,
+	DocumentStatus,
+	DrawerAction,
+	DrawerActionTypes
+} from "../../components/navigation/DrawerContent";
+import Header from "../../components/navigation/Header";
+import { colors } from "../../constants";
+import { strings } from "../../locales/strings";
 import {
+	documentsLoaded,
 	fetchDocuments,
-	getRegions,
+	hideError,
 	hideModal,
 	showModal,
-	hideError,
-	userLoggedOut,
-	documentsLoaded
+	userLoggedOut
 } from "../../redux/actions";
-import BlurWrapper from "../../components/containers/BlurWrapper";
-import { DrawerAction } from "../../components/navigation/DrawerContent";
-import Text from "../../components/common/CustomText";
-import Feather from "react-native-vector-icons/Feather";
-import DocumentPicker from "react-native-document-picker";
-import { requests, url } from "../../api/requests";
-import { SET_DANGER_ERROR } from "../../redux/types";
-import AsyncStorage from "@react-native-community/async-storage";
 import { storeName } from "../../redux/reducers/user";
-import Modal from "../../components/Modal";
-import FieldsRenderer from "../../components/generators/FieldsRenderer";
-import { FieldProps, FieldType, FieldSize } from "../auth";
-import RoundButton from "../../components/common/RoundButton";
-import GradientButton from "../../components/common/GradientButton";
+import { SET_DANGER_ERROR } from "../../redux/types";
 import { normalizeFilters } from "../../utils/object";
-import { bindActionCreators, AnyAction, Dispatch } from "redux";
+import { FieldProps, FieldSize, FieldType } from "../auth";
+import Document from "./Document";
 
 const minW = 60;
 let { height, width } = Dimensions.get("window");
@@ -118,7 +116,7 @@ let filterFields: FieldProps[] = [
 const Main = ({
 	navigation,
 	fetchDocuments,
-	documents: { data, status, boxType },
+	documents,
 	hideModal,
 	showModal,
 	dispatch,
@@ -127,6 +125,7 @@ const Main = ({
 	userLoggedOut,
 	documentsLoaded
 }) => {
+	let { data, status, boxType, notification } = documents;
 	const [width, setWidth] = useState(new Animated.Value(minW));
 	const [expanded, setExpanded] = useState(false);
 	let defaultModal = {
@@ -140,6 +139,26 @@ const Main = ({
 	const [modalData, setModalData] = useState(defaultModal);
 	const [filters, setFilters] = useState({});
 	const [filterVisible, setFilterVisible] = useState(false);
+	useEffect(() => {
+		try {
+			if (notification) {
+				let index = data.findIndex(
+					e => e.id.toString() === notification.id
+				);
+				if (flatList.current && index) {
+					flatList.current.scrollToIndex({ index });
+					// documentsLoaded({
+					// 	data,
+					// 	boxType,
+					// 	status,
+					// 	notification: null
+					// });
+				}
+			}
+		} catch (error) {
+			console.log("ON PUSH SCROLL ERROR:", error);
+		}
+	}, [documents]);
 	let toggle = async (action: DrawerAction) => {
 		if (!action || !action.type) {
 			Animated.spring(width, {
@@ -198,6 +217,7 @@ const Main = ({
 	};
 
 	const ref = useRef(null);
+	const flatList = useRef(null);
 
 	useEffect(() => {
 		if (modalData.visible || filterVisible) {
@@ -275,6 +295,7 @@ const Main = ({
 				/>
 				<View style={styles.row}>
 					<FlatList
+						ref={flatList}
 						ListEmptyComponent={() => (
 							<Text
 								style={{

@@ -134,7 +134,7 @@ export let docIdUrls = {
 };
 
 export function* fetchDocumentsAsync({
-	payload: { boxType = 1, status = 10, page = 1, perPage = 20 }
+	payload: { boxType = 1, status = 10, page = 1, perPage = 20, ...rest }
 }) {
 	try {
 		yield put(showModal());
@@ -144,9 +144,13 @@ export function* fetchDocumentsAsync({
 			page,
 			perPage
 		}) || {};
-		yield put(
-			documentsLoaded({ data: response.data.data, boxType, status })
-		);
+		let payload = {
+			data: response.data.data,
+			boxType,
+			status,
+			...rest
+		};
+		yield put(documentsLoaded(payload));
 		let res = yield call(requests.documents.getDocumentsCount, {});
 		yield put(documentsCountLoaded(res.data));
 		yield put(delay(100));
