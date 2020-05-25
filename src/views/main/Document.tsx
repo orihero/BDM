@@ -59,7 +59,9 @@ const Document: React.FC<DocumentProps> = ({
 		signed
 	} = item;
 	let price = normalizePrice(sum ? sum.toString() : sum);
-	let newDate = moment(date, "DD-MM-YYYY").format("DD-MM-YYYY");
+	let newDate = moment(date).format("DD-MM-YYYY");
+	let newActedDate = moment(createdDate).format("DD-MM-YYYY");
+	let newCreatedDate = moment(createdDate).format("DD-MM-YYYY");
 	const [animatedValue, setAnimatedValue] = useState(new Animated.Value(0));
 	let startShake = () => {
 		Animated.sequence([
@@ -300,7 +302,7 @@ const Document: React.FC<DocumentProps> = ({
 						{statuses[boxType][status].date}
 					</Text>
 					<Text selectable style={styles.regularText}>
-						{createdDate}
+						{newCreatedDate}
 					</Text>
 				</View>
 				{status !== 10 && (
@@ -317,7 +319,7 @@ const Document: React.FC<DocumentProps> = ({
 							{statuses[boxType][status].acted}
 						</Text>
 						<Text selectable style={styles.regularText}>
-							{actedDate}
+							{newActedDate}
 						</Text>
 					</View>
 				)}
