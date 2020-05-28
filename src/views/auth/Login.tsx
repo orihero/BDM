@@ -12,7 +12,8 @@ import {
 	ScrollView,
 	Platform,
 	ToastAndroid,
-	Keyboard
+	Keyboard,
+	NativeModules
 } from "react-native";
 import { connect } from "react-redux";
 import logo from "../../assets/images/logo.png";
@@ -26,7 +27,6 @@ import { requestUserLogin } from "../../redux/actions";
 import BlurWrapper from "../../components/containers/BlurWrapper";
 import FA5 from "react-native-vector-icons/FontAwesome5";
 import RectangularInput from "../../components/common/RectangularInput";
-// import Launcher from "react-native-intent-launcher";
 import InnerHeader from "../../components/navigation/InnerHeader";
 
 let { width } = Dimensions.get("window");
@@ -44,7 +44,11 @@ let socialIcons = [
 ];
 const Login = ({ navigation, requestUserLogin }) => {
 	let [showSocials, setShowSocials] = useState(true);
+	let isIos = Platform.OS === "ios";
 	useEffect(() => {
+		if (isIos) {
+			return;
+		}
 		let keyboardDidShowListener = Keyboard.addListener(
 			"keyboardDidShow",
 			() => {
@@ -63,7 +67,6 @@ const Login = ({ navigation, requestUserLogin }) => {
 		};
 	}, []);
 
-	let isIos = Platform.OS === "ios";
 	const [remember, setRemember] = useState(true);
 	const [isUsername, setIsUsername] = useState(isIos);
 	const [username, setUsername] = useState("");
@@ -73,7 +76,7 @@ const Login = ({ navigation, requestUserLogin }) => {
 	};
 	let onLogin = async () => {
 		try {
-			// await Launcher.isAppInstalled("uz.yt.eimzo");
+			await NativeModules.EImzo.isAppInstalled("uz.yt.eimzo");
 		} catch (error) {
 			ToastAndroid.show(strings.downloadEImzoApp, 2000);
 			return;
