@@ -35,6 +35,9 @@ target 'BDM' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
   pod 'react-native-blur', :path => '../node_modules/@react-native-community/blur'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Core'
+  pod 'Firebase/Messaging'
 
   target 'BDMTests' do
     inherit! :search_paths
