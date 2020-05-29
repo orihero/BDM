@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Dimensions } from "react-native";
+import React, { useEffect } from "react";
+import { View, Dimensions, StatusBar } from "react-native";
 import { createMaterialTopTabNavigator } from "react-navigation-tabs";
 import { Profile, Integration, Tariffs } from "./index";
 import { createAppContainer } from "react-navigation";
@@ -43,7 +43,7 @@ let tabConfig = {
 	}
 };
 
-let Account = ({}: Props): React.ReactElement => {
+let Account = ({  }: Props): React.ReactElement => {
 	let tabs = createMaterialTopTabNavigator(
 		{
 			Profile: {
@@ -68,9 +68,15 @@ let Account = ({}: Props): React.ReactElement => {
 		tabConfig
 	);
 	let AccountRoutes = createAppContainer(tabs);
+	useEffect(() => {
+		StatusBar.setBarStyle("dark-content");
+	});
 	return (
 		<BlurWrapper>
-			<AccountRoutes />
+			<View style={{ flex: 1 }}>
+				<StatusBar barStyle={"dark-content"} />
+				<AccountRoutes />
+			</View>
 		</BlurWrapper>
 	);
 };

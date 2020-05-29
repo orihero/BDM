@@ -162,7 +162,8 @@ const Main = ({
 	let toggle = async (action: DrawerAction) => {
 		if (!action || !action.type) {
 			Animated.spring(width, {
-				toValue: expanded ? minW : maxW
+				toValue: expanded ? minW : maxW,
+				speed: 500
 			}).start(() => setExpanded(!expanded));
 			return;
 		}

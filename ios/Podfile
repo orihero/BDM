@@ -38,6 +38,7 @@ target 'BDM' do
   pod 'Firebase/Analytics'
   pod 'Firebase/Core'
   pod 'Firebase/Messaging'
+  pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
 
   target 'BDMTests' do
     inherit! :search_paths
