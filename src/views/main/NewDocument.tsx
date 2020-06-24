@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	ScrollView,
 	StyleSheet,
@@ -20,7 +20,6 @@ import { strings } from "../../locales/strings";
 import { createDocument } from "../../redux/actions";
 import { NavigationProps } from "../../utils/defaultPropTypes";
 import { FieldProps, FieldSize, FieldType } from "../auth";
-import { reducer } from "../../utils/state";
 
 interface Props {
 	createDocument: Function;
@@ -33,26 +32,18 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 	user
 }) => {
 	const [documentType, setDocumentType] = useState(null);
+	const [invoiceType, setInvoiceType] = useState(null);
 	const [documentTypes, setDocumentTypes] = useState([]);
+	const [invoiceTypes, setInvoiceTypes] = useState([]);
 	let docType =
 		documentType && documentTypes.length > 0
 			? documentTypes[documentType].actualValue
 			: 0;
+	let currentInvoiceType =
+		invoiceType && invoiceTypes.length > 0
+			? invoiceTypes[invoiceType].actualValue
+			: 0;
 	let initialFields: FieldProps[] = [
-		{
-			type: FieldType.SELECT,
-			visible: docType === 2,
-			title: strings.invoiceType,
-			placeholder: strings.invoiceType,
-			size: FieldSize.FULL,
-			name: "invoiceType",
-			fetch: () => requests.documents.getDocumentTypes(2),
-			map: (e, index) => ({
-				value: index,
-				label: e.docTypeName,
-				actualValue: e.docTypeCode
-			})
-		},
 		{
 			type: FieldType.INPUT,
 			title: strings.documentName,
@@ -66,15 +57,8 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 			title: strings.recieverInn,
 			placeholder: strings.recieverInn,
 			size: FieldSize.FULL,
-			name: "buyerTin",
+			name: "buyer",
 			fetch: requests.user.getRequisite
-		},
-		{
-			type: FieldType.INPUT,
-			title: strings.companyName,
-			placeholder: strings.companyName,
-			size: FieldSize.FULL,
-			name: "buyerCompanyName"
 		},
 		{
 			type: FieldType.LINE,
@@ -85,7 +69,7 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 					title: strings.documentNumber,
 					size: FieldSize.QUARTER,
 					placeholder: strings.number,
-					name: "document.documentNumber"
+					name: "document.documentNo"
 				},
 				{
 					type: FieldType.DATE_PICKER,
@@ -115,8 +99,7 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 					name: "contract.contractDate"
 				}
 			],
-			visible:
-				docType === 3 || docType === 4 || docType === 6 || docType === 2
+			visible: docType !== 8 && docType !== 1
 		},
 		{
 			type: FieldType.LINE,
@@ -166,13 +149,15 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 			title: strings.hasIndividualPerson,
 			placeholder: strings.recieverInn,
 			size: FieldSize.FULL,
-			name: "hasIndividualPerson"
+			name: "hasIndividualPerson",
+			visible: false
 		},
 		{
 			type: FieldType.INPUT,
 			placeholder: strings.individualTin,
 			size: FieldSize.FULL,
-			name: "individualPerson.tin"
+			name: "individualPerson.tin",
+			visible: false
 		},
 		{
 			type: FieldType.LINE,
@@ -242,9 +227,9 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 			let res = await requests.documents.getDocumentTypes(1);
 			setDocumentTypes(
 				res.data.map((e, i) => ({
-					label: e.docTypeName,
+					label: e.typeName || "",
 					value: i,
-					actualValue: e.docTypeCode
+					actualValue: e.type
 				}))
 			);
 		} catch (res) {}
@@ -339,6 +324,14 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 						<RectangularSelect
 							value={documentType}
 							items={documentTypes}
+							onChange={val => {
+								setDocumentType(val);
+							}}
+							placeholder={strings.type}
+						/>
+						<RectangularSelect
+							value={invoiceType}
+							items={invoiceTypes}
 							onChange={val => {
 								setDocumentType(val);
 							}}

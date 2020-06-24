@@ -1,19 +1,9 @@
 import React, { useState } from "react";
-import {
-	ScrollView,
-	StyleSheet,
-	View,
-	Dimensions,
-	Animated,
-	TouchableWithoutFeedback
-} from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { Animated, Dimensions, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
+import { connect } from "react-redux";
+import { colors } from "../../constants";
 import { strings } from "../../locales/strings";
 import DrawerItem, { DrawerItemProps } from "./DrawerItem";
-import { connect } from "react-redux";
-import Text from "../common/CustomText";
-import { colors } from "../../constants";
-import { closeDrawer } from "react-navigation-drawer/lib/typescript/src/routers/DrawerActions";
 
 interface DrawerContentProps {
 	navigation: any;
@@ -51,28 +41,28 @@ export interface DrawerAction {
 }
 
 let menus: DrawerItemProps[] = [
-	// {
-	// 	iconName: "add-file",
-	// 	title: strings.create,
-	// 	children: [
-	// 		{
-	// 			title: strings.twoSide,
-	// 			iconName: "double",
-	// 			iconSize: 24,
-	// 			action: {
-	// 				navigateTo: "NewDocument"
-	// 			}
-	// 		},
-	// 		{
-	// 			title: strings.threeSide,
-	// 			iconName: "triple",
-	// 			iconSize: 24,
-	// 			action: {
-	// 				navigateTo: "NewDocument"
-	// 			}
-	// 		}
-	// 	]
-	// },
+	{
+		iconName: "add-file",
+		title: strings.create,
+		children: [
+			{
+				title: strings.twoSide,
+				iconName: "double",
+				iconSize: 24,
+				action: {
+					navigateTo: "NewDocument"
+				}
+			},
+			{
+				title: strings.threeSide,
+				iconName: "triple",
+				iconSize: 24,
+				action: {
+					navigateTo: "NewDocument"
+				}
+			}
+		]
+	},
 	{
 		iconName: "file-down",
 		title: strings.inbox,

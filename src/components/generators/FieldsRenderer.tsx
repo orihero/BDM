@@ -227,7 +227,7 @@ const FieldsRenderer = ({
 									backgroundColor: colors.ultraLightGray
 								}}
 								inputContainerStyle={{ borderWidth: 0 }}
-								data={items[e.name]}
+								data={items[e.name]||[]}
 								value={
 									state[e.name]
 										? state[e.name].tin +

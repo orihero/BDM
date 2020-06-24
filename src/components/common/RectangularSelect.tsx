@@ -39,7 +39,7 @@ const RectangularSelect = ({
             }}
             disabled={disabled}
             value={value}
-            placeholder={{ label: placeholder, value: -1, color: colors.gray }}
+            placeholder={{ label: placeholder||"", value: -1, color: colors.gray }}
             items={items}>
             <View style={[styles.container, containerStyle]}>
                 <Text style={[styles.placeholder, value && styles.value]}>{val}</Text>

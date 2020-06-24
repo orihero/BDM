@@ -1,5 +1,11 @@
-import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import React, { useEffect } from "react";
+import {
+	ScrollView,
+	StyleSheet,
+	View,
+	StatusBarIOS,
+	StatusBar
+} from "react-native";
 import { connect } from "react-redux";
 import { requests } from "../../api/requests";
 import GradientButton from "../../components/common/GradientButton";
@@ -316,8 +322,12 @@ const Profile = ({
 			</View>
 		);
 	};
+	useEffect(() => {
+		StatusBar.setBarStyle("dark-content");
+	});
 	return (
 		<View>
+			<StatusBar barStyle={"dark-content"} />
 			<ScrollView
 				contentContainerStyle={styles.container}
 				showsVerticalScrollIndicator={false}

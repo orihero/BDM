@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Dimensions } from "react-native";
+import React, { useEffect } from "react";
+import { View, Dimensions, StatusBar, Platform } from "react-native";
 import { createMaterialTopTabNavigator } from "react-navigation-tabs";
 import { Profile, Integration, Tariffs } from "./index";
 import { createAppContainer } from "react-navigation";
@@ -43,34 +43,56 @@ let tabConfig = {
 	}
 };
 
-let Account = ({}: Props): React.ReactElement => {
+let Account = ({  }: Props): React.ReactElement => {
 	let tabs = createMaterialTopTabNavigator(
-		{
-			Profile: {
-				screen: Profile,
-				navigationOptions: {
-					title: strings.profile
+		Platform.select({
+			android: {
+				Profile: {
+					screen: Profile,
+					navigationOptions: {
+						title: strings.profile
+					}
+				},
+				Integration: {
+					screen: Integration,
+					navigationOptions: {
+						title: strings.integration
+					}
+				},
+				Tariffs: {
+					screen: Tariffs,
+					navigationOptions: {
+						title: strings.tariffs
+					}
 				}
 			},
-			Integration: {
-				screen: Integration,
-				navigationOptions: {
-					title: strings.integration
-				}
-			},
-			Tariffs: {
-				screen: Tariffs,
-				navigationOptions: {
-					title: strings.tariffs
+			ios: {
+				Profile: {
+					screen: Profile,
+					navigationOptions: {
+						title: strings.profile
+					}
+				},
+				Integration: {
+					screen: Integration,
+					navigationOptions: {
+						title: strings.integration
+					}
 				}
 			}
-		},
+		}),
 		tabConfig
 	);
 	let AccountRoutes = createAppContainer(tabs);
+	useEffect(() => {
+		StatusBar.setBarStyle("dark-content");
+	});
 	return (
 		<BlurWrapper>
-			<AccountRoutes />
+			<View style={{ flex: 1 }}>
+				<StatusBar barStyle={"dark-content"} />
+				<AccountRoutes />
+			</View>
 		</BlurWrapper>
 	);
 };

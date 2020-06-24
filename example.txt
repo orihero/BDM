@@ -1,0 +1,165 @@
+let initialFields: FieldProps[] = [
+	{
+		type: FieldType.INPUT,
+		title: strings.documentName,
+		placeholder: strings.documentName,
+		size: FieldSize.FULL,
+		name: "other",
+		visible: docType === 10
+	},
+	{
+		type: FieldType.AUTOCOMPLETE,
+		title: strings.recieverInn,
+		placeholder: strings.recieverInn,
+		size: FieldSize.FULL,
+		name: "buyer",
+		fetch: requests.user.getRequisite
+	},
+	{
+		type: FieldType.LINE,
+		size: FieldSize.FULL,
+		columns: [
+			{
+				type: FieldType.INPUT,
+				title: strings.documentNumber,
+				size: FieldSize.QUARTER,
+				placeholder: strings.number,
+				name: "document.documentNo"
+			},
+			{
+				type: FieldType.DATE_PICKER,
+				placeholder: strings.selectDate,
+				size: FieldSize.QUERTER_THREE,
+				title: strings.selectDate,
+				name: "document.documentDate"
+			}
+		]
+	},
+	{
+		type: FieldType.LINE,
+		size: FieldSize.FULL,
+		columns: [
+			{
+				type: FieldType.INPUT,
+				title: strings.contractNumber,
+				size: FieldSize.QUARTER,
+				placeholder: strings.contractNumber,
+				name: "contract.contractNumber"
+			},
+			{
+				type: FieldType.DATE_PICKER,
+				placeholder: strings.selectDate,
+				size: FieldSize.QUERTER_THREE,
+				title: strings.contractDate,
+				name: "contract.contractDate"
+			}
+		],
+		visible: docType !== 8 && docType !== 1
+	},
+	{
+		type: FieldType.LINE,
+		size: FieldSize.FULL,
+		columns: [
+			{
+				type: FieldType.CHECKBOX,
+				title: strings.service,
+				size: FieldSize.QUARTER,
+				placeholder: strings.service,
+				name: "service"
+			},
+			{
+				type: FieldType.CHECKBOX,
+				title: strings.constructAKT,
+				size: FieldSize.QUARTER,
+				placeholder: strings.constructAKT,
+				name: "constructAKT"
+			}
+		],
+		visible:
+			docType === 3 || docType === 4 || docType === 6 || docType === 2
+	},
+	{
+		type: FieldType.LINE,
+		size: FieldSize.FULL,
+		columns: [
+			{
+				type: FieldType.INPUT,
+				title: strings.empovermentNumber,
+				size: FieldSize.QUARTER,
+				placeholder: strings.number,
+				name: "empovermentNumber"
+			},
+			{
+				type: FieldType.DATE_PICKER,
+				placeholder: strings.empovermentDate,
+				size: FieldSize.QUERTER_THREE,
+				title: strings.selectDate,
+				name: "empovermentDate"
+			}
+		],
+		visible: docType === 2
+	},
+	{
+		type: FieldType.CHECKBOX,
+		title: strings.hasIndividualPerson,
+		placeholder: strings.recieverInn,
+		size: FieldSize.FULL,
+		name: "hasIndividualPerson",
+		visible: false
+	},
+	{
+		type: FieldType.INPUT,
+		placeholder: strings.individualTin,
+		size: FieldSize.FULL,
+		name: "individualPerson.tin",
+		visible: false
+	},
+	{
+		type: FieldType.LINE,
+		size: FieldSize.FULL,
+		columns: [
+			{
+				type: FieldType.INPUT,
+				title: strings.amount,
+				size: FieldSize.QUERTER_THREE,
+				placeholder: strings.enterAmount,
+				name: "sum"
+			},
+			{
+				type: FieldType.SELECT,
+				placeholder: strings.uzs,
+				size: FieldSize.QUARTER,
+				title: strings.currency,
+				name: "currencyId",
+				staticValue: [
+					{ label: "UZS", actualValue: 1, value: 0 },
+					{ label: "USD", actualValue: 2, value: 1 },
+					{ label: "RUB", actualValue: 3, value: 2 },
+					{ label: "EUR", actualValue: 4, value: 3 }
+				]
+			}
+		]
+	},
+	{
+		type: FieldType.INPUT,
+		title: strings.productReleased,
+		placeholder: strings.productReleased,
+		size: FieldSize.FULL,
+		name: "productReleased",
+		visible: docType === 2
+	},
+	{
+		type: FieldType.INPUT,
+		title: strings.comments,
+		placeholder: strings.enterComments,
+		size: FieldSize.FULL,
+		name: "description"
+	},
+	{
+		type: FieldType.FILE,
+		placeholder: strings.selectFile,
+		size: FieldSize.FULL,
+		name: "file",
+		visible: docType !== 2
+	}
+];
