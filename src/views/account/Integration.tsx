@@ -19,7 +19,7 @@ import GradientButton from "../../components/common/GradientButton";
 import { connect } from "react-redux";
 import FieldsRenderer from "../../components/generators/FieldsRenderer";
 import { requests } from "../../api/requests";
-import { SET_DANGER_ERROR, SET_SUCCESS_ERROR } from "../../redux/types";
+import { SET_DANGER_ERROR, SET_SUCCESS_MESSAGE } from "../../redux/types";
 import { showModal, hideModal, hideError } from "../../redux/actions";
 import BlurWrapper from "../../components/containers/BlurWrapper";
 
@@ -67,7 +67,7 @@ const Integration: React.FC<Props> = ({ user, dispatch }) => {
 				oldPassword,
 				newPassword
 			});
-			dispatch({ type: SET_SUCCESS_ERROR, payload: res.data.message });
+			dispatch({ type: SET_SUCCESS_MESSAGE, payload: res.data.message });
 		} catch (error) {
 			if (error.response)
 				dispatch({
@@ -89,7 +89,7 @@ const Integration: React.FC<Props> = ({ user, dispatch }) => {
 		try {
 			dispatch(showModal());
 			let res = await requests.user.create1CAccount({ password });
-			dispatch({ type: SET_SUCCESS_ERROR, payload: res.data.message });
+			dispatch({ type: SET_SUCCESS_MESSAGE, payload: res.data.message });
 		} catch (error) {
 			if (error.response)
 				dispatch({

@@ -71,7 +71,8 @@ export let requests = {
 			axios.get(`${url}/document/get/counts/by/status`),
 		getDocumentTypes: type =>
 			axios.get(`${url}/user/get/document/types?type=${type}`),
-		create: (path, data) => axios.post(`${url}/document${path}`, data),
+		create: (type, data) =>
+			axios.post(`${url}/document/create/${type}`, data),
 		uploadFile: data =>
 			axios.post(`${url}/document/get/path/for/view/pdf`, formData(data)),
 		getSignMessageForAccept: docId =>

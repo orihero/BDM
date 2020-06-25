@@ -4,6 +4,7 @@ import { colors, Icons } from "../../constants";
 import Picker from "@react-native-community/datetimepicker";
 import Text from "./CustomText";
 import { strings } from "../../locales/strings";
+import moment from "moment";
 
 interface DatePickerProps {
 	placeholder?: string;
@@ -33,7 +34,7 @@ const RectangularDatePicker = ({
 				? (selectedDate.getMonth() + 1).toString()
 				: "0" + (selectedDate.getMonth() + 1).toString();
 
-		let date = `${day}.${month}.${year}`;
+		let date = `${year}-${month}-${day}`;
 		return date;
 	};
 	const [visible, setVisible] = useState(false);
@@ -42,7 +43,9 @@ const RectangularDatePicker = ({
 			<View>
 				<View style={[styles.container, containerStyle]}>
 					<Text style={[styles.placeholder, value && styles.value]}>
-						{value ? value : placeholder}
+						{value
+							? moment(value, "YYYY-MM-DD").format("DD.MM.YYYY")
+							: placeholder}
 					</Text>
 					<Icons
 						name={"down-chevron"}

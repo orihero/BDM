@@ -28,11 +28,12 @@ import {
 import { docIdUrls } from "../../redux/sagas/documents";
 import {
 	SET_DANGER_ERROR,
-	SET_SUCCESS_ERROR,
+	SET_SUCCESS_MESSAGE,
 	SET_WARNING_ERROR
 } from "../../redux/types";
 import { sign } from "../../utils/bdmImzoProvider";
 import { NavigationProps } from "../../utils/defaultPropTypes";
+import { convertToTypeOf } from "../../utils/object";
 
 let { width, height } = Dimensions.get("window");
 
@@ -48,12 +49,10 @@ const PdfViewer = ({
 	//* notNull docId -- recieved document
 	let docId = navigation.getParam("docId");
 	//* notNull filePath -- document was created
-	let filePath = navigation.getParam("filePath");
-	let fileName = navigation.getParam("fileName");
+	let newDocument = navigation.getParam("newDocument");
+	let { dataForSign, filePath, fileName } = newDocument || {};
 	//* notNull content -- we have to sign invoice JSON
-	let content = navigation.getParam("content");
 	let data = navigation.getParam("data");
-	let dataForSign = navigation.getParam("dataForSign");
 	let signed = navigation.getParam("signed");
 
 	const [modalVisible, setModalVisible] = useState(false);
@@ -62,7 +61,7 @@ const PdfViewer = ({
 
 	let accept = async () => {
 		//* Check if new document
-		if (filePath) {
+		if (newDocument) {
 			//* Start loading
 			dispatch(showModal(strings.creatingDocument));
 			try {
@@ -91,9 +90,7 @@ const PdfViewer = ({
 						invoiceJSON: dataForSign,
 						sign: pkcs7,
 						sum,
-						description: data.description,
-						filePath,
-						fileName
+						description: data.description
 					};
 					//TODO get facture id
 					// let invoiceData = yield call(
@@ -104,45 +101,33 @@ const PdfViewer = ({
 						docIdUrls[data.documentType].url,
 						invoiceData
 					);
-					dispatch(hideModal());
-					dispatch({
-						type: SET_SUCCESS_ERROR,
-						payload: strings.documentCreatedSuccesfully
-					});
-					navigation.navigate("Main");
-					await sleep(3000);
-					dispatch(hideError());
-					return;
 				} else {
 					//* Creating upload data for non-invoice document
-					let { buyerTin: buyer, ...rest } = data;
-					let documentData = {
-						...rest,
-						filePath,
-						fileName,
+					let { documentModel } = data;
+					let completeData = {
+						...data,
 						sign: pkcs7,
-						buyerCompanyName: buyer.name,
-						buyerTin: buyer.tin
+						fileName,
+						filePath
 					};
-					//* Remove local file path
-					delete documentData.file;
-					delete documentData.type;
-					//* Getting document url specific to documentType
-					let url =
-						docIdUrls[data.documentType].url || docIdUrls.other;
-					//* Creating document
-					let res = await requests.documents.create(
-						url,
-						documentData
+					let createRequestBody = Object.keys(
+						documentModel[data.parentName]
+					).reduce(
+						(prev, current) => ({
+							...prev,
+							[current]: completeData[current]
+						}),
+						{}
 					);
-					dispatch(hideModal());
-					dispatch({
-						type: SET_SUCCESS_ERROR,
-						payload: strings.documentCreatedSuccesfully
+					console.warn({
+						contract: createRequestBody.contract,
+						buyer: createRequestBody.buyer
 					});
-					navigation.navigate("Main");
-					await sleep(3000);
-					dispatch(hideError());
+					let res = await requests.documents.create(
+						data.documentType,
+						{ [data.parentName]: { ...createRequestBody } }
+					);
+					console.log(res.data);
 				}
 			} catch (error) {
 				console.warn(error.response);
@@ -151,6 +136,16 @@ const PdfViewer = ({
 					type: SET_DANGER_ERROR,
 					payload: strings.somethingWentWrong + `\n${error.message}`
 				});
+				await sleep(3000);
+				dispatch(hideError());
+				return;
+			} finally {
+				dispatch(hideModal());
+				dispatch({
+					type: SET_SUCCESS_MESSAGE,
+					payload: strings.documentCreatedSuccesfully
+				});
+				navigation.navigate("Main");
 				await sleep(3000);
 				dispatch(hideError());
 			}
@@ -202,7 +197,7 @@ const PdfViewer = ({
 			"base64"
 		);
 		dispatch({
-			type: SET_SUCCESS_ERROR,
+			type: SET_SUCCESS_MESSAGE,
 			payload: `Файл сохранен в папке загрузок как ${tempName}`
 		});
 		await sleep(3000);
@@ -255,9 +250,6 @@ const PdfViewer = ({
 		});
 	}
 	//* Creating document
-	if (filePath) {
-		buttonsToRender = newDocumentButtons;
-	}
 	if (status === 10 && boxType === 1) {
 		buttonsToRender.push({
 			name: "delete",
@@ -272,6 +264,9 @@ const PdfViewer = ({
 			size: 18,
 			onPress: onDelete
 		});
+	}
+	if (filePath) {
+		buttonsToRender = newDocumentButtons;
 	}
 	return (
 		<BlurWrapper>

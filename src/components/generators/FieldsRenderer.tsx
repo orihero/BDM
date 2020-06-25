@@ -167,12 +167,14 @@ const FieldsRenderer = ({
 							dispatch({ type: SET, name: e.name, value: "" });
 							return;
 						}
-						let res = await e.fetch(text);
-						dispatchItems({
-							type: SET,
-							name: e.name,
-							value: res.data
-						});
+						if(text.length>4){
+							let res = await e.fetch(text);
+							dispatchItems({
+								type: SET,
+								name: e.name,
+								value: res.data
+							});
+						}
 					};
 					let autocompleteItem = ({ item }) => {
 						return (

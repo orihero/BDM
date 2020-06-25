@@ -15,7 +15,7 @@ import { colors } from "../../constants";
 import { strings } from "../../locales/strings";
 import { FieldProps, FieldSize, FieldType } from "../auth";
 import { showModal, hideModal, hideError } from "../../redux/actions";
-import { SET_DANGER_ERROR, SET_SUCCESS_ERROR } from "../../redux/types";
+import { SET_DANGER_ERROR, SET_SUCCESS_MESSAGE } from "../../redux/types";
 import NavigationService from "../../services/NavigationService";
 
 const Profile = ({
@@ -291,7 +291,7 @@ const Profile = ({
 			try {
 				let res = await requests.user.update(data);
 				dispatch({
-					type: SET_SUCCESS_ERROR,
+					type: SET_SUCCESS_MESSAGE,
 					payload: strings.updatedSuccessfully
 				});
 				dispatch(hideModal());

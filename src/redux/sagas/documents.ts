@@ -20,7 +20,7 @@ import {
 	GET_REGIONS,
 	REJECT_DOCUMENT,
 	SET_DANGER_ERROR,
-	SET_SUCCESS_ERROR
+	SET_SUCCESS_MESSAGE
 } from "./../types";
 
 let invoice = {
@@ -311,11 +311,8 @@ export function* createDocument({ payload: data }) {
 		//* Uploading file
 		let response = yield call(requests.documents.uploadFile, fileData);
 		yield put(hideModal());
-		let { documentContentForSign: dataForSign } = response.data.data;
 		NavigationService.navigate("PdfViewer", {
-			filePath: response.data.data.filePath,
-			fileName: response.data.data.fileName,
-			dataForSign,
+			newDocument: response.data.data,
 			data
 		});
 		return;
@@ -324,7 +321,7 @@ export function* createDocument({ payload: data }) {
 		yield put(showModal(strings.creatingDocument));
 		//* Let user know that the file uploaded succesfully
 		yield put({
-			type: SET_SUCCESS_ERROR,
+			type: SET_SUCCESS_MESSAGE,
 			payload: `${strings.uploadSuccess}`
 		});
 		//* Getting path of file to convert it base64 with react-native-fs
@@ -372,7 +369,7 @@ export function* createDocument({ payload: data }) {
 		yield put(hideModal());
 		yield delay(500);
 		yield put({
-			type: SET_SUCCESS_ERROR,
+			type: SET_SUCCESS_MESSAGE,
 			payload: strings.documentCreatedSuccesfully
 		});
 		yield delay(3000);
@@ -562,7 +559,7 @@ export function* documentInteractionHandler({
 		yield put(hideModal());
 		NavigationService.navigate("Main");
 		yield put({
-			type: SET_SUCCESS_ERROR,
+			type: SET_SUCCESS_MESSAGE,
 			payload: message
 		});
 		yield delay(3000);

@@ -85,3 +85,17 @@ export let normalizePrice = (str: string, chunk: number = 3) => {
 			.join("");
 	}
 };
+
+export function convertToTypeOf(typevar: string, input: string) {
+	let type = typeof typevar;
+	switch (type) {
+		case "string":
+			return String.bind(null, input)();
+		case "number":
+			return Number.bind(null, input)();
+		case "boolean":
+			return input == "true" ? true : false;
+		default:
+			return input;
+	}
+}

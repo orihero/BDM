@@ -3,13 +3,13 @@ import { FieldType, FieldSize } from "../views";
 import { strings } from "../locales/strings";
 import { requests } from "../api/requests";
 
-let contractFields = [
+export let contractFields = [
 	{
 		type: FieldType.AUTOCOMPLETE,
 		title: strings.recieverInn,
 		placeholder: strings.recieverInn,
 		size: FieldSize.FULL,
-		name: "buyer",
+		name: "buyerTin",
 		fetch: requests.user.getRequisite
 	},
 	{
@@ -73,7 +73,7 @@ let contractFields = [
 	}
 ];
 
-let contract = {
+export let contract = {
 	contract: {
 		buyerTin: "",
 		buyer: {

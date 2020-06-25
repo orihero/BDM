@@ -13,7 +13,7 @@ interface RectangularInputProps {
 
 const RectangularInput = ({
 	placeholder,
-	onChange = () => { },
+	onChange = () => {},
 	value,
 	disabled,
 	containerStyle,
@@ -22,13 +22,13 @@ const RectangularInput = ({
 	return (
 		<View style={[styles.container, containerStyle]}>
 			<TextInput
-				{...rest}
-				numberOfLines={2}
+				style={styles.input}
 				placeholder={placeholder}
 				editable={!disabled}
 				value={value}
 				onChangeText={onChange}
 				placeholderTextColor={colors.gray}
+				{...rest}
 			/>
 		</View>
 	);
@@ -38,8 +38,13 @@ const styles = StyleSheet.create({
 	container: {
 		borderRadius: 8,
 		backgroundColor: colors.ultraLightGray,
-		padding: Platform.select({ android: 6, ios: 20 }),
-		paddingHorizontal: 20
+		justifyContent: "center",
+		height: 60,
+		paddingLeft: 10
+	},
+	input: {
+		textAlignVertical: "center",
+		fontSize: 15
 	}
 });
 
