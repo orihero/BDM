@@ -1,13 +1,22 @@
-import { createStore, applyMiddleware } from 'redux';
-import { reducers } from './reducers';
-import sagas from './sagas'
-import createSagaMiddleware from 'redux-saga';
+import { createStore, applyMiddleware, compose } from "redux";
+import { reducers } from "./reducers";
+import sagas from "./sagas";
+import createSagaMiddleware from "redux-saga";
+import reactotron from "./reactotron-config";
+import Reactotron from "reactotron-react-native";
 
 let configureStore = () => {
-  let sagaMiddleware = createSagaMiddleware();
-  let store = createStore(reducers, applyMiddleware(sagaMiddleware));
-  sagaMiddleware.run(sagas)
-  return store
+	const sagaMonitor = Reactotron.createSagaMonitor();
+	let sagaMiddleware = createSagaMiddleware({ sagaMonitor });
+	let store = createStore(
+		reducers,
+		compose(
+			applyMiddleware(sagaMiddleware),
+			reactotron.createEnhancer()
+		)
+	);
+	sagaMiddleware.run(sagas);
+	return store;
 };
 
 export default configureStore;

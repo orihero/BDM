@@ -48,7 +48,7 @@ export function* requestUserLogin({
 		let { message } = data || {};
 		yield put({
 			type: SET_DANGER_ERROR,
-			payload: `${strings.somethingWentWrong}: ${JSON.stringify(data)}`
+			payload: `${strings.somethingWentWrong}: ${message || ""}`
 		});
 		yield put(hideModal());
 		yield delay(3000);

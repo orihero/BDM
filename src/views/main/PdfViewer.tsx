@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
+	BackHandler,
 	Dimensions,
 	StyleSheet,
 	TouchableWithoutFeedback,
-	View,
-	BackHandler
+	View
 } from "react-native";
 import Pdf from "react-native-pdf";
 import SimpleLine from "react-native-vector-icons/Feather";
@@ -25,15 +25,16 @@ import {
 	hideModal,
 	showModal
 } from "../../redux/actions";
+import reactotron from "../../redux/reactotron-config";
 import { docIdUrls } from "../../redux/sagas/documents";
 import {
 	SET_DANGER_ERROR,
 	SET_SUCCESS_MESSAGE,
 	SET_WARNING_ERROR
 } from "../../redux/types";
-import { sign } from "../../utils/bdmImzoProvider";
+import { sign, attach } from "../../utils/bdmImzoProvider";
 import { NavigationProps } from "../../utils/defaultPropTypes";
-import { convertToTypeOf } from "../../utils/object";
+import {taxDepartmentDocs} from '../../redux/sagas/documents'
 
 let { width, height } = Dimensions.get("window");
 
@@ -61,50 +62,90 @@ const PdfViewer = ({
 
 	let accept = async () => {
 		//* Check if new document
-		if (newDocument) {
+		if (!!newDocument) {
 			//* Start loading
 			dispatch(showModal(strings.creatingDocument));
 			try {
-				//* Sign document hash
-				let { pkcs7 } = await sign(dataForSign);
-				if (!pkcs7) {
-					//* User did not sign
-					dispatch(hideModal());
-					dispatch({
-						type: SET_WARNING_ERROR,
-						payload: strings.yourSignIsNeeded
-					});
-					await sleep(3000);
-					dispatch(hideError());
-					return;
-				}
 				//* Check if the document is invoice
-				if (data.documentType === 2) {
+				if (taxDepartmentDocs[data.documentType]) {
+					console.warn({ data, newDocument });
+					let facturaID = await requests.documents.getInvoiceId();
+					let productId = await requests.documents.getInvoiceId();
+					reactotron.logImportant(data);
+					let docModel =
+						data.documentModel[data.parentName][data.middleName];
+					let createdDocModel = Object.keys(docModel).reduce(
+						(prev, current) => {
+							return {
+								...prev,
+								[current]: data.data[current]
+							};
+						},
+						{}
+					);
+					let content = {
+						...createdDocModel,
+						ProductList: {
+							...data.products,
+							[data.productIdName]: productId.data.data,
+							Tin: data.seller.tin,
+						},
+						[data.facturaIdName]: facturaID.data.data,
+						Seller: data.seller,
+						SellerTin: data.seller.tin,
+						SellerName:  data.seller.name,
+						BuyerName: data.buyer.name,
+						Buyer: data.buyer,
+						BuyerTin: data.buyer.tin,
+						Version: 1,
+						FacturaType: 0,
+						SingleSidedType: 0,
+					}
+					if(data.documentType===29){
+						content.ActDoc.ActText = `Мы, нижеподписавшиеся, 
+						${data.buyer.name}, именуемое в дальнейшем Исполнитель, с одной стороны, и 
+						${data.seller.name}, именуемое в дальнейшем Заказчик, с другой стороны, 
+						составили настоящий Акт о том, что работы выполнены в соответствии с условиями Заказчика в полном объёме.`
+					}
+					//* Sign document hash
+					let { pkcs7, signature } = await sign(JSON.stringify(content));
 					//* Creating upload data for invoice document
-					let sum = data.products.reduce(
-						(prev, current) =>
-							prev + parseFloat(current.DeliverySumWithVat),
-						0
-					);
-					let invoiceData = {
-						invoiceJSON: dataForSign,
-						sign: pkcs7,
-						sum,
-						description: data.description
+					let time = await requests.documents.getTimestamp(signature);
+					let attachedSign = await attach(time.data.data);
+					if (!pkcs7) {
+						//* User did not sign
+						dispatch(hideModal());
+						dispatch({
+							type: SET_WARNING_ERROR,
+							payload: strings.yourSignIsNeeded
+						});
+						await sleep(3000);
+						dispatch(hideError());
+						return;
+					}
+					reactotron.logImportant({ docModel, createdDocModel });
+					let submitData = {
+						[data.parentName]: {
+							[data.middleName]: content,
+							sign: attachedSign.pkcs7,
+							sum: data.data.sum,
+							description: data.description,
+							fileName,
+							filePath
+						}
 					};
-					//TODO get facture id
-					// let invoiceData = yield call(
-					// 	requests.documents.getIvoiceId
-					// );
-					// let FacturaId = invoiceData.data.data;
-					requests.documents.create(
-						docIdUrls[data.documentType].url,
-						invoiceData
+					
+					let createRes = await requests.documents.create(
+						data.invoiceType||data.documentType,
+						submitData
 					);
+					console.warn({ createRes });
 				} else {
+					let {pkcs7} = await sign(dataForSign);
 					//* Creating upload data for non-invoice document
 					let { documentModel } = data;
 					let completeData = {
+						...data.data,
 						...data,
 						sign: pkcs7,
 						fileName,
@@ -119,27 +160,13 @@ const PdfViewer = ({
 						}),
 						{}
 					);
-					console.warn({
-						contract: createRequestBody.contract,
-						buyer: createRequestBody.buyer
-					});
+					let submitData = { ...createRequestBody }
+					reactotron.log({submitData})
 					let res = await requests.documents.create(
 						data.documentType,
-						{ [data.parentName]: { ...createRequestBody } }
+						{ [data.parentName]:  submitData}
 					);
-					console.log(res.data);
 				}
-			} catch (error) {
-				console.warn(error.response);
-				dispatch(hideModal());
-				dispatch({
-					type: SET_DANGER_ERROR,
-					payload: strings.somethingWentWrong + `\n${error.message}`
-				});
-				await sleep(3000);
-				dispatch(hideError());
-				return;
-			} finally {
 				dispatch(hideModal());
 				dispatch({
 					type: SET_SUCCESS_MESSAGE,
@@ -148,6 +175,23 @@ const PdfViewer = ({
 				navigation.navigate("Main");
 				await sleep(3000);
 				dispatch(hideError());
+			} catch (error) {
+				let txt = error?.response?.data?.message||"{}";
+				let message=strings.pleaseFillAllOfTheFields;
+				try {
+					message = JSON.parse(txt)?.errorMessage
+				} catch (error) {
+					
+				}
+				dispatch(hideModal());
+				dispatch({
+					type: SET_DANGER_ERROR,
+					payload: strings.somethingWentWrong + `\n${message}`
+				});
+				await sleep(6000);
+				dispatch(hideError());
+				return;
+			} finally {
 			}
 			return;
 		}
@@ -268,6 +312,10 @@ const PdfViewer = ({
 	if (filePath) {
 		buttonsToRender = newDocumentButtons;
 	}
+	console.log({
+		path: `${url}/document/instant/view/pdf?path=${filePath}/${fileName}`
+	});
+
 	return (
 		<BlurWrapper>
 			<View style={styles.container}>

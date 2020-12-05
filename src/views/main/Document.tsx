@@ -1,25 +1,24 @@
-import React, { useState, useEffect } from "react";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
 import {
-	View,
+	Animated,
+	Image,
 	StyleSheet,
 	TouchableWithoutFeedback,
-	Image,
-	Animated,
-	Easing
+	View
 } from "react-native";
-import { commonStyles, Icons, colors } from "../../constants";
-import Text from "../../components/common/CustomText";
-import { strings } from "../../locales/strings";
-import { withNavigation } from "react-navigation";
-import { NavigationProps } from "../../utils/defaultPropTypes";
-import { connect } from "react-redux";
-import icon from "../../assets/images/logo_100x100-01.png";
-import { statuses } from "../../components/navigation/Header";
-import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import Feather from "react-native-vector-icons/Feather";
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import { withNavigation } from "react-navigation";
+import { connect } from "react-redux";
 import { requests } from "../../api/requests";
+import icon from "../../assets/images/logo_100x100-01.png";
+import Text from "../../components/common/CustomText";
+import { statuses } from "../../components/navigation/Header";
+import { colors, commonStyles } from "../../constants";
+import { strings } from "../../locales/strings";
+import { NavigationProps } from "../../utils/defaultPropTypes";
 import { normalizePrice } from "../../utils/object";
-import moment from "moment";
 
 export interface DocumentProps {
 	documentId: string;

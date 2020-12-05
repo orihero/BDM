@@ -61,7 +61,7 @@ const DrawerItem: React.FC<DrawerItemProps> = ({
 		<TouchableWithoutFeedback
 			onPress={() => {
 				if (!children && action?.navigateTo) {
-					NavigationService.navigate(action.navigateTo);
+					NavigationService.navigate(action.navigateTo,action.params);
 					return;
 				}
 				// LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);

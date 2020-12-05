@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Animated, Dimensions, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
+import { Animated, Dimensions, ScrollView, StyleSheet, TouchableWithoutFeedback, View, Platform } from "react-native";
 import { connect } from "react-redux";
 import { colors } from "../../constants";
 import { strings } from "../../locales/strings";
@@ -38,31 +38,10 @@ export interface DrawerAction {
 	navigateTo?: string;
 	boxType?: BoxType;
 	status?: DocumentStatus;
+	params?:any
 }
 
 let menus: DrawerItemProps[] = [
-	{
-		iconName: "add-file",
-		title: strings.create,
-		children: [
-			{
-				title: strings.twoSide,
-				iconName: "double",
-				iconSize: 24,
-				action: {
-					navigateTo: "NewDocument"
-				}
-			},
-			{
-				title: strings.threeSide,
-				iconName: "triple",
-				iconSize: 24,
-				action: {
-					navigateTo: "NewDocument"
-				}
-			}
-		]
-	},
 	{
 		iconName: "file-down",
 		title: strings.inbox,
@@ -191,6 +170,32 @@ let menus: DrawerItemProps[] = [
 		}
 	}
 ];
+
+if (Platform.OS==='android'){
+		menus.unshift({
+		iconName: "add-file",
+		title: strings.create,
+		children: [
+			{
+				title: strings.twoSide,
+				iconName: "double",
+				iconSize: 24,
+				action: {
+					navigateTo: "NewDocument"
+				}
+			},
+			{
+				title: strings.threeSide,
+				iconName: "triple",
+				iconSize: 24,
+				action: {
+					navigateTo: "NewDocument",
+					params:{triterial:true}
+				}
+			}
+		]
+	})
+	}
 
 let { width } = Dimensions.get("window");
 

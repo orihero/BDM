@@ -38,6 +38,7 @@ import {
 	showModal,
 	userLoggedOut
 } from "../../redux/actions";
+import reactotron from "../../redux/reactotron-config";
 import { storeName } from "../../redux/reducers/user";
 import { SET_DANGER_ERROR } from "../../redux/types";
 import { normalizeFilters } from "../../utils/object";
@@ -167,9 +168,11 @@ const Main = ({
 			}).start(() => setExpanded(!expanded));
 			return;
 		}
+		reactotron.log({ action, toggling: true });
 		switch (action.type) {
 			case DrawerActionTypes.navigate:
-				navigation.navigate(action.navigateTo);
+				reactotron.log({ params: action.params });
+				navigation.navigate(action.navigateTo, action.params);
 				break;
 			case DrawerActionTypes.changeBox:
 				fetchDocuments(action);

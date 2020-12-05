@@ -2,6 +2,7 @@ import axios from "axios";
 import { formData } from "../utils/formData";
 import { userLoggedIn } from "../redux/actions";
 
+// export let url = "http://192.168.1.9:8282/api";
 export let url = "http://api-mobile.24m.uz/api";
 
 export let configureAxios = storeInstance => {
@@ -84,7 +85,7 @@ export let requests = {
 		reject: credentials =>
 			axios.post(`${url}/document/reject`, credentials),
 		getReason: docId => axios.get(`${url}/document/get/reason/${docId}`),
-		getIvoiceId: () => axios.get(`${url}/invoice/get/id`),
+		getInvoiceId: () => axios.get(`${url}/invoice/get/id`),
 		getJsonContent: id => axios.get(`${url}/document/get/content/${id}`),
 		getTimestamp: signatureHex =>
 			axios.post(`${url}/invoice/get/timestamp`, {

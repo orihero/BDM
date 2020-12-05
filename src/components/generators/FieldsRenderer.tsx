@@ -78,6 +78,7 @@ const FieldsRenderer = ({
 				items[key]
 					.fetch(param)
 					.then(res => {
+						console.log({[key]:res.data});
 						dispatchItems({
 							type: SET,
 							name: key,
@@ -228,7 +229,7 @@ const FieldsRenderer = ({
 								style={{
 									backgroundColor: colors.ultraLightGray
 								}}
-								inputContainerStyle={{ borderWidth: 0 }}
+								inputContainerStyle={{ borderWidth: 0,marginVertical:5 }}
 								data={items[e.name]||[]}
 								value={
 									state[e.name]

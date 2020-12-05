@@ -16,21 +16,163 @@ import BlurWrapper from "../../components/containers/BlurWrapper";
 import FieldsRenderer from "../../components/generators/FieldsRenderer";
 import InnerHeader from "../../components/navigation/InnerHeader";
 import { colors } from "../../constants";
+import {
+	actContent,
+	invoiceStOrUnOrComFields as actFields
+} from "../../docs/actContent";
+import {
+	triterialContractFields,
+	trilateralContractOrRentConModel
+} from "../../docs/trilateralContractOrRentCon";
+import { invoiceExcise, invoiceExciseFields } from "../../docs/invoiceExcise";
+import { baseDocument, baseDocumentFields } from "../../docs/baseDocument";
+import {
+	comissionerReport,
+	comissionerReportFields
+} from "../../docs/comissionerReport";
+import { contract, contractFields } from "../../docs/contract";
+import { empowermentFields, empowermentModel } from "../../docs/empowerment";
+import {
+	invoiceStOrUnOrCom,
+	invoiceStOrUnOrComFields
+} from "../../docs/invoiceStOrUnOrCom";
+import { latterModel, latterFields } from "../../docs/latter";
+import { otherFields, otherModel } from "../../docs/other";
 import { strings } from "../../locales/strings";
-import { createDocument } from "../../redux/actions";
+import { createDocument, showModal } from "../../redux/actions";
+import reactotron from "../../redux/reactotron-config";
 import { NavigationProps } from "../../utils/defaultPropTypes";
-import { contractFields, contract } from "../../docs/contract";
+import { getObjectProperty } from "../../utils/object";
+import {
+	actReconciliationFields,
+	actReconciliationModel
+} from "../../docs/actReconciliation";
 
 interface Props {
 	createDocument: Function;
 	user: any;
 }
 
-let docIds = {
+let twoSideDocIds = {
+	10: {
+		fields: otherFields,
+		parentName: "other",
+		documentModel: otherModel,
+		documentNumberProperty: "document.documentNo",
+		documentDateProperty: "document.documentDate"
+	},
+	5: {
+		fields: actReconciliationFields,
+		parentName: "actReconciliation",
+		documentModel: actReconciliationModel,
+		documentNumberProperty: "document.documentNo",
+		documentDateProperty: "document.documentDate"
+	},
+	25: {
+		fields: baseDocumentFields,
+		parentName: "baseDocument",
+		documentModel: baseDocument,
+		documentNumberProperty: "document.documentNo",
+		documentDateProperty: "document.documentDate"
+	},
+	4: {
+		fields: baseDocumentFields,
+		parentName: "baseDocument",
+		documentModel: baseDocument,
+		documentNumberProperty: "document.documentNo",
+		documentDateProperty: "document.documentDate"
+	},
+	7: {
+		fields: comissionerReportFields,
+		parentName: "comissionerReport",
+		documentModel: comissionerReport,
+		documentNumberProperty: "contract.contractNo",
+		documentDateProperty: "contract.contractDate"
+	},
+	3: {
+		fields: baseDocumentFields,
+		parentName: "baseDocument",
+		documentModel: baseDocument,
+		documentNumberProperty: "document.documentNo",
+		documentDateProperty: "document.documentDate"
+	},
+	11: {
+		fields: baseDocumentFields,
+		parentName: "baseDocument",
+		documentModel: baseDocument,
+		documentNumberProperty: "document.documentNo",
+		documentDateProperty: "document.documentDate"
+	},
+	6: {
+		fields: empowermentFields,
+		parentName: "empowerment",
+		documentModel: empowermentModel,
+		documentNumberProperty: "document.documentNo",
+		documentDateProperty: "document.documentDate"
+	},
+	29: {
+		fields: actFields,
+		parentName: "actTax",
+		middleName: "actContent",
+		documentModel: actContent,
+		documentNumberProperty: "ActDoc.ActNo",
+		documentDateProperty: "ActDoc.ActDate",
+		facturaIdName: "ActId",
+		productIdName: "ActProductId"
+	},
+	22: {
+		fields: comissionerReportFields,
+		parentName: "invoiceStOrUnOrCom",
+		middleName: "invoicecContent",
+		documentModel: comissionerReport,
+		documentNumberProperty: "ActDoc.ActNo",
+		documentDateProperty: "ActDoc.ActDate",
+		facturaIdName: "ActId",
+		productIdName: "ActProductId"
+	},
 	1: {
 		fields: contractFields,
 		parentName: "contract",
-		documentModel: contract
+		documentModel: contract,
+		documentNumberProperty: "document.documentNo",
+		documentDateProperty: "document.documentDate"
+	},
+	8: {
+		fields: latterFields,
+		parentName: "latter",
+		documentModel: latterModel,
+		documentNumberProperty: "document.documentNo",
+		documentDateProperty: "document.documentDate"
+	},
+	2: {
+		fields: invoiceStOrUnOrComFields,
+		parentName: "invoiceStandard",
+		middleName: "invoiceContent",
+		documentModel: invoiceStOrUnOrCom,
+		documentNumberProperty: "FacturaDoc.FacturaNo",
+		documentDateProperty: "FacturaDoc.FacturaDate",
+		facturaIdName: "FacturaId",
+		productIdName: "FacturaProductId"
+	},
+	13: {
+		fields: invoiceExciseFields,
+		parentName: "invoiceExcise",
+		middleName: "invoiceExciseContent",
+		documentModel: invoiceExcise,
+		documentNumberProperty: "FacturaDoc.FacturaNo",
+		documentDateProperty: "FacturaDoc.FacturaDate",
+		facturaIdName: "FacturaId",
+		productIdName: "FacturaProductId"
+	}
+};
+
+let threeSideDocIds = {
+	1: {
+		fields: triterialContractFields,
+		parentName: "contract",
+		documentModel: trilateralContractOrRentConModel,
+		documentNumberProperty: "document.documentNo",
+		documentDateProperty: "document.documentDate"
 	}
 };
 
@@ -44,23 +186,57 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 	const [documentTypes, setDocumentTypes] = useState([]);
 	const [invoiceTypes, setInvoiceTypes] = useState([]);
 	const [fields, setFields] = useState([]);
-	const [products, setProducts] = useState([
-		{
-			Name: "Beta",
-			Count: "68",
-			MeasureId: 5,
-			Summa: "6",
-			DeliverySum: "7",
-			VatRate: 7,
-			VatSum: "6",
-			DeliverySumWithVat: "6",
-			OrderNo: 1
-		}
-	]);
+	let productList = navigation.getParam("productList");
+	let isTriterial = navigation.getParam("triterial");
+	let docIds = isTriterial ? threeSideDocIds : twoSideDocIds;
+	const [products, setProducts] = useState(productList || {});
+	useEffect(() => {
+		console.log({ productList });
+
+		setProducts(productList || {});
+	}, [productList]);
 	let effect = async () => {
+		reactotron.log({ isTriterial });
+		if (isTriterial) {
+			let res = await requests.documents.getDocumentTypes(3);
+			let temp = res.data.reduce((prev, e) => {
+				if (e.type === 34) {
+					return prev;
+				}
+				return [
+					...prev,
+					{
+						label: e.typeName || "",
+						value: e.type,
+						actualValue: e.type
+					}
+				];
+			}, []);
+			setDocumentTypes(temp);
+			return;
+		}
 		try {
 			let res = await requests.documents.getDocumentTypes(1);
-			setDocumentTypes(
+			let temp = res.data.reduce((prev, e) => {
+				if (e.type === 34) {
+					return prev;
+				}
+				return [
+					...prev,
+					{
+						label: e.typeName || "",
+						value: e.type,
+						actualValue: e.type
+					}
+				];
+			}, []);
+			setDocumentTypes(temp);
+		} catch (res) {
+			console.error(res);
+		}
+		try {
+			let res = await requests.documents.getDocumentTypes(2);
+			setInvoiceTypes(
 				res.data.map((e, i) => ({
 					label: e.typeName || "",
 					value: e.type,
@@ -70,54 +246,111 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 		} catch (res) {}
 	};
 	useEffect(() => {
-		if (!!documentType)
+		reactotron.log({ products });
+	}, [products]);
+	useEffect(() => {
+		let hasProduct =
+			docIds[documentType] &&
+			docIds[documentType].parentName &&
+			getObjectProperty(
+				docIds,
+				`${documentType}.documentModel.${
+					docIds[documentType].parentName
+				}.${docIds[documentType].middleName}.ProductList`
+			);
+		setProducts(productList || hasProduct || {});
+		if (documentType === 2) {
+			setFields(
+				(docIds[invoiceType] && docIds[invoiceType].fields) || []
+			);
+
+			return;
+		} else {
+			setInvoiceType(null);
+		}
+		console.log({ documentType });
+		if (documentType !== null && documentType !== undefined)
 			setFields(
 				(docIds[documentType] && docIds[documentType].fields) || []
 			);
-	}, [documentType]);
+	}, [documentType, invoiceType]);
 	useEffect(() => {
 		effect();
 	}, []);
 
+	let isInvoice = documentType === 2;
+
 	let footer = ({ getSubmitData }) => {
 		let onSubmit = () => {
+			showModal(strings.loading);
 			let data = getSubmitData();
-			let { parentName, documentModel } = docIds[documentType] || {};
+			let {
+				parentName,
+				documentModel,
+				middleName,
+				documentNumberProperty,
+				documentDateProperty,
+				facturaIdName,
+				productIdName
+			} = docIds[invoiceType || documentType] || {};
+			reactotron.log({ data });
+
 			let { buyerTin: buyer } = data;
+			if (!buyer) {
+				buyer = data.BuyerTin;
+			}
 			let { tin: buyerTin } = buyer;
 			// let {}
-			console.log({ buyerTin });
 			createDocument({
-				...data,
+				data,
 				buyerTin,
 				buyer,
 				documentType,
 				seller: user.data,
 				products,
 				parentName,
-				documentModel
+				middleName,
+				documentModel,
+				invoiceType,
+				documentNumberProperty,
+				documentDateProperty,
+				facturaIdName,
+				productIdName
 			});
 		};
 		let onCancel = () => {
 			navigation.goBack();
 		};
+
+		let hasProduct =
+			docIds[documentType] &&
+			docIds[documentType].parentName &&
+			getObjectProperty(
+				docIds,
+				`${documentType}.documentModel.${
+					docIds[documentType].parentName
+				}.${docIds[documentType].middleName}.ProductList`
+			);
+		console.log({ hasProduct });
 		return (
 			<View>
-				{documentType === 2 && (
+				{!!hasProduct && (
 					<View style={styles.productsWrapper}>
 						<View style={styles.productsContainer}>
 							<Text style={styles.inputTitle}>
 								{strings.products}
 							</Text>
 							<Text style={styles.inputTitle}>
-								{products.length}
+								{!!products.Products &&
+									products.Products.length}
 							</Text>
 						</View>
 						<TouchableWithoutFeedback
 							onPress={() => {
 								navigation.navigate("Products", {
-									products,
-									setProducts
+									initalProducts: products,
+									setProducts,
+									model: hasProduct.Products[0]
 								});
 							}}
 						>
@@ -163,7 +396,12 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 	return (
 		<BlurWrapper>
 			<View style={styles.flex}>
-				<InnerHeader back={"Main"} title={strings.newTwoSide} />
+				<InnerHeader
+					back={"Main"}
+					title={
+						isTriterial ? strings.newThreeSide : strings.newTwoSide
+					}
+				/>
 				<ScrollView
 					contentContainerStyle={styles.container}
 					showsVerticalScrollIndicator={false}
@@ -179,6 +417,21 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 							placeholder={strings.type}
 						/>
 					</View>
+					{isInvoice && (
+						<View>
+							<Text style={styles.inputTitle}>
+								{strings.invoiceType}
+							</Text>
+							<RectangularSelect
+								value={invoiceType}
+								items={invoiceTypes}
+								onChange={val => {
+									setInvoiceType(val);
+								}}
+								placeholder={strings.invoiceType}
+							/>
+						</View>
+					)}
 					<FieldsRenderer fields={fields} footer={footer} />
 				</ScrollView>
 			</View>

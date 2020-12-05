@@ -2,6 +2,8 @@ import LocalizedStrings from "react-native-localization";
 
 export let strings = new LocalizedStrings({
 	ru: {
+		physicTin: "ИНН физического лица",
+		withoutVat: "Без НДС",
 		pleaseFillAllOfTheFields: "Пожалуйста, заполните причину отказа",
 		login: "Войти",
 		updatedSuccessfully: "Успешно Обновлено",
@@ -61,6 +63,7 @@ export let strings = new LocalizedStrings({
 		documentSentDate: "Отправлено",
 		yes: "Да",
 		newTwoSide: "Двусторонний документ",
+		newThreeSide: "Трехсторонний документ",
 		input: "Ввод данных",
 		documentNumber: "№ документа",
 		documentDate: "Дата документа",

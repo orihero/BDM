@@ -1,4 +1,5 @@
-import { Platform } from "react-native";
+import { getObjectProperty } from "./../../utils/object";
+import { Platform, Clipboard } from "react-native";
 import RnFs from "react-native-fs";
 import { call, delay, put, takeEvery } from "redux-saga/effects";
 import NavigationService from "../../services/NavigationService";
@@ -22,6 +23,7 @@ import {
 	SET_DANGER_ERROR,
 	SET_SUCCESS_MESSAGE
 } from "./../types";
+import reactotron from "../reactotron-config";
 
 let invoice = {
 	FacturaId: "5d8b79047f398c00010b2cb7",
@@ -204,6 +206,11 @@ export function* getRegions(data) {
 	}
 }
 
+export let taxDepartmentDocs = {
+	29: true,
+	2: true
+};
+
 /**
  ** Saga for creating a document!
  * @param param0 Action type
@@ -213,106 +220,163 @@ export function* createDocument({ payload: data }) {
 		//* Show loading
 		yield put(showModal(strings.loading));
 		//* Construct fileUpload request body
-		if (data.documentType === 2) {
-			let { seller = {}, buyerTin: buyer } = data;
-			//* Get invoiceID
-			let FacturaDoc = {
-				FacturaNo: data.document.documentNumber,
-				FacturaDate: data.document.documentDate
-			};
-			let ContractDoc = {
-				ContractNo: data.contract.contractNumber,
-				ContractDate: data.contract.contractDate
-			};
-			let FacturaEmpowermentDoc = {
-				AgentFacturaId: data.empovermentNumber,
-				EmpowermentNo: data.empovermentDate,
-				AgentFio: "",
-				AgentTin: ""
-			};
-			let ItemReleasedDoc = { ItemReleasedFio: data.productReleased };
-			let SellerTin = seller.tin;
-			//* Construct seller data
-			let Seller = {
-				Name: seller.name,
-				Address: seller.address,
-				Account: seller.accountNumber,
-				Oked: seller.oked,
-				DistrictId: seller.districtId,
-				Director: seller.mainDirector,
-				Accountant: seller.mainAccauntant,
-				VatRegCode: seller.vatPayerCode,
-				Mobile: seller.phoneCode + seller.phoneNumber,
-				WorkPhone: seller.phoneCode + seller.phoneNumber,
-				BankId: seller.bankCode
-			};
-			let BuyerTin = buyer.tin;
-			//* Construct buyer data
-			let Buyer = {
-				Name: buyer.name,
-				Address: buyer.address,
-				Account: buyer.accountNumber,
-				Oked: buyer.okedId,
-				DistrictId: buyer.districtId,
-				Director: buyer.mainDirector,
-				Accountant: buyer.mainAccauntant,
-				VatRegCode: buyer.vatPayerCode,
-				Mobile: buyer.phoneNumber,
-				WorkPhone: buyer.phoneNumber,
-				BankId: buyer.bankCode
-			};
-			let ProductList = {
-				Tin: seller.tin,
-				HasFuel: false,
-				HasVat: true,
-				Products: data.products.map((e, i) => ({
-					...invoice.ProductList.Products[0],
-					...e.submitData,
-					OrderNo: i + 1
-				}))
-			};
-			//* Construct final invoice data
-			let invoiceJson = {
-				FacturaDoc,
-				ContractDoc,
-				FacturaEmpowermentDoc,
-				ItemReleasedDoc,
-				SellerTin,
-				Seller,
-				BuyerTin,
+		if (taxDepartmentDocs[data.documentType]) {
+			// let { seller = {}, buyerTin: buyer } = data;
+			// //* Get invoiceID
+			// let FacturaDoc = {
+			// 	FacturaNo: data.document.documentNumber,
+			// 	FacturaDate: data.document.documentDate
+			// };
+			// let ContractDoc = {
+			// 	ContractNo: data.contract.contractNumber,
+			// 	ContractDate: data.contract.contractDate
+			// };
+			// let FacturaEmpowermentDoc = {
+			// 	AgentFacturaId: data.empovermentNumber,
+			// 	EmpowermentNo: data.empovermentDate,
+			// 	AgentFio: "",
+			// 	AgentTin: ""
+			// };
+			// let ItemReleasedDoc = { ItemReleasedFio: data.productReleased };
+			// let SellerTin = seller.tin;
+			// //* Construct seller data
+			// let Seller = {
+			// 	Name: seller.name,
+			// 	Address: seller.address,
+			// 	Account: seller.accountNumber,
+			// 	Oked: seller.oked,
+			// 	DistrictId: seller.districtId,
+			// 	Director: seller.mainDirector,
+			// 	Accountant: seller.mainAccauntant,
+			// 	VatRegCode: seller.vatPayerCode,
+			// 	Mobile: seller.phoneCode + seller.phoneNumber,
+			// 	WorkPhone: seller.phoneCode + seller.phoneNumber,
+			// 	BankId: seller.bankCode
+			// };
+			// let BuyerTin = buyer.tin;
+			// //* Construct buyer data
+			// let Buyer = {
+			// 	Name: buyer.name,
+			// 	Address: buyer.address,
+			// 	Account: buyer.accountNumber,
+			// 	Oked: buyer.okedId,
+			// 	DistrictId: buyer.districtId,
+			// 	Director: buyer.mainDirector,
+			// 	Accountant: buyer.mainAccauntant,
+			// 	VatRegCode: buyer.vatPayerCode,
+			// 	Mobile: buyer.phoneNumber,
+			// 	WorkPhone: buyer.phoneNumber,
+			// 	BankId: buyer.bankCode
+			// };
+			// let ProductList = {
+			// 	Tin: seller.tin,
+			// 	HasFuel: false,
+			// 	HasVat: true,
+			// 	Products: data.products.map((e, i) => ({
+			// 		...invoice.ProductList.Products[0],
+			// 		...e.submitData,
+			// 		OrderNo: i + 1
+			// 	}))
+			// };
+			// //* Construct final invoice data
+			// let invoiceJson = {
+			// 	FacturaDoc,
+			// 	ContractDoc,
+			// 	FacturaEmpowermentDoc,
+			// 	ItemReleasedDoc,
+			// 	SellerTin,
+			// 	Seller,
+			// 	BuyerTin,
+			// 	Buyer,
+			// 	ProductList
+			// };
+			// console.warn(JSON.stringify(invoiceJson));
+			let {
+				documentModel,
+				buyer: Buyer,
+				seller: Seller,
+				documentNumberProperty,
+				documentDateProperty
+			} = data;
+			if (!Buyer) {
+				Buyer = data.BuyerTin;
+			}
+			reactotron.log(data);
+			let { totalSumForPdf, ...rest } = data.products;
+			data.products = { ...rest, Tin: Seller.tin };
+
+			let completeData = {
+				...data.data,
+				...data,
 				Buyer,
-				ProductList
+				BuyerTin: Buyer.tin,
+				Seller,
+				SellerTin: Seller.tin,
+				ProductList: data.products,
+				SellerName: Seller.name,
+				BuyerName: Buyer.name
 			};
-			console.warn(JSON.stringify(invoiceJson));
+			let invoiceJson = Object.keys(
+				documentModel[data.parentName][data.middleName]
+			).reduce(
+				(prev, current) => ({
+					...prev,
+					[current]: completeData[current]
+				}),
+				{}
+			);
+
+			console.log({ invoiceJson });
+
 			let invoicePDF = yield call(requests.documents.uploadFile, {
 				invoiceJson: JSON.stringify(invoiceJson),
-				tinRecipient: data.buyerTin.tin,
-				documentTypeId: data.invoiceType,
-				documentNumber: data.document.documentNumber,
-				documentDate: data.document.documentDate
+				tinRecipient: Buyer.tin,
+				documentTypeId: data.documentType || data.invoiceType,
+				documentNumber: getObjectProperty(
+					data.data,
+					documentNumberProperty
+				),
+				documentDate: getObjectProperty(
+					data.data,
+					documentDateProperty
+				),
+				sum: totalSumForPdf
 			});
 			yield put(hideModal());
-			let { fileName, filePath } = invoicePDF;
+			let { fileName, filePath } = invoicePDF.data.data;
+			console.log({ invoice: invoicePDF.data.data });
+
 			NavigationService.navigate("PdfViewer", {
-				fileName,
-				filePath,
-				dataForSign: invoiceJson,
-				data
+				newDocument: {
+					fileName,
+					filePath,
+					dataForSign: JSON.stringify(invoiceJson)
+				},
+				data,
+				invoiceJson
 			});
 			return;
 		}
+		let { documentNumberProperty, documentDateProperty } = data;
 		let fileData = {
-			file: constructFileFromUri(data.file),
+			file: constructFileFromUri(data.data.file),
 			tinRecipient: data.buyerTin.tin,
 			documentTypeId: data.documentType,
-			documentNumber: data.document.documentNumber,
-			documentDate: data.document.documentDate
+			documentNumber: getObjectProperty(
+				data.data,
+				documentNumberProperty
+			),
+			documentDate: getObjectProperty(data.data, documentDateProperty)
 		};
 		//* Uploading file
 		let response = yield call(requests.documents.uploadFile, fileData);
+
 		yield put(hideModal());
 		NavigationService.navigate("PdfViewer", {
-			newDocument: response.data.data,
+			newDocument: {
+				...response.data.data,
+				dataForSign: response.data.data.documentContentForSign
+			},
 			data
 		});
 		return;
@@ -375,7 +439,6 @@ export function* createDocument({ payload: data }) {
 		yield delay(3000);
 		yield put(hideError());
 	} catch (error) {
-		console.warn(error);
 		let { response } = error || {};
 		if (!response) {
 			yield put({
@@ -390,7 +453,7 @@ export function* createDocument({ payload: data }) {
 				)}`
 			});
 		}
-		console.warn(response);
+		// Clipboard.setString(JSON.stringify(response));
 		yield put(hideModal());
 		yield delay(3000);
 		yield put(hideError());

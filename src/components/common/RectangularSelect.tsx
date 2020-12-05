@@ -39,7 +39,7 @@ const RectangularSelect = ({
 			)}
 			placeholder={{
 				label: placeholder || "",
-				value: 0,
+				value: -1,
 				color: colors.gray
 			}}
 			items={items}
