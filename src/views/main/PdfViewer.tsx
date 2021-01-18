@@ -123,17 +123,17 @@ const PdfViewer = ({
 						dispatch(hideError());
 						return;
 					}
-					reactotron.logImportant({ docModel, createdDocModel });
 					let submitData = {
 						[data.parentName]: {
 							[data.middleName]: content,
 							sign: attachedSign.pkcs7,
-							sum: data.data.sum,
+							sum: data.data.sum||data.totalSumForPdf,
 							description: data.description,
 							fileName,
 							filePath
 						}
 					};
+					reactotron.logImportant({ submitData, data });
 					
 					let createRes = await requests.documents.create(
 						data.invoiceType||data.documentType,
@@ -144,6 +144,7 @@ const PdfViewer = ({
 					let {pkcs7} = await sign(dataForSign);
 					//* Creating upload data for non-invoice document
 					let { documentModel } = data;
+					reactotron.log({pdfView:data});
 					let completeData = {
 						...data.data,
 						...data,
@@ -161,7 +162,6 @@ const PdfViewer = ({
 						{}
 					);
 					let submitData = { ...createRequestBody }
-					reactotron.log({submitData})
 					let res = await requests.documents.create(
 						data.documentType,
 						{ [data.parentName]:  submitData}
@@ -176,12 +176,13 @@ const PdfViewer = ({
 				await sleep(3000);
 				dispatch(hideError());
 			} catch (error) {
+				console.error(error)
 				let txt = error?.response?.data?.message||"{}";
 				let message=strings.pleaseFillAllOfTheFields;
 				try {
 					message = JSON.parse(txt)?.errorMessage
 				} catch (error) {
-					
+					console.error(error)
 				}
 				dispatch(hideModal());
 				dispatch({

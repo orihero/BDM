@@ -240,7 +240,7 @@ const ProductsList = ({ navigation }) => {
 																temp[
 																	field
 																] = result.toString();
-																console.log({
+																reactotron.log({
 																	temp: temp,
 																	result,
 																	field,
@@ -301,15 +301,19 @@ const ProductsList = ({ navigation }) => {
 				}
 				if (current.toLowerCase() === "products") {
 					let totalSumForPdf = 0;
-					products.forEach(e => {
-						totalSumForPdf = parseFloat(e.TotalSum);
+					let newProducts = products.map((e, i) => {
+						totalSumForPdf += parseFloat(
+							e.TotalSum || e.DeliverySumWithVat
+						);
+						return { ...e, OrdNo: i + 1 };
 					});
-					return { ...prev, [current]: products, totalSumForPdf };
+					return { ...prev, [current]: newProducts, totalSumForPdf };
 				}
 				return { ...prev, [current]: initialProducts[current] };
 			},
 			{}
 		);
+		// reactotron.log({ formedProducts });
 
 		navigation.navigate("NewDocument", {
 			productList: formedProducts

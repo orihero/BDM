@@ -24,6 +24,10 @@ import {
 	triterialContractFields,
 	trilateralContractOrRentConModel
 } from "../../docs/trilateralContractOrRentCon";
+import {
+	trilateralActCompOrInv,
+	triterialAct
+} from "../../docs/trilateralActCompOrInv";
 import { invoiceExcise, invoiceExciseFields } from "../../docs/invoiceExcise";
 import { baseDocument, baseDocumentFields } from "../../docs/baseDocument";
 import {
@@ -47,6 +51,14 @@ import {
 	actReconciliationFields,
 	actReconciliationModel
 } from "../../docs/actReconciliation";
+import {
+	invoicePharmNo1Fields,
+	invoicePharmNo1Model
+} from "../../docs/invoicePharmNo1";
+import {
+	invoicePharmNo2Fields,
+	invoicePharmNo2Model
+} from "../../docs/invoicePharmNo2";
 
 interface Props {
 	createDocument: Function;
@@ -163,16 +175,53 @@ let twoSideDocIds = {
 		documentDateProperty: "FacturaDoc.FacturaDate",
 		facturaIdName: "FacturaId",
 		productIdName: "FacturaProductId"
+	},
+	19: {
+		fields: invoicePharmNo1Fields,
+		parentName: "invoicePharmNo1",
+		middleName: "invoicePharmNo1Content",
+		documentModel: invoicePharmNo1Model,
+		documentNumberProperty: "FacturaDoc.FacturaNo",
+		documentDateProperty: "FacturaDoc.FacturaDate",
+		facturaIdName: "FacturaId",
+		productIdName: "FacturaProductId"
+	},
+	24: {
+		fields: invoicePharmNo2Fields,
+		parentName: "invoicePharmNo2",
+		middleName: "invoicePharmNo2Content",
+		documentModel: invoicePharmNo2Model,
+		documentNumberProperty: "FacturaDoc.FacturaNo",
+		documentDateProperty: "FacturaDoc.FacturaDate",
+		facturaIdName: "FacturaId",
+		productIdName: "FacturaProductId"
 	}
 };
 
 let threeSideDocIds = {
 	1: {
 		fields: triterialContractFields,
-		parentName: "contract",
+		parentName: "trilateralContractOrRentCon",
 		documentModel: trilateralContractOrRentConModel,
 		documentNumberProperty: "document.documentNo",
-		documentDateProperty: "document.documentDate"
+		documentDateProperty: "document.documentDate",
+		customDocType: 30
+	},
+	3: {
+		fields: triterialAct,
+		parentName: "trilateralActCompOrInv",
+		documentModel: trilateralActCompOrInv,
+		documentNumberProperty: "document.documentNo",
+		documentDateProperty: "document.documentDate",
+		customDocType: 31
+	},
+	4: {
+		fields: triterialAct,
+		parentName: "trilateralActCompOrInv",
+		documentModel: trilateralActCompOrInv,
+		documentNumberProperty: "document.documentNo",
+		documentDateProperty: "document.documentDate",
+		customDocType: 32
 	}
 };
 
@@ -301,11 +350,15 @@ const NewDocument: React.FC<Props & NavigationProps> = ({
 			}
 			let { tin: buyerTin } = buyer;
 			// let {}
+			let tempDocType = documentType;
+			if (isTriterial) {
+				tempDocType = threeSideDocIds[documentType].customDocType;
+			}
 			createDocument({
 				data,
 				buyerTin,
 				buyer,
-				documentType,
+				documentType: tempDocType,
 				seller: user.data,
 				products,
 				parentName,

@@ -13,6 +13,14 @@ export let triterialContractFields = [
 		fetch: requests.user.getRequisite
 	},
 	{
+		type: FieldType.AUTOCOMPLETE,
+		title: strings.recieverInn,
+		placeholder: strings.recieverInn,
+		size: FieldSize.FULL,
+		name: "thirdParty",
+		fetch: requests.user.getRequisite
+	},
+	{
 		type: FieldType.LINE,
 		size: FieldSize.FULL,
 		columns: [

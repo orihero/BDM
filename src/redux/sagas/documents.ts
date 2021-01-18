@@ -208,7 +208,10 @@ export function* getRegions(data) {
 
 export let taxDepartmentDocs = {
 	29: true,
-	2: true
+	2: true,
+	24: true,
+	19: true,
+	13: true
 };
 
 /**
@@ -220,7 +223,9 @@ export function* createDocument({ payload: data }) {
 		//* Show loading
 		yield put(showModal(strings.loading));
 		//* Construct fileUpload request body
-		if (taxDepartmentDocs[data.documentType]) {
+		let isTaxDoc = taxDepartmentDocs[data.documentType || data.invoiceType];
+		reactotron.log({ isTaxDoc });
+		if (isTaxDoc) {
 			// let { seller = {}, buyerTin: buyer } = data;
 			// //* Get invoiceID
 			// let FacturaDoc = {
@@ -295,16 +300,16 @@ export function* createDocument({ payload: data }) {
 				documentModel,
 				buyer: Buyer,
 				seller: Seller,
+				thirdParty,
 				documentNumberProperty,
 				documentDateProperty
 			} = data;
 			if (!Buyer) {
 				Buyer = data.BuyerTin;
 			}
-			reactotron.log(data);
+			reactotron.log({ from: "CREATE DOCUMENT SAGA", data });
 			let { totalSumForPdf, ...rest } = data.products;
 			data.products = { ...rest, Tin: Seller.tin };
-
 			let completeData = {
 				...data.data,
 				...data,
@@ -314,7 +319,10 @@ export function* createDocument({ payload: data }) {
 				SellerTin: Seller.tin,
 				ProductList: data.products,
 				SellerName: Seller.name,
-				BuyerName: Buyer.name
+				BuyerName: Buyer.name,
+				thirdParty,
+				thirdPartyTin:thirdParty?.tin,
+				sum: totalSumForPdf
 			};
 			let invoiceJson = Object.keys(
 				documentModel[data.parentName][data.middleName]
@@ -352,12 +360,12 @@ export function* createDocument({ payload: data }) {
 					filePath,
 					dataForSign: JSON.stringify(invoiceJson)
 				},
-				data,
+				data: { ...data, totalSumForPdf },
 				invoiceJson
 			});
 			return;
 		}
-		let { documentNumberProperty, documentDateProperty } = data;
+		let { documentNumberProperty, documentDateProperty, } = data;
 		let fileData = {
 			file: constructFileFromUri(data.data.file),
 			tinRecipient: data.buyerTin.tin,
@@ -370,14 +378,14 @@ export function* createDocument({ payload: data }) {
 		};
 		//* Uploading file
 		let response = yield call(requests.documents.uploadFile, fileData);
-
+		let {thirdParty} = data?.data||{};
 		yield put(hideModal());
 		NavigationService.navigate("PdfViewer", {
 			newDocument: {
 				...response.data.data,
 				dataForSign: response.data.data.documentContentForSign
 			},
-			data
+			data:{...data,thirdPartyTin:thirdParty?.tin}
 		});
 		return;
 		//! Signing should be on
